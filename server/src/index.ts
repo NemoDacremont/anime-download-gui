@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 import express from 'express';
 
 /*
@@ -12,6 +13,9 @@ import logger from './logger';
 *		Import Config
 */
 import { PORT } from './config/constants';
+import initScript from './initScript';
+
+console.log('Server is loading...');
 
 /*
 *		Server Declaration	
@@ -34,6 +38,10 @@ app.use('/', clientRouter);
 *		Start
 */
 
-app.listen(PORT, () => {
-	console.log(`Listenning on port ${PORT}`);
-});
+initScript()
+	.then(() => {
+		app.listen(PORT, () => {
+			console.log(`\nServer listening on port ${PORT}`);
+		});
+	});
+
