@@ -4,7 +4,8 @@
 		"module": "commonjs",
 		"target": "ESnext",
 		"removeComments": true,
-		"strict": true
+		"strict": true,
+		"esModuleInterop": true
 	},
 	"files": [
 		"server/src/index.ts"
