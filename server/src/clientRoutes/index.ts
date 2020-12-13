@@ -1,15 +1,20 @@
 
-import { Router } from 'express';
+import path from 'path';
+import { Router, static as expressStatic } from 'express';
+import history from 'connect-history-api-fallback';
 
 const clientRouter = Router();
 
-clientRouter.get('/', (req, res) => {
-	res.send('home');
-});
+const historyHandler = history({});
+
+clientRouter.use(historyHandler);
+clientRouter.use(
+	'/',
+	expressStatic( path.join(__dirname, '../client/') )
+);
 
 clientRouter.get('*', (req, res) => {
-	res.status(404);
-	res.send('File not found');
+	res.sendFile('/index.html');
 });
 
 export default clientRouter;

@@ -26,8 +26,8 @@ const app = express();
 app.use(logger);
 
 //	Routers
-app.use('/', clientRouter);
 app.use('/api/', api);
+app.use('/', clientRouter);
 
 
 /*

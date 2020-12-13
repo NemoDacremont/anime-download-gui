@@ -1,4 +1,4 @@
 
 import morgan from 'morgan';
 
-export default morgan('combined');
+export default morgan('dev');

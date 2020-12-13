@@ -1,5 +1,10 @@
 
-node_modules/
+# Editor
 .vscode/
+
+# Builded folders
+node_modules/
 dist/
+
+server/client/
 
