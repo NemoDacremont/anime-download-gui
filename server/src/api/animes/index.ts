@@ -1,11 +1,14 @@
 
 import { Router } from 'express';
+
 import animeList from './animeList';
+import getURL from './getURL';
 import animeStore from '../../stores/animes';
 
 const animesRouter = Router();
 
 animesRouter.use(animeList);
+animesRouter.use(getURL);
 
 /*
 *		Route handling single anime downloading
