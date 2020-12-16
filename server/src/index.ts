@@ -38,9 +38,12 @@ app.use('/', clientRouter);
 *		Start
 */
 
+console.log('Server loaded, initializing data...');
+
 initScript()
 	.then(() => {
 		app.listen(PORT, () => {
+			console.log('Server Loaded.');
 			console.log(`\nServer listening on port ${PORT}`);
 		});
 	});

@@ -1,19 +1,23 @@
 
 /*
-	"id": 17183,
-  "title": "Osomatsu-san 3",
-  "title_english": "",
-  "title_romanji": "Osomatsu-san 3",
-  "others": "Mr. Osomatsu 3",
-  "type": "tv",
-  "status": "1",
-  "popularity": 8.560080465021827,
-  "url": "/anime/info/17183-osomatsu-san-3-vostfr",
-  "genres": [],
-  "url_image": "https://cdn10.neko-sama.xyz/2/439b968b83f96a704ad09bf8ffe2e91b.jpg",
-  "score": "32.50",
-  "start_date_year": "2020",
-  "nb_eps": "? Eps"
+	Example of Anime:
+
+	{
+		"id": 17183,
+		"title": "Osomatsu-san 3",
+		"title_english": "",
+		"title_romanji": "Osomatsu-san 3",
+		"others": "Mr. Osomatsu 3",
+		"type": "tv",
+		"status": "1",
+		"popularity": 8.560080465021827,
+		"url": "/anime/info/17183-osomatsu-san-3-vostfr",
+		"genres": [],
+		"url_image": "https://cdn10.neko-sama.xyz/2/439b968b83f96a704ad09bf8ffe2e91b.jpg",
+		"score": "32.50",
+		"start_date_year": "2020",
+		"nb_eps": "? Eps"
+	}
 */
 
 export interface Anime {
