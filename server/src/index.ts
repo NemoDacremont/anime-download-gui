@@ -42,7 +42,7 @@ console.log('Server loaded, initializing data...');
 
 initScript()
 	.then(() => {
-		app.listen(PORT, () => {
+		app.listen(PORT, 'localhost',  () => {
 			console.log('Server Loaded.');
 			console.log(`\nServer listening on port ${PORT}`);
 		});

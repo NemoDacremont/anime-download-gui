@@ -3,11 +3,12 @@ import axios from 'axios';
 import animeStore, { Anime } from '../stores/animes';
 
 const animeMapper = (anime: Anime): Anime => {
-	const { id, title, status, url_image, nb_eps } = anime;
+	const { id, title, url, status, url_image, nb_eps } = anime;
 
 	return {
 		id,
 		title,
+		url,
 		status,
 		url_image,
 		nb_eps

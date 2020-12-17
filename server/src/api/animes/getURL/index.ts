@@ -8,9 +8,20 @@ const getURL = Router();
 
 getURL.get('/getURL/:animeIndex/:version/:episode', (req, res, next) => {
 	const { animeIndex, version, episode } = req.params;
+
 	console.log(req.params);
-	if (!parseInt(animeIndex) || !parseInt(episode)) next();
-	else if (version !== 'vostfr' && version !== 'vf') next();
+
+	//	Checking if the version is valid
+	if (version !== 'vostfr' && version !== 'vf') next();
+
+	//	Then check if the anime is valid
+	else if (
+			!parseInt(animeIndex) ||
+			!parseInt(episode) ||
+			parseInt(animeIndex) >= animeStore.animeList[version].length
+		) next();
+
+	//	We can finally proceed to the extract
 	else {
 		/*
 		*		If no version is passed in url, default is vostfr
@@ -19,9 +30,10 @@ getURL.get('/getURL/:animeIndex/:version/:episode', (req, res, next) => {
 			.then((url) => {
 				res.send(url);
 			})
-			.catch((err) => {
-				console.error(err);
-				next();
+			.catch((err: Error) => {
+				console.log(err.message);
+				res.status(500);
+				res.send(`Error 500 - message: ${err.message}`);
 			});
 	}
 });

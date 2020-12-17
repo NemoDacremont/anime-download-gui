@@ -1,22 +1,44 @@
 
-import { JSDOM } from "jsdom";
 import axios from 'axios';
 
+import extractURLFromPlayer from './extractURLFromPlayer';
 import { Anime } from "../../../stores/animes";
-import pages from '../../../stores/jsdom';
 
-
-export default async function (anime: Anime, version: string, episode: number): Promise<string> {
+/**
+ * 
+ * @param anime animeIndex of the animeStore
+ * @param version version of the anime
+ * @param episode episode number, starting to 1
+ */
+export default async function (anime: Anime, version: 'vostfr' | 'vf', episode: number): Promise<string | null> {
 	console.log(anime);
-	const formattedTitle = anime.title?.replace(/:|-/g, '').toLowerCase().replace(/ /g, '-');
 
-	const animeURL = `https://neko-sama.fr/anime/episode/${anime.id}-${formattedTitle}-${episode}-${version}`;
-	const animePage = (await axios.get(animeURL)).data;
+	const formattedEpisode = `${episode<10 ? 0: ''}${episode}`;
 
-	const pageIndex = pages.push(new JSDOM(animePage));
-	const page = pages[pageIndex - 1];
+	console.log(anime.title?.replace(/:|-|\/|\\/g, '')
+		.replace(/\./g, ' ')
+		.trim());
 
-	console.log(page.window.document.querySelector('body')?.innerHTML);
+	//	Check if anime.url exist and then generate url to the episode from it
+	if (!anime.url) throw new Error("Sorry, the anime you're looking for isn't reachable");;
+	const episodeURL = 'https://neko-sama.fr' + anime.url
+		.replace('info', 'episode')
+		.replace(version, `${formattedEpisode}-${version}`);
 
-	return '';
+	console.log('episodeURL:', episodeURL);
+
+
+
+	const animePage = (await axios.get(episodeURL)).data;
+
+	const playersSources = animePage.match(/https?:\/\/((www)|(embed))\.((pstream)|(mystream))\.((net)|(to))\/(\w+\/)?\w+/g);
+	console.log(playersSources)
+
+	for (let i=playersSources.length-1 ; i>0 ; i--) {
+		const url = await extractURLFromPlayer(playersSources[i]);
+		console.log(url);
+		if (typeof url === "string") return url;
+	}
+
+	throw new Error("Sadly, we blob download isn't supported yet");
 }
