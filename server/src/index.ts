@@ -5,15 +5,15 @@ import express from 'express';
 /*
 *		Import middlewares
 */
-import api from './api';
-import clientRouter from './clientRoutes';
+import api from './routes/api';
+import clientRouter from './routes/client';
 import logger from './logger';
 
 /*
 *		Import Config
 */
 import { PORT } from './config/constants';
-import initScript from './initScript';
+import initScript from './scripts/init';
 
 console.log('Server is loading...');
 

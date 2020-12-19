@@ -2,7 +2,7 @@
 import puppeteer from 'puppeteer';
 
 import cacheAnimeList from './cacheAnimeList';
-import { initPuppeteer } from '../stores/puppeteer';
+import { initPuppeteer } from '../../stores/puppeteer';
 
 async function initScript (): Promise<void> {
 	await cacheAnimeList();

@@ -1,6 +1,6 @@
 
 //import axios from 'axios';
-import { browser, pages } from '../../../stores/puppeteer';
+import { browser, pages } from '../../../../stores/puppeteer';
 
 export default async function (playerURL: string): Promise<string | null> {
 	//const playerPage = (await axios.get(playerURL)).data;

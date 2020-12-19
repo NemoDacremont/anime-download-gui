@@ -1,6 +1,6 @@
 
 import { Router } from 'express';
-import animeStore from '../../../stores/animes';
+import animeStore from '../../../../stores/animes';
 
 const animeList = Router();
 

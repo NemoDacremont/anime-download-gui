@@ -1,7 +1,7 @@
 
 import { Router } from 'express';
 
-import animeStore from '../../../stores/animes';
+import animeStore from '../../../../stores/animes';
 import extractURL from './extractURL';
 
 const getURL = Router();

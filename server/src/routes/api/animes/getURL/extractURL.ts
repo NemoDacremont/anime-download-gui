@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 import extractURLFromPlayer from './extractURLFromPlayer';
-import { Anime } from "../../../stores/animes";
+import { Anime } from "../../../../stores/animes";
 
 /**
  * 

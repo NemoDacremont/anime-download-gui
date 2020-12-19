@@ -3,7 +3,7 @@ import { Router } from 'express';
 
 import animeList from './animeList';
 import getURL from './getURL';
-import animeStore from '../../stores/animes';
+import animeStore from '../../../stores/animes';
 
 const animesRouter = Router();
 

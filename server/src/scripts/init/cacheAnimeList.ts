@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import animeStore, { Anime } from '../stores/animes';
+import animeStore, { Anime } from '../../stores/animes';
 
 const animeMapper = (anime: Anime): Anime => {
 	const { id, title, url, status, url_image, nb_eps } = anime;
