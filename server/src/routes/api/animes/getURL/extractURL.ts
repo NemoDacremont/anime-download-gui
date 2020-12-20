@@ -6,11 +6,11 @@ import { Anime } from "../../../../stores/animes";
 
 /**
  * 
- * @param anime animeIndex of the animeStore
+ * @param anime Anime interface
  * @param version version of the anime
  * @param episode episode number, starting to 1
  */
-export default async function (anime: Anime, version: 'vostfr' | 'vf', episode: number): Promise<string | null> {
+export default async function (anime: Anime, version: 'vostfr' | 'vf', episode: number): Promise<string> {
 	console.log(anime);
 
 	const formattedEpisode = `${episode<10 ? 0: ''}${episode}`;
@@ -25,18 +25,17 @@ export default async function (anime: Anime, version: 'vostfr' | 'vf', episode: 
 		.replace('info', 'episode')
 		.replace(version, `${formattedEpisode}-${version}`);
 
-	console.log('episodeURL:', episodeURL);
+	console.log(episodeURL);
 
+	const animePage: string = (await axios.get(episodeURL)).data;
 
-
-	const animePage = (await axios.get(episodeURL)).data;
 
 	const playersSources = animePage.match(/https?:\/\/((www)|(embed))\.((pstream)|(mystream))\.((net)|(to))\/(\w+\/)?\w+/g);
-	console.log(playersSources)
+
+	if (!playersSources) throw new Error(`The episode you're looking for doesn't look like existing`);
 
 	for (let i=playersSources.length-1 ; i>0 ; i--) {
 		const url = await extractURLFromPlayer(playersSources[i]);
-		console.log(url);
 		if (typeof url === "string") return url;
 	}
 

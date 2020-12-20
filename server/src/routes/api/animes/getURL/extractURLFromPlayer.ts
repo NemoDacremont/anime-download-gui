@@ -14,17 +14,12 @@ export default async function (playerURL: string): Promise<string | null> {
 	*		Scraping video's src attribute
 	*		if it exist, return. else try source tag
 	*/
-	console.log(await page.$eval('video', (el) => el.innerHTML));
-
 	const videoSrc = await page.$eval('video', (el) => el.getAttribute('src'));
 	if (typeof videoSrc === 'string' && videoSrc) {
 		await page.close();
 		return videoSrc;
 	}
 
-	console.log(videoSrc);
-	console.log(videoSrc);
-	console.log(videoSrc);
 	console.log(videoSrc);
 
 	/*
@@ -33,8 +28,6 @@ export default async function (playerURL: string): Promise<string | null> {
 	*/
 
 	const sourceSrc = await page.$eval('source', (el) => el.getAttribute('src'));
-	console.log(sourceSrc);
-	console.log(sourceSrc);
 	console.log(sourceSrc);
 	if (sourceSrc) {
 		await page.close();

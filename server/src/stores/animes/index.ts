@@ -35,6 +35,7 @@ export interface Anime {
 	score?: string;
 	start_date_year?: string;
 	nb_eps?: string;
+	nb_of_episodes: number;
 }
 
 export interface AnimeStore {

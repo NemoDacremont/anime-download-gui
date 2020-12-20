@@ -23,10 +23,7 @@ getURL.get('/getURL/:animeIndex/:version/:episode', (req, res, next) => {
 
 	//	We can finally proceed to the extract
 	else {
-		/*
-		*		If no version is passed in url, default is vostfr
-		*/
-		extractURL( animeStore.animeList[version ? version: 'vostfr'][parseInt(animeIndex)], version, parseInt(episode) )
+		extractURL( animeStore.animeList[version][parseInt(animeIndex)], version, parseInt(episode) )
 			.then((url) => {
 				res.send(url);
 			})

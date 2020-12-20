@@ -4,6 +4,9 @@ import animeStore, { Anime } from '../../stores/animes';
 
 const animeMapper = (anime: Anime): Anime => {
 	const { id, title, url, status, url_image, nb_eps } = anime;
+	
+	const rawEpisodesMatch = nb_eps ? nb_eps.match(/\d+/g): 0;
+	const nb_of_episodes = rawEpisodesMatch ? parseInt(rawEpisodesMatch[0]) :0;
 
 	return {
 		id,
@@ -11,7 +14,8 @@ const animeMapper = (anime: Anime): Anime => {
 		url,
 		status,
 		url_image,
-		nb_eps
+		nb_eps,
+		nb_of_episodes: !isNaN(nb_of_episodes) ? nb_of_episodes: -1
 	}
 }
 

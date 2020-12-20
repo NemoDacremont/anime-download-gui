@@ -5,12 +5,14 @@ import history from 'connect-history-api-fallback';
 
 const clientRouter = Router();
 
-const historyHandler = history({});
+const historyHandler = history({
+	verbose: true
+});
 
 clientRouter.use(historyHandler);
 clientRouter.use(
 	'/',
-	expressStatic( path.join(__dirname, '../client/') )
+	expressStatic( path.join(__dirname, '../../client/') )
 );
 
 clientRouter.get('*', (req, res) => {

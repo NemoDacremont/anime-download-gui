@@ -1,6 +1,4 @@
 
-import puppeteer from 'puppeteer';
-
 import cacheAnimeList from './cacheAnimeList';
 import { initPuppeteer } from '../../stores/puppeteer';
 
