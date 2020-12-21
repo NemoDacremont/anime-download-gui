@@ -1,8 +1,13 @@
 <template>
 	<div class="anime-list-view">
-		<div class="top-bar">
-			
-		</div>
+		<header>
+			<h1>AnimeList</h1>
+			<div class="page-navigator">
+				<page-navigation />
+			</div>
+		</header>
+
+
 		<anime-list-component v-if="animeData">
 			<li
 				v-for="(anime, index) of animeDataFiltered"
@@ -12,19 +17,20 @@
 			</li>
 		</anime-list-component>
 
-		<div class="page-navigator">
-			<page-navigation :baseUrl="baseUrl" :currentPage="page"/>
-		</div>
-		
+		<footer>
+			<div class="page-navigator">
+				<page-navigation />
+			</div>
+		</footer>
 	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useRoute } from 'vue-router';
+import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router';
 import axios from 'axios';
 
-import { constants } from '../store';
+import { animeListStore } from '../store';
 import PageNavigation from '../components/pageNavigation';
 
 
@@ -38,22 +44,22 @@ export default defineComponent({
 		PageNavigation
 	},
 	data (): {
-		version: string | string[];
+		version: 'vostfr' | 'vf';
 		animeData: object[] | null;
 		itemsPerPage: number;
 		page: number;
 		baseUrl: string;
-		//route: RouteLocationNormalizedLoaded;
+		route: RouteLocationNormalizedLoaded;
 	} {
 		return {
-			//route: useRoute(),
-			version: this.$route.params.version,
+			version: this.$route.params.version as 'vostfr' | 'vf',
 			animeData: null,
 			page: Array.isArray(this.$route.params.page) 
 				?	-1
 				:	parseInt( this.$route.params.page ),
 			itemsPerPage: 50,
-			baseUrl: '/animelist/vostfr/{{newPage}}'
+			baseUrl: '/animelist/vostfr/{{newPage}}',
+			route: useRoute()
 		}
 	},
 	computed: {
@@ -71,20 +77,35 @@ export default defineComponent({
 			return animeData.slice( itemsPerPage * (page - 1), itemsPerPage * page );
 		}
 	},
-	methods: {
-		go () {
-			this.$router.go(0);
-		}
-	},
 	async created () {
-		const route = useRoute();
-		console.log(route);
-		this.$data.animeData = (await axios.get( `${constants.state.API_BASE_URL}/animes/animelist/${this.$data.version}` )).data;
+		// Handle truc nul
+		const { page } = this.$data;
+		if (page <= 0) {
+			this.$router.push({
+				name: '404'
+			});
+		}
+
+
+		// 
+		const { version } = this.$data;
+
+		if (animeListStore.state[ version ]) this.$data.animeData = animeListStore.state[ version ];
+		else {
+			animeListStore.dispatch('loadData', version)
+				.then(() => {
+					this.$data.animeData = animeListStore.state[ version ];
+				});
+		}
 	}
 })
 </script>
 
 <style lang="scss" scoped>
+
+header {
+	padding: 1em 2em;
+}
 
 .anime-list-view {
 	position: relative;

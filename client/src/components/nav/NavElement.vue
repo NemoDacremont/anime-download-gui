@@ -20,6 +20,8 @@ export default defineComponent({
 	height: 100%;
 	width: 100%;
 
+	background-color: var(--nav-background-color);
+
 	padding: 3em 0;
 
 	.nav__routes-list {

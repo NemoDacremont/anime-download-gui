@@ -1,6 +1,5 @@
 <template>
 	<div class="anime-list">
-		<h1>AnimeList</h1>
 		<ol class="anime-list__list">
 			<slot></slot>
 		</ol>
@@ -11,11 +10,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-	name: 'AnimeList',
-	data () {
-		return {
-		}
-	}
+	name: 'AnimeList'
 });
 </script>
 

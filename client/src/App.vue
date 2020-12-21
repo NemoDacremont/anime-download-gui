@@ -1,15 +1,13 @@
 <template>
 	<div class="app-container">
-		<header>
-			<nav-element>
-				<nav-item path="/" name="Home" />
-				<nav-item path="/animelist/vostfr/1" name="Anime List" />
-				<nav-item path="/about" name="About" />
-			</nav-element>
-		</header>
+		<nav-element>
+			<nav-item path="/" name="Home" />
+			<nav-item path="/animelist/vostfr/1" name="Anime List" />
+			<nav-item path="/about" name="About" />
+		</nav-element>
 
 		<main>
-			<router-view/>
+			<router-view :key="$route.path"/>
 		</main>
 	</div>
 </template>
@@ -75,10 +73,6 @@ a {
 	}
 }
 
-header {
-	background-color: var(--nav-background-color);
-}
-
 nav {
 	display: flex;
 	flex-direction: column;
@@ -93,6 +87,10 @@ nav {
 
 	height: 100vh;
 	width: 100vw;
+}
+
+header, footer {
+	background-color: var(--nav-background-color);
 }
 
 

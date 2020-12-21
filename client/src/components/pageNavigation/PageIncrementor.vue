@@ -1,7 +1,12 @@
 <template>
 	<router-link
-		:to="path"
-		@click="go"
+		:to="{
+			name: 'AnimeList',
+			params: {
+				version,
+				page: newPage
+			}
+		}"
 	>
 	{{ text }}
 	</router-link>
@@ -12,43 +17,48 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
 	props: {
-		version: {
+		variant: {
 			type: String,
 			validator (value: string) {
 				return ['previous', 'next'].includes(value);
 			}
-		},
-		baseUrl: {
-			type: String,
-			validator (value: string) {
-				return value.includes('{{newPage}}')
-			}
-		},
-		currentPage: {
-			type: Number
+		}
+	},
+	data () {
+		return {
+			...this.$route.params
 		}
 	},
 	computed: {
 		text () {
-			const { version } = this.$props as { version: string };
+			const { variant } = this.$props as { variant: string };
 
-			return version === 'previous'
+			return variant === 'previous'
 				? 'Page précédente'
 				: 'Page suivante'
 		},
-		path () {
-			const { version, baseUrl, currentPage } = this.$props as { version: string; baseUrl: string; currentPage: number};
+		newPage () {
+			const { variant } = this.$props as { variant: string };
+			const { page } = this.$data as { page: string }
 
-			return version === 'previous'
-				? baseUrl.replace('{{newPage}}', `${currentPage - 1}`)
-				: baseUrl.replace('{{newPage}}', `${currentPage + 1}`)
-		},
-		/*isShown () {
-			const { version } = this.$props;
-		}*/
-	},
-	methods: {
-		go () { this.$router.go(0) }
+			return variant === 'previous'
+				? parseInt(page) - 1
+				: parseInt(page) + 1
+		}
 	}
 })
 </script>
+
+<style lang="scss" scoped>
+
+a {
+	transition: background-color .25s;
+	padding: .5em 1em;
+	border-radius: 4px;
+
+	&:hover {
+		background-color: var(--background-color-highlight);
+	}
+}
+
+</style>
