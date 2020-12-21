@@ -46,16 +46,17 @@ downloadRouter.post('/', JSONParser, async (req, res, next) => {
 	else if (
 		animeIndex > animeStore.animeList[version].length
 	) {
-		res.status(403);
-		res.send("403 - Bad Request: The anime passed doesn't exist");
+		res.status(400);
+		res.send("400 - Bad Request: The anime passed doesn't exist");
 	}
 
 	else if (
 		animeStore.animeList[version][ animeIndex ].nb_of_episodes !== -1 &&
-		episodeIndex < animeStore.animeList[version][ animeIndex ].nb_of_episodes
+		episodeIndex > animeStore.animeList[version][ animeIndex ].nb_of_episodes
 	) {
-		res.status(403);
-		res.send("403 - Bad Request: The episode passed doesn't exist");
+		console.log(animeStore.animeList[version][animeIndex].nb_of_episodes)
+		res.status(400);
+		res.send("400 - Bad Request: The episode passed doesn't exist");
 	}
 
 	else {
