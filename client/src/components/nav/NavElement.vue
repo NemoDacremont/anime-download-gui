@@ -1,6 +1,9 @@
 <template>
 	<nav class="nav">
-		<ul class="nav__routes-list">
+		<ul
+			class="nav__routes-list"
+			:class="variantClass"
+		>
 			<slot></slot>
 		</ul>
 	</nav>
@@ -10,7 +13,23 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-	name: 'NavElement'
+	name: 'NavElement',
+	props: {
+		variant: {
+			type: String,
+			validator (value: string) {
+				return ['grid', 'list'].includes(value);
+			}
+		}
+	},
+	computed: {
+		variantClass () {
+			const { variant } = this.$props as { variant: 'grid' | 'list' | undefined };
+			return variant && variant === 'list'
+				? 'list'
+				: 'grid'
+		}
+	}
 })
 </script>
 
@@ -25,9 +44,18 @@ export default defineComponent({
 	padding: 5em 0;
 
 	.nav__routes-list {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
+		&.list {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		&.grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			grid-template-rows: auto;
+		}
+		
 		gap: .25em;
 
 		list-style: none;

@@ -13,13 +13,30 @@
 				</label>
 			</form>
 
+			<div class="display-style">
+				<span
+					class="material-icons"
+					:class="{ active: isGridViewSelected }"
+					@click="selectGridView"
+				>view_module</span>
+
+				<span
+					class="material-icons"
+					:class="{ active: !isGridViewSelected}"
+					@click="selectListView"
+				>list</span>
+			</div>
+
 		</header>
 			<!--div class="page-navigator">
 				<page-navigation />
 			</div-->
 
 
-		<anime-list-component v-if="animeData">
+		<anime-list-component
+			v-if="animeData"
+			:variant=" isGridViewSelected ? 'grid': 'list'"
+		>
 			<li
 				v-for="(anime, index) of animeDataFiltered"
 				:key="index"
@@ -64,7 +81,8 @@ export default defineComponent({
 			itemsPerPage: constants.state.ANIME_PER_PAGE,
 			baseUrl: '/animelist/vostfr/{{newPage}}',
 			route: useRoute(),
-			searchFilter: ''
+			searchFilter: '',
+			isGridViewSelected: true
 		}
 	},
 	computed: {
@@ -80,6 +98,14 @@ export default defineComponent({
 				) return [];
 
 			return animeData.slice( itemsPerPage * (page - 1), itemsPerPage * page );
+		}
+	},
+	methods: {
+		selectGridView () {
+			this.$data.isGridViewSelected = true;
+		},
+		selectListView () {
+			this.$data.isGridViewSelected = false;
 		}
 	},
 	async created () {
@@ -116,7 +142,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 
 header {
-	padding: 2em 5em;
+	padding: 1em 3em;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -148,6 +174,64 @@ header {
 .page-navigator {
 	display: flex;
 	gap: 1rem;
+}
+
+.display-style {
+	display: flex;
+	align-items: center;
+	padding: 0;
+	gap: 3em;
+
+	span {
+		position: relative;
+		color: var(--font-color);
+		transition: color .25s;
+		width: 3em;
+		height: 3em;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 9999;
+
+		&::selection {
+			background-color: transparent;
+		}
+
+		&.active {
+			color: var(--highlight-active);
+		}
+
+		&::before {
+			content: '';
+			width: 100%;
+			height: 100%;
+
+			position: absolute;
+			left: 0;
+			top: 0;
+
+			background-color: var(--background-color-highlight);
+			border-radius: 50%;
+
+			opacity: 0;
+			z-index: -1;
+			transform: scale(50%, 50%);
+			transition: opacity .25s, transform .25s;
+		}
+
+		&:hover {
+			cursor: pointer;
+			color: var(--highlight-activable);
+			&.active {
+				color: var(--highlight-active);
+			}
+
+			&::before {
+				opacity: 50%;
+				transform: scale(100%, 100%);
+			}
+		}
+	}
 }
 
 </style>
