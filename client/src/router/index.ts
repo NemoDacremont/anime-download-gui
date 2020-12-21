@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
 		component: Anime
 	},
 	{
-		path: '/animelist/version',
+		path: '/animelist/:version/:page',
 		component: AnimeList
 	},
   {
