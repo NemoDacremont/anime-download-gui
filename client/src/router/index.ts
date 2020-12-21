@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+
 import Home from '@/views/Home.vue'
-
 import notFound from '@/views/notFound.vue';
-
 import Anime from '@/views/Anime.vue';
 import AnimeList from '@/views/AnimeList.vue';
+import Download from '@/views/Download.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -21,6 +21,11 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/animelist/:version/:page',
 		name: 'AnimeList',
 		component: AnimeList
+	},
+	{
+		path: '/download',
+		name: 'Download',
+		component: Download
 	},
   {
     path: '/about',

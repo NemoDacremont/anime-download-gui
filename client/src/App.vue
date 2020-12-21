@@ -3,6 +3,7 @@
 		<nav-element>
 			<nav-item path="/" name="Home" />
 			<nav-item path="/animelist/vostfr/1" name="Anime List" />
+			<nav-item path="/download" name="Downloads" />
 			<nav-item path="/about" name="About" />
 		</nav-element>
 

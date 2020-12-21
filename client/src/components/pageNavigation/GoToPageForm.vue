@@ -1,7 +1,7 @@
 <template>
 	<form @submit.prevent="go" class="go-to-page-form">
 		<label for="pageInput">
-			<input type="number" name="pageInput" id="pageInput" v-model="page" length="2" min="0">
+			<input type="number" name="pageInput" id="pageInput" v-model="page" length="2" min="1">
 		</label>
 		<input type="submit" value="Go">
 	</form>
@@ -38,10 +38,11 @@ export default defineComponent({
 
 .go-to-page-form {
 	display: flex;
-	gap: 1em;
+	gap: .5em;
 
 	input[type=number] {
 		width: 3em;
+		padding: .25em .5em;
 	}
 }
 

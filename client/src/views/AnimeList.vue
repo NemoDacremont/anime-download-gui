@@ -1,11 +1,22 @@
 <template>
 	<div class="anime-list-view">
 		<header>
-			<h1>AnimeList</h1>
-			<div class="page-navigator">
-				<page-navigation />
-			</div>
+			<form @submit.prevent>
+				<label for="search-filter">
+					<input
+						type="text"
+						name="search-filter"
+						id="search-filter"
+						v-model="searchFilter"
+						placeholder="Ex: One Piece"
+					>
+				</label>
+			</form>
+
 		</header>
+			<!--div class="page-navigator">
+				<page-navigation />
+			</div-->
 
 
 		<anime-list-component v-if="animeData">
@@ -28,13 +39,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router';
-import axios from 'axios';
 
-import { animeListStore } from '../store';
+import { animeListStore, constants } from '../store';
 import PageNavigation from '../components/pageNavigation';
 
 
 import { AnimeCard, AnimeList as AnimeListComponent } from '../components/animeList';
+import { Anime } from '../../../server/src/stores/animes';
 
 export default defineComponent({
 	name: 'AnimeListView',
@@ -43,27 +54,21 @@ export default defineComponent({
 		AnimeListComponent,
 		PageNavigation
 	},
-	data (): {
-		version: 'vostfr' | 'vf';
-		animeData: object[] | null;
-		itemsPerPage: number;
-		page: number;
-		baseUrl: string;
-		route: RouteLocationNormalizedLoaded;
-	} {
+	data () {
 		return {
 			version: this.$route.params.version as 'vostfr' | 'vf',
-			animeData: null,
+			animeData: null as Anime[] | null,
 			page: Array.isArray(this.$route.params.page) 
 				?	-1
 				:	parseInt( this.$route.params.page ),
-			itemsPerPage: 50,
+			itemsPerPage: constants.state.ANIME_PER_PAGE,
 			baseUrl: '/animelist/vostfr/{{newPage}}',
-			route: useRoute()
+			route: useRoute(),
+			searchFilter: ''
 		}
 	},
 	computed: {
-		animeDataFiltered (): object[]{
+		animeDataFiltered (): Anime[]{
 			const { itemsPerPage, animeData, page } = this.$data;
 
 			if (!animeData) return [];
@@ -79,17 +84,24 @@ export default defineComponent({
 	},
 	async created () {
 		// Handle truc nul
-		const { page } = this.$data;
-		if (page <= 0) {
+		const { page, version } = this.$data;
+		const animeDataTemp = animeListStore.state[ version ];
+		if (
+			(page <= 0) ||
+			(
+				animeDataTemp &&
+				page >= Math.floor(animeDataTemp.length / constants.state.ANIME_PER_PAGE) + 1
+			)
+		) {
 			this.$router.push({
 				name: '404'
 			});
 		}
 
+		if (animeDataTemp) console.log(Math.floor(animeDataTemp.length / constants.state.ANIME_PER_PAGE) + 1);
+
 
 		// 
-		const { version } = this.$data;
-
 		if (animeListStore.state[ version ]) this.$data.animeData = animeListStore.state[ version ];
 		else {
 			animeListStore.dispatch('loadData', version)
@@ -104,7 +116,27 @@ export default defineComponent({
 <style lang="scss" scoped>
 
 header {
-	padding: 1em 2em;
+	padding: 2em 5em;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	form {
+		input[type=text] {
+			border-radius: 2em;
+			padding: .5em 1em;
+			font-size: 1em;
+			border: .2em solid var(--highlight-activable);
+			transition: border-color .25s, border-radius .25s;
+			background-color: var(--font-color);
+			width: 20em;
+
+			&:focus {
+				border-color: var(--highlight-active);
+				border-radius: .5em;
+			}
+		}
+	}
 }
 
 .anime-list-view {

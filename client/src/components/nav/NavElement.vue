@@ -22,13 +22,13 @@ export default defineComponent({
 
 	background-color: var(--nav-background-color);
 
-	padding: 3em 0;
+	padding: 5em 0;
 
 	.nav__routes-list {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1rem;
+		gap: .25em;
 
 		list-style: none;
 	}
