@@ -18,8 +18,6 @@ import GoToPageForm from './GoToPageForm.vue';
 // Constants
 import { ANIME_PER_PAGE } from '../../constants'
 
-//import { animeListStore, constants } from '../../store';
-
 export default defineComponent({
 	components: {
 		PageIncrementor,
@@ -37,17 +35,16 @@ export default defineComponent({
 			return page > 1;
 		},
 		showNext (): boolean {
-			const { version } = this.$data;
-			const animeList = this.getAnimeList( version );
+			const { version } = this.$route.params;
+			const { search } = this.$route.query;
+			const animeListLength = this.animeListFilteredLength( version, search );
 
-			if (animeList === null) return false;
-
-			const totalPages = Math.floor(animeList.length / ANIME_PER_PAGE);
-			const page = parseInt(this.$data.page);
+			const page = parseInt(this.$route.params.page as string);
+			const totalPages = Math.floor(animeListLength / ANIME_PER_PAGE);
 
 			return page <= totalPages - 1;
 		},
-		...mapGetters(['getAnimeList'])
+		...mapGetters(['animeListFilteredLength'])
 	}
 })
 </script>

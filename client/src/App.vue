@@ -8,7 +8,7 @@
 		</nav-element>
 
 		<main>
-			<router-view :key="$route.path"/>
+			<router-view :key="$route.fullPath"/>
 		</main>
 	</div>
 </template>
@@ -50,7 +50,7 @@ export default defineComponent({
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -moz-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
   -moz-osx-font-smoothing: grayscale;
 }
 

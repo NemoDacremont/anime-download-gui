@@ -1,19 +1,60 @@
 <template>
 	<div class="anime-list-view">
 		<header>
-			<form @submit.prevent>
+			<form @submit.prevent="search">
 				<label for="search-filter">
 					<input
 						type="text"
 						name="search-filter"
 						id="search-filter"
-						v-model="searchFilter"
+						v-model.trim="searchFilterRaw"
 						placeholder="Ex: One Piece"
+					>
+				</label>
+
+				<label for="submit">
+					<span class="material-icons">
+						search
+					</span>
+					<input
+						type="submit"
+						id="submit"
+						name="submit"
 					>
 				</label>
 			</form>
 
 			<div class="display-style">
+				<router-link
+					:to="{
+						name: 'AnimeList',
+						params: {
+							...$route.params,
+							version: 'vostfr'
+						}
+					}"
+				>
+					<span :class="{ active: isVOSTFRSelected }" >
+						vostfr
+					</span>
+				</router-link>
+				
+				<router-link
+					:to="{
+						name: 'AnimeList',
+						params: {
+							...$route.params,
+							version: 'vf'
+						}
+					}"
+				>
+					<span :class="{ active: !isVOSTFRSelected }">
+						vf
+					</span>
+				</router-link>
+
+				<hr>
+
 				<span
 					class="material-icons"
 					:class="{ active: isGridViewSelected }"
@@ -34,10 +75,10 @@
 
 
 		<anime-list-component
-			v-if="animeData"
+			v-if="getAnimeList(version)"
 			:class=" isGridViewSelected ? 'grid': 'list'"
 		>
-			<li
+			<!--li
 				v-for="(anime, index) of animeDataFiltered"
 				:key="index"
 			>
@@ -45,7 +86,7 @@
 					:anime="anime"
 					:class=" isGridViewSelected ? 'grid': 'list'"
 				/>
-			</li>
+			</li-->
 		</anime-list-component>
 
 		<footer>
@@ -63,11 +104,11 @@ import { useRoute } from 'vue-router';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 // Types
-import { Anime } from '../store/animeList';
+import { Version } from '../store/animeList';
 
 // Components
 import PageNavigation from '../components/pageNavigation';
-import { AnimeCard, AnimeList as AnimeListComponent } from '../components/animeList';
+import { /*AnimeCard*/ AnimeList as AnimeListComponent } from '../components/animeList';
 
 // Constants data
 import { ANIME_PER_PAGE } from '../constants';
@@ -75,37 +116,30 @@ import { ANIME_PER_PAGE } from '../constants';
 export default defineComponent({
 	name: 'AnimeListView',
 	components: {
-		AnimeCard,
+		//AnimeCard,
 		AnimeListComponent,
 		PageNavigation
 	},
 	data () {
 		return {
-			version: this.$route.params.version as 'vostfr' | 'vf',
-			animeData: null as Anime[] | null,
-			page: Array.isArray(this.$route.params.page) 
-				?	-1
-				:	parseInt( this.$route.params.page ),
+			version: this.$route.params.version as Version,
 			baseUrl: '/animelist/vostfr/{{newPage}}',
 			route: useRoute(),
-			searchFilter: ''
+			searchFilterRaw: this.$route.query.search
 		}
 	},
 	computed: {
-		animeDataFiltered (): Anime[]{
-			const { animeData, page } = this.$data;
+		page (): number {
+			const { page } = this.$route.params;
 
-			if (!animeData) return [];
-
-			if (
-					!page ||
-					page <= 0 ||
-					page >= animeData.length / ANIME_PER_PAGE
-				) return [];
-
-			return animeData.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
+			return Array.isArray( page ) 
+				?	-1
+				:	parseInt( page );
 		},
-		...mapGetters(['isGridViewSelected', 'getAnimeList'])
+		isVOSTFRSelected (): boolean {
+			return this.$route.params.version === 'vostfr';
+		},
+		...mapGetters(['isGridViewSelected', 'getAnimeList', 'animeListFilteredLength'])
 	},
 	methods: {
 		selectGridView () {
@@ -114,36 +148,46 @@ export default defineComponent({
 		selectListView () {
 			if (this.isGridViewSelected) this.setAnimeListView('list');
 		},
+		search () {
+			const { version } = this.$route.params;
+			const { searchFilterRaw } = this.$data;
+
+			this.$router.push({
+				name: 'AnimeList',
+				params: {
+					version,
+					page: 1
+				},
+				query: {
+					search: searchFilterRaw
+				}
+			});
+		},
 		...mapMutations(['setAnimeListView']),
 		...mapActions(['loadData'])
 	},
 	async created () {
-		// Handle truc nul
-		const { page, version } = this.$data;
-		const animeDataTemp = this.getAnimeList(version);
+		/*
+		*		Redirect to 404 page if the page passed in param is invalid
+		*/
+		const { page } = this;
+		const { version } = this.$data;
+		const { search } = this.$route.query;
+		const animeDataLength = this.animeListFilteredLength(version, search);
 		if (
-			(page <= 0) ||
-			(
-				animeDataTemp &&
-				page >= Math.floor(animeDataTemp.length / ANIME_PER_PAGE) + 1
-			)
+			page < 1 ||
+			page > Math.floor(animeDataLength / ANIME_PER_PAGE) + 1
 		) {
-			this.$router.push({
+			// Using .replace because it allows go back
+			this.$router.replace({
 				name: '404'
 			});
 		}
 
-		if (animeDataTemp) console.log(Math.floor(animeDataTemp.length / ANIME_PER_PAGE) + 1);
-
-
-		// 
-		if (this.getAnimeList(version)) this.$data.animeData = this.getAnimeList(version);
-		else {
-			this.loadData(version)
-				.then(() => {
-					this.$data.animeData = this.getAnimeList(version);
-				});
-		}
+		/*
+		*		Cache animeList if it isn't already
+		*/
+		if (!this.getAnimeList(version)) this.loadData(version);
 	}
 })
 </script>
@@ -157,6 +201,9 @@ header {
 	align-items: center;
 
 	form {
+		display: flex;
+		align-items: center;
+
 		input[type=text] {
 			border-radius: 2em;
 			padding: .5em 1em;
@@ -169,6 +216,25 @@ header {
 			&:focus {
 				border-color: var(--highlight-active);
 				border-radius: .5em;
+			}
+		}
+
+		label[for=submit] {
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 2em;
+			padding: .5em;
+			color: var(--font-color);
+			transition: color .25s;
+
+			&:hover {
+				cursor: pointer;
+				color: var(--highlight-activable);
+			}
+
+			input[type=submit] {
+				display: none;
 			}
 		}
 	}
@@ -189,7 +255,14 @@ header {
 	display: flex;
 	align-items: center;
 	padding: 0;
-	gap: 3em;
+	gap: 2em;
+	position: relative;
+
+	hr {
+		border: 0;
+		height: 1.5em;
+		border-left: .1em solid var(--font-color);
+	}
 
 	span {
 		position: relative;

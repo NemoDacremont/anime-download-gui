@@ -12,11 +12,15 @@
 			>
 		</div>
 
-		<div class="title">
-			<h2>
-				{{ formattedTitle }}
-			</h2>
-			<p>{{ anime.nb_eps }}</p>
+		<div class="details">
+			<div class="title">
+				<h2>
+					{{ formattedTitle }}
+				</h2>
+			</div>
+			<div class="infos">
+				<p>{{ anime.nb_eps }}</p>
+			</div>
 		</div>
 	</div>
 </template>
@@ -58,11 +62,19 @@ export default defineComponent({
 
 	&.list {
 		justify-content: space-between;
-		flex-direction: row;
 		align-items: center;
+
+		padding: .5em;
 
 		.cover {
 			display: none;
+		}
+
+		.details {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
 		}
 	}
 
@@ -72,12 +84,13 @@ export default defineComponent({
 
 		.cover {
 			width: 100%;
+			height: 300px;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 		}
 
-		.title {
+		.details {
 			width: 100%;
 			height: 100px;
 			display: flex;

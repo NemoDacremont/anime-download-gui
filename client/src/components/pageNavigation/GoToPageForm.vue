@@ -28,30 +28,34 @@ export default defineComponent({
 	name: 'GoToPageForm',
 	data () {
 		return {
-				page: this.$route.params.page,
-				version: this.$route.params.version
+				page: this.$route.params.page
 		}
 	},
 	methods: {
 		go (): void {
-			const { version, page } = this.$data;
+			const { query } = this.$route;
+			const { version } = this.$route.params;
+			const { page } = this.$data;
 
 			this.$router.push({
 				name: '',
 				params: {
 					version,
 					page
-				}
+				},
+				query
 			});
 		}
 	},
 	computed: {
 		maxPage (): number {
-			const { version } = this.$data;
+			const { version } = this.$route.params;
+			const { search } = this.$route.query;
+
 			if (Array.isArray(version)) return 0;
-			return Math.floor(this.animeListLength( version ) / ANIME_PER_PAGE);
+			return Math.floor(this.animeListFilteredLength( version, search ) / ANIME_PER_PAGE);
 		},
-		...mapGetters(['animeListLength'])
+		...mapGetters(['animeListFilteredLength'])
 	}
 })
 </script>

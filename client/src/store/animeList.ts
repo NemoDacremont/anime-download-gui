@@ -2,7 +2,7 @@
 import { Module } from 'vuex';
 import axios from 'axios';
 
-import { API_BASE_URL } from '../constants';
+import { API_BASE_URL, ANIME_PER_PAGE } from '../constants';
 
 export interface Anime {
 	id?: number;
@@ -52,6 +52,44 @@ export default {
 			return list
 				? list.length
 				: -1
+		},
+		animeListFilteredLength: (state) => (version: Version, searchFilter?: string) => {
+			const animeList = state[version];
+			if (!animeList) return [];
+
+			if (!searchFilter) return animeList.length;
+
+			const filterFunction = (anime: Anime) => {
+				const searchData = searchFilter
+					.trim()
+					.toLowerCase();
+
+				return anime.title?.toLowerCase().includes(searchData);
+			}
+
+			return animeList.filter(filterFunction).length;
+		},
+		getAnimeListFiltered:
+			(state) => (version: Version, page: number, searchFilter?: string) => {
+			const animeList = state[version];
+			if (!animeList) return [];
+
+			if (!searchFilter) {
+				return animeList
+					.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
+			}
+
+			const filterFunction = (anime: Anime) => {
+				const searchData = searchFilter
+					.trim()
+					.toLowerCase();
+
+				return anime.title?.toLowerCase().includes(searchData);
+			}
+
+			return animeList
+				.filter(filterFunction)
+				.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
 		}
 	},
 

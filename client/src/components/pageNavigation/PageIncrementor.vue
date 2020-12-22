@@ -5,7 +5,8 @@
 			params: {
 				version,
 				page: newPage
-			}
+			},
+			query
 		}"
 	>
 	{{ text }}
@@ -26,7 +27,8 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			...this.$route.params
+			...this.$route.params,
+			query: this.$route.query
 		}
 	},
 	computed: {
@@ -39,7 +41,7 @@ export default defineComponent({
 		},
 		newPage () {
 			const { variant } = this.$props as { variant: string };
-			const { page } = this.$data as { page: string }
+			const { page } = this.$route.params as { page: string };
 
 			return variant === 'previous'
 				? parseInt(page) - 1
