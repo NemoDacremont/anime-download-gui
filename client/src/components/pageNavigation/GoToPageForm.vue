@@ -1,7 +1,15 @@
 <template>
 	<form @submit.prevent="go" class="go-to-page-form">
 		<label for="pageInput">
-			<input type="number" name="pageInput" id="pageInput" v-model="page" length="2" min="1">
+			<input
+				type="number"
+				name="pageInput"
+				id="pageInput"
+				v-model="page"
+				length="2" 
+				min="1"
+				:max="maxPage"
+			>
 		</label>
 		<input type="submit" value="Go">
 	</form>
@@ -9,6 +17,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+
+// Stores
+import { mapGetters } from 'vuex';
+
+// Constants
+import { ANIME_PER_PAGE } from '../../constants';
 
 export default defineComponent({
 	name: 'GoToPageForm',
@@ -30,6 +44,14 @@ export default defineComponent({
 				}
 			});
 		}
+	},
+	computed: {
+		maxPage (): number {
+			const { version } = this.$data;
+			if (Array.isArray(version)) return 0;
+			return Math.floor(this.animeListLength( version ) / ANIME_PER_PAGE);
+		},
+		...mapGetters(['animeListLength'])
 	}
 })
 </script>
@@ -41,8 +63,9 @@ export default defineComponent({
 	gap: .5em;
 
 	input[type=number] {
-		width: 3em;
+		width: 5em;
 		padding: .25em .5em;
+		
 	}
 }
 

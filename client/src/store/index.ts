@@ -1,19 +1,19 @@
 import { createStore } from 'vuex'
 
-import Constants from './constants';
-export const constants = Constants;
+/*
+*		Modules
+*/
 
-import AnimeListStore from './animeList';
-export const animeListStore= AnimeListStore;
+import animeListStore from './animeList';
+import settings from './settings';
 
+/*
+*		Store
+*/
 
 export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
+	modules: {
+		settings,
+		animeListStore
+	}
 })

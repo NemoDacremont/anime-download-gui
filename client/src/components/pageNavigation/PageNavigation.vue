@@ -10,11 +10,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { mapGetters } from 'vuex';
 
 import PageIncrementor from './PageIncrementor.vue';
 import GoToPageForm from './GoToPageForm.vue';
 
-import { animeListStore, constants } from '../../store';
+// Constants
+import { ANIME_PER_PAGE } from '../../constants'
+
+//import { animeListStore, constants } from '../../store';
 
 export default defineComponent({
 	components: {
@@ -34,15 +38,16 @@ export default defineComponent({
 		},
 		showNext (): boolean {
 			const { version } = this.$data;
-			const animeList = animeListStore.state[version];
+			const animeList = this.getAnimeList( version );
 
 			if (animeList === null) return false;
 
-			const totalPages = Math.floor(animeList.length / constants.state.ANIME_PER_PAGE);
+			const totalPages = Math.floor(animeList.length / ANIME_PER_PAGE);
 			const page = parseInt(this.$data.page);
 
 			return page <= totalPages - 1;
-		}
+		},
+		...mapGetters(['getAnimeList'])
 	}
 })
 </script>

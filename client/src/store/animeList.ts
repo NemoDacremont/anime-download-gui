@@ -1,8 +1,8 @@
 
-import { createStore } from 'vuex';
+import { Module } from 'vuex';
 import axios from 'axios';
 
-import { constants } from '.';
+import { API_BASE_URL } from '../constants';
 
 export interface Anime {
 	id?: number;
@@ -22,22 +22,37 @@ export interface Anime {
 	nb_of_episodes: number;
 }
 
+export type Version = 'vostfr' | 'vf'
+
 export interface LoadDataPayload {
-	version: 'vostfr' | 'vf';
+	version: Version;
 	data: Anime[];
 }
 
-const load = async (version: 'vostfr' | 'vf'): Promise<Anime[]> => {
-	return (await axios.get( `${constants.state.API_BASE_URL}/animes/animelist/${version}` )).data
+interface State {
+	vostfr: Anime[] | null;
+	vf: Anime[] | null;
 }
 
-export default createStore({
+const load = async (version: 'vostfr' | 'vf'): Promise<Anime[]> => {
+	return (await axios.get( `${API_BASE_URL}/animes/animelist/${version}` )).data
+}
+
+export default {
 	state: {
 		vostfr: null,
 		vf: null
-	} as {
-		vostfr: Anime[] | null;
-		vf: Anime[] | null;
+	},
+
+	getters: {
+		getAnimeList: (state) => (version: Version) => state[version],
+		animeListLength: (state) => (version: Version): number => {
+			const list = state[version];
+
+			return list
+				? list.length
+				: -1
+		}
 	},
 
 	mutations: {
@@ -57,4 +72,4 @@ export default createStore({
 			return true;
 		}
 	}
-});
+} as Module<State, any>;

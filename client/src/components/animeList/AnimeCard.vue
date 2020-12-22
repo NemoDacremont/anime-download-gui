@@ -1,10 +1,23 @@
 
 <template>
 	<div class="anime-card">
-		<h2>
-			{{ formattedTitle }}
-		</h2>
-		<p>{{ anime.nb_eps }}</p>
+		<div
+			class="cover"
+		>
+			<img
+				loading="lazy"
+				async
+				:src="anime.url_image"
+				:alt="`${formattedTitle} cover`"
+			>
+		</div>
+
+		<div class="title">
+			<h2>
+				{{ formattedTitle }}
+			</h2>
+			<p>{{ anime.nb_eps }}</p>
+		</div>
 	</div>
 </template>
 
@@ -38,14 +51,44 @@ export default defineComponent({
 
 .anime-card {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
 	position: relative;
 	overflow: hidden;
 
-	border-radius: 4px;
-	padding: 1em 1.5em;
+	width: 100%;
 
+	&.list {
+		justify-content: space-between;
+		flex-direction: row;
+		align-items: center;
+
+		.cover {
+			display: none;
+		}
+	}
+
+	&.grid {
+		flex-direction: column;
+		align-items: center;
+
+		.cover {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.title {
+			width: 100%;
+			height: 100px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+			padding: .5em;
+		}
+	}
+	
+	border-radius: 4px;
 	background-color: var(--nav-background-color);
 
 	transform: translate(0, 0);

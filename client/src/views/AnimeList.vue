@@ -35,13 +35,16 @@
 
 		<anime-list-component
 			v-if="animeData"
-			:variant=" isGridViewSelected ? 'grid': 'list'"
+			:class=" isGridViewSelected ? 'grid': 'list'"
 		>
 			<li
 				v-for="(anime, index) of animeDataFiltered"
 				:key="index"
 			>
-				<anime-card :anime="anime" />
+				<anime-card
+					:anime="anime"
+					:class=" isGridViewSelected ? 'grid': 'list'"
+				/>
 			</li>
 		</anime-list-component>
 
@@ -54,15 +57,20 @@
 </template>
 
 <script lang="ts">
+// Modules
 import { defineComponent } from 'vue';
-import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 
-import { animeListStore, constants } from '../store';
+// Types
+import { Anime } from '../store/animeList';
+
+// Components
 import PageNavigation from '../components/pageNavigation';
-
-
 import { AnimeCard, AnimeList as AnimeListComponent } from '../components/animeList';
-import { Anime } from '../../../server/src/stores/animes';
+
+// Constants data
+import { ANIME_PER_PAGE } from '../constants';
 
 export default defineComponent({
 	name: 'AnimeListView',
@@ -78,45 +86,46 @@ export default defineComponent({
 			page: Array.isArray(this.$route.params.page) 
 				?	-1
 				:	parseInt( this.$route.params.page ),
-			itemsPerPage: constants.state.ANIME_PER_PAGE,
 			baseUrl: '/animelist/vostfr/{{newPage}}',
 			route: useRoute(),
-			searchFilter: '',
-			isGridViewSelected: true
+			searchFilter: ''
 		}
 	},
 	computed: {
 		animeDataFiltered (): Anime[]{
-			const { itemsPerPage, animeData, page } = this.$data;
+			const { animeData, page } = this.$data;
 
 			if (!animeData) return [];
 
 			if (
 					!page ||
 					page <= 0 ||
-					page >= animeData.length / itemsPerPage
+					page >= animeData.length / ANIME_PER_PAGE
 				) return [];
 
-			return animeData.slice( itemsPerPage * (page - 1), itemsPerPage * page );
-		}
+			return animeData.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
+		},
+		...mapGetters(['isGridViewSelected', 'getAnimeList'])
 	},
 	methods: {
 		selectGridView () {
-			this.$data.isGridViewSelected = true;
+			if (!this.isGridViewSelected) this.setAnimeListView('grid');
 		},
 		selectListView () {
-			this.$data.isGridViewSelected = false;
-		}
+			if (this.isGridViewSelected) this.setAnimeListView('list');
+		},
+		...mapMutations(['setAnimeListView']),
+		...mapActions(['loadData'])
 	},
 	async created () {
 		// Handle truc nul
 		const { page, version } = this.$data;
-		const animeDataTemp = animeListStore.state[ version ];
+		const animeDataTemp = this.getAnimeList(version);
 		if (
 			(page <= 0) ||
 			(
 				animeDataTemp &&
-				page >= Math.floor(animeDataTemp.length / constants.state.ANIME_PER_PAGE) + 1
+				page >= Math.floor(animeDataTemp.length / ANIME_PER_PAGE) + 1
 			)
 		) {
 			this.$router.push({
@@ -124,15 +133,15 @@ export default defineComponent({
 			});
 		}
 
-		if (animeDataTemp) console.log(Math.floor(animeDataTemp.length / constants.state.ANIME_PER_PAGE) + 1);
+		if (animeDataTemp) console.log(Math.floor(animeDataTemp.length / ANIME_PER_PAGE) + 1);
 
 
 		// 
-		if (animeListStore.state[ version ]) this.$data.animeData = animeListStore.state[ version ];
+		if (this.getAnimeList(version)) this.$data.animeData = this.getAnimeList(version);
 		else {
-			animeListStore.dispatch('loadData', version)
+			this.loadData(version)
 				.then(() => {
-					this.$data.animeData = animeListStore.state[ version ];
+					this.$data.animeData = this.getAnimeList(version);
 				});
 		}
 	}
@@ -233,5 +242,4 @@ header {
 		}
 	}
 }
-
 </style>

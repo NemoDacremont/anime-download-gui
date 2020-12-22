@@ -17,11 +17,27 @@ export default defineComponent({
 <style lang="scss" scoped>
 
 .anime-list {
+
+	&.list {
+		.anime-list__list {
+			display: flex;
+			flex-direction: column;
+			gap: 1em;
+		}
+	}
+
+	&.grid {
+		.anime-list__list {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			grid-auto-rows: auto;
+			gap: 1em;
+		}
+	}
 		
 	.anime-list__list {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+
+		position: relative;
 
 		list-style: none;
 
