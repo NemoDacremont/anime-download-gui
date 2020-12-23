@@ -29,9 +29,17 @@ export interface LoadDataPayload {
 	data: Anime[];
 }
 
-interface State {
+export interface AnimeListState {
 	vostfr: Anime[] | null;
 	vf: Anime[] | null;
+}
+
+export interface AnimeListOutput {
+	getAnimeList: Anime[];
+	getAnimeListFiltered: Anime[];
+	animeListLength: number;
+	animeListFilteredLength: number;
+	loadData: void | boolean;
 }
 
 const load = async (version: 'vostfr' | 'vf'): Promise<Anime[]> => {
@@ -46,7 +54,7 @@ export default {
 
 	getters: {
 		getAnimeList: (state) => (version: Version) => state[version],
-		animeListLength: (state) => (version: Version): number => {
+		animeListLength: (state) => (version: Version) => {
 			const list = state[version];
 
 			return list
@@ -110,4 +118,4 @@ export default {
 			return true;
 		}
 	}
-} as Module<State, any>;
+} as Module<AnimeListState, AnimeListOutput>;

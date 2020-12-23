@@ -13,7 +13,7 @@ import settings from './settings';
 
 export default createStore({
 	modules: {
+		animeListStore,
 		settings,
-		animeListStore
 	}
 })

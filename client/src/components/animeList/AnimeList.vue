@@ -16,6 +16,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+
+// Import required to use this.$route
+// eslint-disable-next-line
+import { useRoute } from 'vue-router';
+
+// Component
 import animeCard from './AnimeCard.vue';
 
 // Store

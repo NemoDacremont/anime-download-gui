@@ -5,8 +5,14 @@ import { DEFAULT_VIEW, DefaultView } from '../constants';
 
 export type AnimeListView = DefaultView;
 
-interface State {
+export interface SettingsState {
 	animeListView: AnimeListView;
+}
+
+export interface SettingsOutput {
+	isGridViewSelected: boolean;
+	animeListView: AnimeListView;
+	setAnimeListView: void;
 }
 
 export default {
@@ -21,8 +27,7 @@ export default {
 
 	mutations: {
 		setAnimeListView: (state, newValue: AnimeListView) => {
-			console.log('setAnimeListView')
 			state.animeListView = newValue;
 		}
 	}
-} as Module<State, any>
+} as Module<SettingsState, any>

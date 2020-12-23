@@ -100,8 +100,11 @@
 <script lang="ts">
 // Modules
 import { defineComponent } from 'vue';
-import { useRoute } from 'vue-router';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
+
+// Import required to use this.$route
+// eslint-disable-next-line
+import { useRoute } from 'vue-router';
 
 // Types
 import { Version } from '../store/animeList';
@@ -124,7 +127,6 @@ export default defineComponent({
 		return {
 			version: this.$route.params.version as Version,
 			baseUrl: '/animelist/vostfr/{{newPage}}',
-			route: useRoute(),
 			searchFilterRaw: this.$route.query.search
 		}
 	},

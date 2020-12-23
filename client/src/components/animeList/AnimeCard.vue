@@ -1,9 +1,10 @@
 
 <template>
-	<div class="anime-card">
-		<div
-			class="cover"
-		>
+	<router-link 
+		:to="link"
+		class="anime-card"
+	>
+		<div class="cover">
 			<img
 				loading="lazy"
 				async
@@ -22,11 +23,15 @@
 				<p>{{ anime.nb_eps }}</p>
 			</div>
 		</div>
-	</div>
+	</router-link>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Anime } from '../../store/animeList';
+
+// eslint-disable-next-line
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
 	name: 'AnimeCard',
@@ -46,6 +51,13 @@ export default defineComponent({
 			return this.$data.title.length > 32
 				? `${this.$data.title.slice(0, 31)}...`
 				: this.$data.title
+		},
+		link (): string {
+			const { version } = this.$route.params;
+			const { id } = this.$props.anime as Anime;
+			if (!id) return '#';
+
+			return `/anime/${version}/${id}`;
 		}
 	}
 });
