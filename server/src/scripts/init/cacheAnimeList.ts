@@ -3,7 +3,7 @@ import axios from 'axios';
 import animeStore, { Anime } from '../../stores/animes';
 
 const animeMapper = (anime: Anime): Anime => {
-	const { id, title, url, status, url_image, nb_eps } = anime;
+	const { id, title, title_english, title_romanji, url, status, url_image, nb_eps } = anime;
 	
 	const rawEpisodesMatch = nb_eps ? nb_eps.match(/\d+/g): 0;
 	const nb_of_episodes = rawEpisodesMatch ? parseInt(rawEpisodesMatch[0]) :0;
@@ -11,6 +11,8 @@ const animeMapper = (anime: Anime): Anime => {
 	return {
 		id,
 		title,
+		title_english,
+		title_romanji,
 		url,
 		status,
 		url_image,

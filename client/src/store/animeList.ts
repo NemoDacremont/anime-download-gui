@@ -39,6 +39,7 @@ export interface AnimeListOutput {
 	getAnimeListFiltered: Anime[];
 	animeListLength: number;
 	animeListFilteredLength: number;
+	getAnime: (version: Version, id: number) => Anime;
 	loadData: void | boolean;
 }
 
@@ -98,6 +99,21 @@ export default {
 			return animeList
 				.filter(filterFunction)
 				.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
+		},
+		getAnime: (state) => (version: Version, id: number): Anime | null => {
+			const animeList = state[version];
+			console.log(version, id);
+			if (!animeList) return null;
+
+			for (let i=0 ; i<animeList.length ; i++) {
+				const anime = animeList[i];
+				if (anime.id === id) {
+					console.log(anime);
+					return anime;
+				}
+			}
+
+			return null;
 		}
 	},
 
