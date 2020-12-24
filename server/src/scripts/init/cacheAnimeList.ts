@@ -34,6 +34,7 @@ export default async function (): Promise<void> {
 			.map(animeMapper)
 			.sort(animeSorter);
 	}
+
 	if (process.env["NEKO-SAMA_ANIMELIST-URL_VF"]) {
 		animeStore.animeList.vf = (await axios.get(process.env["NEKO-SAMA_ANIMELIST-URL_VF"])).data
 			.map(animeMapper)

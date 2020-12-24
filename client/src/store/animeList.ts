@@ -29,9 +29,16 @@ export interface LoadDataPayload {
 	data: Anime[];
 }
 
+export interface SelectedAnime {
+	id: number;
+	start: number;
+	end: number;
+}
+
 export interface AnimeListState {
 	vostfr: Anime[] | null;
 	vf: Anime[] | null;
+	selectedAnimes: Map<number, Anime>;
 }
 
 export interface AnimeListOutput {
@@ -47,10 +54,21 @@ const load = async (version: 'vostfr' | 'vf'): Promise<Anime[]> => {
 	return (await axios.get( `${API_BASE_URL}/animes/animelist/${version}` )).data
 }
 
+const filterFunction = (anime: Anime, searchString: string) => {
+	const searchData = searchString
+		.trim()
+		.toLowerCase();
+
+	return	anime.title?.toLowerCase().includes(searchData) ||
+					anime.title_english?.toLowerCase().includes(searchData) ||
+					anime.title_romanji?.toLowerCase().includes(searchData);
+}
+
 export default {
 	state: {
 		vostfr: null,
-		vf: null
+		vf: null,
+		selectedAnimes: new Map()
 	},
 
 	getters: {
@@ -68,15 +86,7 @@ export default {
 
 			if (!searchFilter) return animeList.length;
 
-			const filterFunction = (anime: Anime) => {
-				const searchData = searchFilter
-					.trim()
-					.toLowerCase();
-
-				return anime.title?.toLowerCase().includes(searchData);
-			}
-
-			return animeList.filter(filterFunction).length;
+			return animeList.filter(anime => filterFunction(anime, searchFilter)).length;
 		},
 		getAnimeListFiltered:
 			(state) => (version: Version, page: number, searchFilter?: string) => {
@@ -88,19 +98,11 @@ export default {
 					.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
 			}
 
-			const filterFunction = (anime: Anime) => {
-				const searchData = searchFilter
-					.trim()
-					.toLowerCase();
-
-				return anime.title?.toLowerCase().includes(searchData);
-			}
-
 			return animeList
-				.filter(filterFunction)
+				.filter(anime => filterFunction(anime, searchFilter))
 				.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
 		},
-		getAnime: (state) => (version: Version, id: number): Anime | null => {
+		getAnime: (state) => (version: Version, id: number) => {
 			const animeList = state[version];
 			console.log(version, id);
 			if (!animeList) return null;

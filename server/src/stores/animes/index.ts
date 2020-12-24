@@ -52,4 +52,9 @@ const animeStore: AnimeStore = {
 	}
 }
 
+export type Version = 'vostfr' | 'vf';
+
 export default animeStore;
+export const vf = animeStore.animeList.vf;
+export const vostfr = animeStore.animeList.vostfr;
+export const animeList = animeStore.animeList;

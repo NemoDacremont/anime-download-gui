@@ -30,7 +30,6 @@ export default defineComponent({
 <style lang="scss">
 
 // Material Icons
-/* fallback */
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
@@ -68,6 +67,57 @@ export default defineComponent({
 	--nav-background-color: var(--nav-background-color-dark);
 	--background-color-highlight: var(--background-color-highlight-dark);
 	--font-color: var(--font-color-dark);
+}
+
+.clickable {
+	position: relative;
+	color: var(--font-color);
+	transition: color .25s;
+	width: 3em;
+	height: 3em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 2;
+
+	&::selection {
+		background-color: transparent;
+	}
+
+	&.active {
+		color: var(--highlight-active);
+	}
+
+	&::before {
+		content: '';
+		width: 100%;
+		height: 100%;
+
+		position: absolute;
+		left: 0;
+		top: 0;
+
+		background-color: var(--background-color-highlight);
+		border-radius: 50%;
+
+		opacity: 0;
+		z-index: -1;
+		transform: scale(50%, 50%);
+		transition: opacity .25s, transform .25s;
+	}
+
+	&:hover {
+		cursor: pointer;
+		color: var(--highlight-activable);
+		&.active {
+			color: var(--highlight-active);
+		}
+
+		&::before {
+			opacity: 50%;
+			transform: scale(100%, 100%);
+		}
+	}
 }
 
 *,

@@ -26,6 +26,7 @@
 
 			<div class="display-style">
 				<router-link
+					class="clickable"
 					:to="{
 						name: 'AnimeList',
 						params: {
@@ -40,6 +41,7 @@
 				</router-link>
 				
 				<router-link
+					class="clickable"
 					:to="{
 						name: 'AnimeList',
 						params: {
@@ -56,13 +58,13 @@
 				<hr>
 
 				<span
-					class="material-icons"
+					class="material-icons clickable"
 					:class="{ active: isGridViewSelected }"
 					@click="selectGridView"
 				>view_module</span>
 
 				<span
-					class="material-icons"
+					class="material-icons clickable"
 					:class="{ active: !isGridViewSelected}"
 					@click="selectListView"
 				>list</span>
@@ -266,7 +268,8 @@ header {
 		border-left: .1em solid var(--font-color);
 	}
 
-	span {
+	/*span {
+		/*
 		position: relative;
 		color: var(--font-color);
 		transition: color .25s;
@@ -315,6 +318,6 @@ header {
 				transform: scale(100%, 100%);
 			}
 		}
-	}
+	}*/
 }
 </style>

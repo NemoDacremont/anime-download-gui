@@ -8,6 +8,7 @@ import express from 'express';
 import api from './routes/api';
 import clientRouter from './routes/client';
 import logger from './logger';
+import cors from './cors';
 
 /*
 *		Import Config
@@ -29,6 +30,9 @@ const app = express();
 //	Logger
 app.use(logger);
 
+// Cors
+app.use(cors);
+
 //	Routers
 app.use('/api/', api);
 app.use('/', clientRouter);
@@ -46,5 +50,8 @@ initScript()
 			console.log('Server Loaded.');
 			console.log(`\nServer listening on port ${PORT}`);
 		});
+	})
+	.catch(() => {
+		console.error('An error occurred during data loading, you should verify your internet connection');
 	});
 
