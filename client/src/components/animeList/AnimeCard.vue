@@ -69,6 +69,7 @@ export default defineComponent({
 	display: flex;
 	position: relative;
 	overflow: hidden;
+	color: var(--font-color);
 
 	width: 100%;
 
@@ -117,7 +118,7 @@ export default defineComponent({
 	background-color: var(--nav-background-color);
 
 	transform: translate(0, 0);
-	transition: transform .25s;
+	transition: transform .25s, color .25s;
 
 	&::before {
 		content: '';
@@ -138,6 +139,7 @@ export default defineComponent({
 	&:hover {
 		cursor: pointer;
 		transform: translate(-.2em, -.2em);
+		color: var(--highlight-activable);
 
 		&::before {
 			transform: translateX(100%);

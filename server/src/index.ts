@@ -7,6 +7,7 @@ import express from 'express';
 */
 import api from './routes/api';
 import clientRouter from './routes/client';
+import duringLoadHandler from './routes/duringLoadHandler';
 import logger from './logger';
 import cors from './cors';
 
@@ -15,6 +16,13 @@ import cors from './cors';
 */
 import { PORT } from './config/constants';
 import initScript from './scripts/init';
+
+/*
+*		Import Stores
+*/
+
+import globalStore from './stores/global';
+import socketIOStore from './stores/socketIO';
 
 console.log('Server is loading...');
 
@@ -34,6 +42,7 @@ app.use(logger);
 app.use(cors);
 
 //	Routers
+app.use(duringLoadHandler);
 app.use('/api/', api);
 app.use('/', clientRouter);
 
@@ -42,16 +51,24 @@ app.use('/', clientRouter);
 *		Start
 */
 
-console.log('Server loaded, initializing data...');
+const httpServer = app.listen(PORT, 'localhost',  () => {
+	console.log(`\nServer listening on port ${PORT}`);
+	console.log('Server loaded, downloading data...');
 
-initScript()
-	.then(() => {
-		app.listen(PORT, 'localhost',  () => {
-			console.log('Server Loaded.');
-			console.log(`\nServer listening on port ${PORT}`);
+	initScript(httpServer)
+		.then(() => {
+			globalStore.isServerLoaded = true;
+			console.log('Server is loaded');
+		})
+		.catch(() => {
+			console.error('An error occurred during data loading, you should verify your internet connection');
+			console.log('Exit in 5 sec');
+
+			setTimeout(() => {
+				process.exit(2);
+			}, 5000);
 		});
-	})
-	.catch(() => {
-		console.error('An error occurred during data loading, you should verify your internet connection');
-	});
+});
+
+
 

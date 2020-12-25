@@ -1,9 +1,8 @@
 
 import axios from 'axios';
-import { raw } from 'body-parser';
 
 // Store
-import { Anime } from '../../../../stores/animes';
+import { Anime } from '.';
 
 /**
  * Example of Episode:
@@ -24,7 +23,10 @@ export interface Episode {
 	url_image: string;
 }
 
-export default async function (anime: Anime, episode?: number): Promise<Episode[] | null> {
+export function ExtractEpisodeList(anime: Anime): Promise<Episode[]|null>;
+export function ExtractEpisodeList(anime: Anime, episode: number): Promise<Episode|null>;
+
+export async function ExtractEpisodeList (anime: Anime, episode?: number): Promise<Episode | Episode[] | null> {
 	if (!anime.url) return null;
 	
 	const baseURL = process.env['NEKO-SAMA_BASE-URL'];

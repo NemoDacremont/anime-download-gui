@@ -2,10 +2,17 @@
 import { Router } from 'express';
 import { json as bodyParserJSON } from 'body-parser';
 
-import extractURL from '../animes/getURL/extractURL';
+// local modules
 import { isValidURL } from './urlValidator';
-import download from './downloadScript';
 
+// Routers
+import extractURL from '../animes/getURL/extractURL';
+import download from './downloadScript';
+import getSelectedEpisodes from './getSelectedEpisodes';
+import selectEpisodes from './selectEpisodes';
+import unSelectEpisodes from './unselectEpisodes';
+
+// Store
 import animeStore from '../../../stores/animes';
 
 const JSONParser = bodyParserJSON()
@@ -15,6 +22,13 @@ const JSONParser = bodyParserJSON()
 */
 const downloadRouter = Router();
 
+/*
+*		Middlewares use
+*/
+
+downloadRouter.use('/getSelectedEpisodes', getSelectedEpisodes);
+downloadRouter.use('/selectEpisodes', selectEpisodes);
+downloadRouter.use('/unSelectEpisodes', unSelectEpisodes);
 //downloadRouter.use(JSONParser);
 
 downloadRouter.post('/', JSONParser, async (req, res, next) => {
@@ -27,13 +41,6 @@ downloadRouter.post('/', JSONParser, async (req, res, next) => {
 					version: 'vostfr' | 'vf';
 					episodeIndex: number;
 				} = req.body;
-
-	console.log(req.body);
-	console.log(req.body);
-	console.log(req.body);
-	console.log(req.body);
-	console.log(req.body);
-	console.log(req.body);
 
 	if (
 			( !animeIndex || !version || !episodeIndex ) ||

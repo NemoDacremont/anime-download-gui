@@ -1,14 +1,13 @@
 
 import https from 'https';
 import fs from 'fs';
+//import socketIOStore from '../../../stores/socketIO';
 
 export default function (url: string): Promise<boolean | null> {
 	return new Promise((resolve, reject) => {
 		
 		const fileStream = fs.createWriteStream('/home/odasta/Vidéos/test.mp4');
 		fileStream.on('ready', () => {
-			console.log('fileStream Ready');
-
 			const requestOptions: https.RequestOptions = {
 				headers: {
 					'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0'
@@ -24,10 +23,7 @@ export default function (url: string): Promise<boolean | null> {
 
 				let startDate = Date.now();
 				
-				console.log('Response Status:', res.statusCode);
-
 				if (res.statusCode !== 200) {
-					console.log(request.getHeaders())
 					reject(new Error(`Request responded with a ${res.statusCode} status code`));
 				}
 
@@ -45,8 +41,7 @@ export default function (url: string): Promise<boolean | null> {
 
 					if (chunkCount % 128 === 0) {
 						downloadSpeed = (lastChunksSize / (Date.now() - lastDate)).toFixed(2);
-						console.log('downloaded:', totalChunkSize);
-						console.log(`download speed: ${downloadSpeed} kB/s`);
+						console.log('Downloading:', totalChunkSize / 1000, 'kB');
 
 						lastDate = Date.now();
 						lastChunksSize = 0;

@@ -14,7 +14,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
+import { io } from 'socket.io-client';
 
 import { NavElement, NavItem } from './components/nav';
 
@@ -23,8 +24,17 @@ export default defineComponent({
 	components: {
 		NavElement,
 		NavItem
+	},
+	created () {
+		const socket = io('http://localhost:8080/');
+		socket.on('connect', function() {
+			console.log('connected')
+		});
+		socket.on('test', (data: string) => {
+			console.log(data);
+		});
 	}
-})
+});
 </script>
 
 <style lang="scss">

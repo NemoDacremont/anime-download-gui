@@ -9,10 +9,8 @@ api.use('/animes/',  animeRouter);
 
 api.use('/download/', downloadRouter);
 
-api.get('*', (req, res) => {
-	res.status(404);
-	res.send('404 - Route error');
+api.all('*', (req, res) => {
+	res.status(400).send('400 - Bad Request');
 });
 
 export default api;
-

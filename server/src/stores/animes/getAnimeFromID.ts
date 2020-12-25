@@ -1,7 +1,7 @@
 
-import { Anime, animeList, Version } from "../../../../stores/animes";
+import { Anime, animeList, Version } from ".";
 
-export default function (version: Version, animeID: number): Anime | null {
+export function getAnimeFromID (version: Version, animeID: number): Anime | null {
 	const animelist = animeList[version];
 
 	for (let i=0 ; i<animelist.length ; i++) {

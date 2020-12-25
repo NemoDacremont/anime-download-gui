@@ -7,17 +7,20 @@ import getURL from './getURL';
 import episodesRouter from './episodes';
 
 // Store
-import animeStore from '../../../stores/animes';
+import { getAnimeFromID } from '../../../stores/animes';
 
+// animeRouter
 const animesRouter = Router();
 
+
+// Middlewares
 animesRouter.use(animeList);
 animesRouter.use(getURL);
 animesRouter.use('/episodes/', episodesRouter);
 
 
 /*
-*		Route handling single anime downloading
+*		Route handling single anime
 */
 animesRouter.get('/:version/:id', (req, res, next) => {
 	if (req.params.version !== "vostfr" && req.params.version !== "vf") {
@@ -25,13 +28,13 @@ animesRouter.get('/:version/:id', (req, res, next) => {
 		return;
 	}
 
-	const animeID = parseInt( req.params.id );
+	const animeID = parseInt( req.params.id ), version = req.params.version;
 	if (isNaN(animeID)) {
 		next();
 	}
 	else {
 		res.json(
-			animeStore.animeList[ req.params.version ][ animeID ]
+			getAnimeFromID(version, animeID)
 		)
 	}
 });

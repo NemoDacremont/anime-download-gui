@@ -1,5 +1,10 @@
 
 /*
+*		Types|Interfaces, ts things
+*/
+
+
+/*
 	Example of Anime:
 
 	{
@@ -54,7 +59,15 @@ const animeStore: AnimeStore = {
 
 export type Version = 'vostfr' | 'vf';
 
-export default animeStore;
 export const vf = animeStore.animeList.vf;
 export const vostfr = animeStore.animeList.vostfr;
 export const animeList = animeStore.animeList;
+
+/*
+*		Actual store
+*/
+
+export { getAnimeFromID } from './getAnimeFromID';
+export { ExtractEpisodeList } from './extractEpisodesList';
+
+export default animeStore;

@@ -5,9 +5,7 @@ import history from 'connect-history-api-fallback';
 
 const clientRouter = Router();
 
-const historyHandler = history({
-	verbose: true
-});
+const historyHandler = history();
 
 clientRouter.use(historyHandler);
 clientRouter.use(
