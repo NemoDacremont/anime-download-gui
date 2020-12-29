@@ -4,15 +4,15 @@ import axios from 'axios';
 // Store
 import { Anime } from '.';
 
-/**
+/*
  * Example of Episode:
  * {
-        "time": "24 min",
-        "episode": "Ep. 917",
-        "title": "One Piece VOSTFR",
-        "url": "\/anime\/episode\/12-one-piece-917-vostfr",
-        "url_image": "https:\/\/cdn20.neko-sama.xyz\/one-piece-917-vostfr.jpg"
-    },
+ *	"time": "24 min",
+ *	"episode": "Ep. 917",
+ *	"title": "One Piece VOSTFR",
+ *	"url": "\/anime\/episode\/12-one-piece-917-vostfr",
+ *	"url_image": "https:\/\/cdn20.neko-sama.xyz\/one-piece-917-vostfr.jpg"
+ * }
  */
 
 export interface Episode {

@@ -6,8 +6,8 @@ import extractURL from './extractURL';
 
 const getURL = Router();
 
-getURL.get('/getURL/:animeIndex/:version/:episode', (req, res, next) => {
-	const { animeIndex, version, episode } = req.params;
+getURL.get('/getURL/:animeIDRaw/:version/:episodeRaw', (req, res, next) => {
+	const { animeIDRaw, version, episodeRaw } = req.params;
 
 	console.log(req.params);
 
@@ -16,14 +16,16 @@ getURL.get('/getURL/:animeIndex/:version/:episode', (req, res, next) => {
 
 	//	Then check if the anime is valid
 	else if (
-			!parseInt(animeIndex) ||
-			!parseInt(episode) ||
-			parseInt(animeIndex) >= animeStore.animeList[version].length
+			!parseInt(animeIDRaw) ||
+			!parseInt(episodeRaw)
 		) next();
 
 	//	We can finally proceed to the extract
 	else {
-		extractURL( animeStore.animeList[version][parseInt(animeIndex)], version, parseInt(episode) )
+		const animeID = parseInt(animeIDRaw);
+		const episode = parseInt(episodeRaw);
+
+		extractURL( animeID, version, episode )
 			.then((url) => {
 				res.send(url);
 			})

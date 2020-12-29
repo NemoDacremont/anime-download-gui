@@ -14,7 +14,7 @@ import cors from './cors';
 /*
 *		Import Config
 */
-import { PORT } from './config/constants';
+import { PORT } from './constants';
 import initScript from './scripts/init';
 
 /*
@@ -60,8 +60,9 @@ const httpServer = app.listen(PORT, 'localhost',  () => {
 			globalStore.isServerLoaded = true;
 			console.log('Server is loaded');
 		})
-		.catch(() => {
+		.catch((err) => {
 			console.error('An error occurred during data loading, you should verify your internet connection');
+			console.log('err:', err?.message);
 			console.log('Exit in 5 sec');
 
 			setTimeout(() => {

@@ -68,6 +68,6 @@ export const animeList = animeStore.animeList;
 */
 
 export { getAnimeFromID } from './getAnimeFromID';
-export { ExtractEpisodeList } from './extractEpisodesList';
+export { Episode, ExtractEpisodeList } from './extractEpisodesList';
 
 export default animeStore;

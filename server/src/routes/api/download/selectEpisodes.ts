@@ -6,8 +6,9 @@ import { json as bodyParserJSON } from 'body-parser';
 const JSONParser = bodyParserJSON();
 
 // Store
-import { itemsToDownload, ItemsToDownload } from '../../../stores/download';
-import { Version } from '../../../stores/animes';
+import { itemsToDownload } from '../../../stores/download';
+import { getAnimeFromID, Version } from '../../../stores/animes';
+import extractURL from '../animes/getURL/extractURL';
 
 const selectEpisodesRouter = Router();
 
@@ -19,9 +20,15 @@ interface BodyInput {
 	episodes?: number  | number[];
 }
 
-selectEpisodesRouter.post('/', (req, res, next) => {
+selectEpisodesRouter.post('/', async (req, res, next) => {
 	const { animeID, version, episodes } = req.body as BodyInput;
 	if (!animeID || !version || !episodes) {
+		next();
+		return;
+	}
+
+	const anime = getAnimeFromID(version, animeID);
+	if (!anime) {
 		next();
 		return;
 	}
@@ -34,13 +41,13 @@ selectEpisodesRouter.post('/', (req, res, next) => {
 	if (!animeEntry) return;
 
 	if (!animeEntry.has(version)) {
-		animeEntry.set(version, new Map());
+		animeEntry.set(version, new Set());
 	}
 	const versionEntry = animeEntry.get(version);
 	if (!versionEntry) return;
 
 	if (typeof episodes === 'number') {
-		versionEntry.set(episodes, 'bonjour');
+		versionEntry.add(episodes);
 
 		res.sendStatus(200);
 		return;
@@ -48,9 +55,9 @@ selectEpisodesRouter.post('/', (req, res, next) => {
 
 
 	if (Array.isArray(episodes)) {
-		episodes.forEach((episodes) => {
-			versionEntry.set(episodes, 'fkjezlkj');
-		});
+		for (let episode of episodes) {
+			versionEntry.add(episode);
+		}
 		res.sendStatus(200);
 		return;
 	}

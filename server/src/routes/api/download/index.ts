@@ -3,19 +3,19 @@ import { Router } from 'express';
 import { json as bodyParserJSON } from 'body-parser';
 
 // local modules
-import { isValidURL } from './urlValidator';
+import extractURL from '../animes/getURL/extractURL';
+// This is probably useless
+//import { isValidURL } from './urlValidator';
 
 // Routers
-import extractURL from '../animes/getURL/extractURL';
 import download from './downloadScript';
 import getSelectedEpisodes from './getSelectedEpisodes';
 import selectEpisodes from './selectEpisodes';
 import unSelectEpisodes from './unselectEpisodes';
+import controlDownload from './controlDownload';
 
 // Store
-import animeStore from '../../../stores/animes';
-
-const JSONParser = bodyParserJSON()
+import animeStore, { getAnimeFromID, Version } from '../../../stores/animes';
 
 /*
 *		Actual Router
@@ -25,54 +25,51 @@ const downloadRouter = Router();
 /*
 *		Middlewares use
 */
+const JSONParser = bodyParserJSON()
 
 downloadRouter.use('/getSelectedEpisodes', getSelectedEpisodes);
 downloadRouter.use('/selectEpisodes', selectEpisodes);
 downloadRouter.use('/unSelectEpisodes', unSelectEpisodes);
+downloadRouter.use('/controlDownload', controlDownload);
 //downloadRouter.use(JSONParser);
 
+interface IncomingBody {
+	animeID?: number,
+	version?: Version;
+	episodeIndex?: number;
+}
+
 downloadRouter.post('/', JSONParser, async (req, res, next) => {
-	const {
-					animeIndex,
-					version,
-					episodeIndex
-				}: {
-					animeIndex: number,
-					version: 'vostfr' | 'vf';
-					episodeIndex: number;
-				} = req.body;
+	const { animeID, version, episodeIndex } = req.body as IncomingBody;
 
 	if (
-			( !animeIndex || !version || !episodeIndex ) ||
+			( !animeID || !version || !episodeIndex ) ||
 			( version !== 'vostfr' && version !== 'vf' )
 		)
 	{
 		next();
+		return;
 	}
 
-	else if (
-		animeIndex > animeStore.animeList[version].length
-	) {
-		res.status(400);
-		res.send("400 - Bad Request: The anime passed doesn't exist");
+	const anime = getAnimeFromID(version, animeID);
+	if (!anime) {
+		next();
+		return;
 	}
 
-	else if (
-		animeStore.animeList[version][ animeIndex ].nb_of_episodes !== -1 &&
-		episodeIndex > animeStore.animeList[version][ animeIndex ].nb_of_episodes
+	if (
+		anime.nb_of_episodes !== -1 &&
+		episodeIndex > anime.nb_of_episodes
 	) {
-		console.log(animeStore.animeList[version][animeIndex].nb_of_episodes)
+		console.log(anime.nb_of_episodes)
 		res.status(400);
 		res.send("400 - Bad Request: The episode passed doesn't exist");
 	}
 
 	else {
-		const parsedAnimeIndex = animeIndex;
-		const parsedEpisodeIndex = episodeIndex;
-		const anime = animeStore.animeList[ version ][ parsedAnimeIndex ];
-
-		extractURL( anime, version, parsedEpisodeIndex )
+		extractURL( animeID, version, episodeIndex )
 			.then((url) => {
+				if (!url) throw new Error('URL is null: api/download');
 				download(url)
 					.then((success) => {
 						if (!success) res.status(530);

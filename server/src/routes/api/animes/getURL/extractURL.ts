@@ -2,30 +2,15 @@
 import axios from 'axios';
 
 import extractURLFromPlayer from './extractURLFromPlayer';
-import { Anime } from "../../../../stores/animes";
+import { downloader } from '../../../../stores/download';
 
-/**
- * 
- * @param anime Anime interface
- * @param version version of the anime
- * @param episode episode number, starting to 1
- */
-export default async function (anime: Anime, version: 'vostfr' | 'vf', episode: number): Promise<string> {
-	console.log(anime);
+export default async function (animeID: number, version: 'vostfr' | 'vf', episode: number): Promise<string | null> {
 
-	const formattedEpisode = `${episode<10 ? 0: ''}${episode}`;
+	const nekoSamaBaseURL = 'https://neko-sama.fr';
+	const episodeData = await downloader.getCachedEpisodes(animeID, version, episode);
+	if (!episodeData) return null;
 
-	console.log(anime.title?.replace(/:|-|\/|\\/g, '')
-		.replace(/\./g, ' ')
-		.trim());
-
-	//	Check if anime.url exist and then generate url to the episode from it
-	if (!anime.url) throw new Error("Sorry, the anime you're looking for isn't reachable");;
-	const episodeURL = 'https://neko-sama.fr' + anime.url
-		.replace('info', 'episode')
-		.replace(version, `${formattedEpisode}-${version}`);
-
-	console.log(episodeURL);
+	const episodeURL = nekoSamaBaseURL + episodeData.url;
 
 	const animePage: string = (await axios.get(episodeURL)).data;
 
@@ -38,6 +23,8 @@ export default async function (anime: Anime, version: 'vostfr' | 'vf', episode: 
 		const url = await extractURLFromPlayer(playersSources[i]);
 		if (typeof url === "string") return url;
 	}
+
+	// Blob support
 
 	throw new Error("Sadly, we blob download isn't supported yet");
 }

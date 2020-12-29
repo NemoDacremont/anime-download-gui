@@ -1,5 +1,5 @@
 
 import morgan from 'morgan';
-import { logStyle } from './config/constants';
+import { logStyle } from './constants';
 
 export default morgan(logStyle);

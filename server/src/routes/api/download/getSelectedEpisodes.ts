@@ -13,9 +13,7 @@ const router = Router();
 
 interface Output {
 	[animeID: number]: {
-		[version in Version]?: {
-			[episodeIndex: number]: string;
-		}
+		[version in Version]?: number[];
 	}
 }
 
@@ -28,15 +26,7 @@ router.get('/', (req, res) => {
 		output[animeID] = {};
 		const animeEntry = output[animeID];
 		versions.forEach((episodes, version) => {
-
-			animeEntry[version] = {};
-			const versionEntry = animeEntry[version];
-			episodes.forEach((episodeURL, episodeIndex) => {
-
-				if (versionEntry) {
-					versionEntry[episodeIndex] = episodeURL;
-				}
-			});
+			animeEntry[version] = [...episodes];
 		});
 	});
 

@@ -8,7 +8,8 @@ import initSocketIOInstance from './initSocketIOInstance';
 
 async function initScript (httpServer: http.Server): Promise<void> {
 	await cacheAnimeList();
-	await initPuppeteer();
+	await (initPuppeteer()
+		.catch(() => console.log('An error occurred, this is probably due to the path for chromium in the config.json file')));
 
 	initSocketIOInstance(httpServer);
 }

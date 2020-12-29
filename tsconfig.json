@@ -5,12 +5,13 @@
 		"target": "ES6",
 		"removeComments": true,
 		"strict": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"resolveJsonModule": true
 	},
 	"files": [
 		"server/src/index.ts"
 	],
 	"include": [
-		"server/src/*/*.ts"
+		"server/src/*/*.ts", "server/src/constants.ts"
 	]
 }

@@ -46,17 +46,11 @@ unselectRouter.post('/', JSONParser, (req, res, next) => {
 
 			if (episodes) {
 				if (typeof episodes === 'number') {
-					const episodeEntry = versionEntry.get(episodes);
-					if (episodeEntry) {
-						versionEntry.delete(episodes);
-					}
+					versionEntry.delete(episodes);
 				}
 				else if (Array.isArray(episodes)) {
 					episodes.forEach((episode) => {
-						const episodeEntry = versionEntry.get(episode);
-						if (episodeEntry) {
-							versionEntry.delete(episode);
-						}
+						versionEntry.delete(episode);
 					});
 				}
 

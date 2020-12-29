@@ -20,15 +20,12 @@ export default async function (playerURL: string): Promise<string | null> {
 		return videoSrc;
 	}
 
-	console.log(videoSrc);
-
 	/*
 	*		Scraping source tag src attribute
 	*		if exist, return. else blob
 	*/
 
 	const sourceSrc = await page.$eval('source', (el) => el.getAttribute('src'));
-	console.log(sourceSrc);
 	if (sourceSrc) {
 		await page.close();
 		return sourceSrc;
@@ -39,6 +36,7 @@ export default async function (playerURL: string): Promise<string | null> {
 	*/
 
 	// maybe latter, this means we can't get p-streaming file source.
+	
 
 	await page.close();
 	return sourceSrc;
