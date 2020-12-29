@@ -13,10 +13,7 @@ export default async function (animeID: number, version: 'vostfr' | 'vf', episod
 	const episodeURL = nekoSamaBaseURL + episodeData.url;
 
 	const animePage: string = (await axios.get(episodeURL)).data;
-
-
 	const playersSources = animePage.match(/https?:\/\/((www)|(embed))\.((pstream)|(mystream))\.((net)|(to))\/(\w+\/)?\w+/g);
-
 	if (!playersSources) throw new Error(`The episode you're looking for doesn't look like existing`);
 
 	for (let i=playersSources.length-1 ; i>0 ; i--) {
@@ -25,6 +22,8 @@ export default async function (animeID: number, version: 'vostfr' | 'vf', episod
 	}
 
 	// Blob support
+
+
 
 	throw new Error("Sadly, we blob download isn't supported yet");
 }

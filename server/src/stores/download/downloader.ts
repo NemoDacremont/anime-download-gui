@@ -8,7 +8,6 @@ import { outputDir } from '../../constants';
 
 import { getAnimeFromID, Version, Episode, ExtractEpisodeList } from '../animes';
 import extractURL from '../../routes/api/animes/getURL/extractURL';
-import { format } from 'morgan';
 
 export type EpisodeLink = string;
 export type EpisodeURL = string;
