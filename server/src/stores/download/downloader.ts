@@ -1,13 +1,15 @@
 
+import path from 'path';
 import { EventEmitter } from 'events';
 import downloadEpisode from './downloadScript';
+import downloadM3u8 from './downloadM3u8';
 
 import { outputDir } from '../../constants';
 
 // Doing TS things
 
 import { getAnimeFromID, Version, Episode, ExtractEpisodeList } from '../animes';
-import extractURL from '../../routes/api/animes/getURL/extractURL';
+import extractURL, { LevelM3u8 } from '../../routes/api/animes/getURL/extractURL';
 
 export type EpisodeLink = string;
 export type EpisodeURL = string;
@@ -145,21 +147,35 @@ export class Downloader {
 
 					const formattedTitle = anime.title?.replace(/ /g, '_').replace(/\W/g, "").toLocaleLowerCase();
 
-					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/episode_${episodeIndex}.mp4`;
-					const episodeURL = await (extractURL(animeID, version, episodeIndex).catch((err) => console.log(err)));
-					if (!episodeURL) continue;
+					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err) => console.log(err)));
+					// test if source is null
+					if (!episodeSource) continue;
+
+					const fileExtension = typeof episodeSource === 'string' ? 'mp4': 'ts';
+					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/episode_${episodeIndex}.${fileExtension}`;
 
 					console.log(`Downloading: ${anime.title} | ${version} | ${episode.episode}`);
+					console.log('outfile:', filePath);
 
-					await (downloadEpisode(filePath, episodeURL, {
-						forceReject: () => {
-							return !this.isDownloading;
-						}
-					}).catch((err: Error) => console.log(err.message)));
+					// If the source is an url, download the file normally
+					if(typeof episodeSource === 'string') {
+						const episodeURL = episodeSource;
+
+						await (downloadEpisode(filePath, episodeURL, {
+							forceReject: () => {
+								return !this.isDownloading;
+							}
+						}).catch((err: Error) => console.log(err.message)));
+					}
+
+					// If the source is m3u8 (ts files)
+					else if (typeof episodeSource === 'object') {
+						await downloadM3u8(filePath, episodeSource as LevelM3u8);
+					}
+
 					console.log(`${anime.title} ${episode.episode} Downloaded!`);
 					// Stop downloading if a cancel request has been used
 					if (!this.isDownloading) return;
-
 				}
 			}
 		}

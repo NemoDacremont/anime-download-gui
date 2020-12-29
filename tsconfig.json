@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"outDir": "dist",
 		"module": "commonjs",
-		"target": "ES6",
+		"target": "ESnext",
 		"removeComments": true,
 		"strict": true,
 		"esModuleInterop": true,

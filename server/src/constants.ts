@@ -8,4 +8,6 @@ export const logStyle: 'dev' | 'combined'
 	= (process.env.NODE_ENV === 'production') ?'combined' :'dev';
 
 export const chromiumPath = config.chromePath ? config.chromePath : path.join(__dirname, '../chromium/chromium-linux/chrome');
-export const outputDir = config.outputDir.replace(/\/$/, '');
+
+if (!process.env.HOME) throw new Error("process.env.HOME doesn't exist");
+export const outputDir = config.outputDir.replace(/\/$/, '').replace('~', process.env.HOME);

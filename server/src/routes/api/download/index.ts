@@ -69,7 +69,7 @@ downloadRouter.post('/', JSONParser, async (req, res, next) => {
 	else {
 		extractURL( animeID, version, episodeIndex )
 			.then((url) => {
-				if (!url) throw new Error('URL is null: api/download');
+				if (!url || typeof url !== 'string') throw new Error('URL is null: api/download');
 				download(url)
 					.then((success) => {
 						if (!success) res.status(530);

@@ -5,11 +5,18 @@ import { chromiumPath } from '../../constants';
 // TO-DO: Maybe at least read the documentation
 
 export let browser: puppeteer.Browser;
-export const pages: puppeteer.Page[] = [];
+export let page: puppeteer.Page | null = null;
 
 export async function initPuppeteer(): Promise<void> {
 	browser = await puppeteer.launch({
-		headless: false,
+		headless: true,
 		executablePath: chromiumPath
 	});
+
+	browser.on('disconnected', (err) => {
+		console.log(err);
+		console.log('disconnected');
+	});
+
+	page = await browser.newPage();
 }
