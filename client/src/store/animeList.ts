@@ -54,6 +54,8 @@ const load = async (version: 'vostfr' | 'vf'): Promise<Anime[]> => {
 	return (await axios.get( `${API_BASE_URL}/animes/animelist/${version}` )).data
 }
 
+import { useRouter } from 'vue-router';
+
 const filterFunction = (anime: Anime, searchString: string) => {
 	const searchData = searchString
 		.trim()
@@ -89,9 +91,11 @@ export default {
 			return animeList.filter(anime => filterFunction(anime, searchFilter)).length;
 		},
 		getAnimeListFiltered:
-			(state) => (version: Version, page: number, searchFilter?: string) => {
+			(state) => (version: Version, page: number/*, searchFilter?: string*/) => {
 			const animeList = state[version];
 			if (!animeList) return [];
+
+			const searchFilter = useRouter().currentRoute.value.query.search as string | undefined
 
 			if (!searchFilter) {
 				return animeList

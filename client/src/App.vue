@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { io } from 'socket.io-client';
+//import { io } from 'socket.io-client';
 
 import { NavElement, NavItem } from './components/nav';
 
@@ -26,13 +26,13 @@ export default defineComponent({
 		NavItem
 	},
 	created () {
-		const socket = io('http://localhost:8080/');
+		/*const socket = io('http://localhost:8080/');
 		socket.on('connect', function() {
 			console.log('connected')
 		});
 		socket.on('test', (data: string) => {
 			console.log(data);
-		});
+		});*/
 	}
 });
 </script>

@@ -2,8 +2,8 @@
 	<div class="anime-list">
 		<ol class="anime-list__list">
 			<li
-				v-for="(anime, index) of getAnimeListFiltered(version, page, searchFilter)"
-				:key="index"
+				v-for="(anime) of getAnimeListFiltered(version, page, searchFilter)"
+				:key="anime.id"
 			>
 				<anime-card
 					:anime="anime"

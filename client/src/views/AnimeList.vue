@@ -8,6 +8,8 @@
 						name="search-filter"
 						id="search-filter"
 						v-model.trim="searchFilterRaw"
+						maxlength="10"
+						@input="search"
 						placeholder="Ex: One Piece"
 					>
 				</label>
