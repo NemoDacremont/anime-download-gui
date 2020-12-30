@@ -1,7 +1,7 @@
 <template>
 	<div class="anime-list-view">
 		<header>
-			<form @submit.prevent="search">
+			<form @submit.prevent>
 				<label for="search-filter">
 					<input
 						type="text"

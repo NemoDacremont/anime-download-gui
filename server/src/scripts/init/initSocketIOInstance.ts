@@ -6,11 +6,21 @@ import socketIO from 'socket.io';
 import socketIOStore from '../../stores/socketIO';
 
 export default function (httpServer: http.Server): void {
-	socketIOStore.socketIOInstance = new socketIO.Server(httpServer);
+	socketIOStore.socketIOInstance = new socketIO.Server(httpServer, {
+		cors: {
+			origin: '*',
+			methods: ['GET', 'POST']
+		}
+	});
 	const socketio = socketIOStore.socketIOInstance;
 
-	socketio.on('connect', () => {
-		console.log('socketio: new user connected');
+	socketio.on('connect', (socket) => {
+		console.log(`socket ${socket.id} connected`);
+
+		socket.on('disconnect', () => {
+			console.log(`socket ${socket.id} disconnected`);
+		})
 	});
+
 }
 

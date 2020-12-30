@@ -15,7 +15,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-//import { io } from 'socket.io-client';
 
 import { NavElement, NavItem } from './components/nav';
 
@@ -24,15 +23,6 @@ export default defineComponent({
 	components: {
 		NavElement,
 		NavItem
-	},
-	created () {
-		/*const socket = io('http://localhost:8080/');
-		socket.on('connect', function() {
-			console.log('connected')
-		});
-		socket.on('test', (data: string) => {
-			console.log(data);
-		});*/
 	}
 });
 </script>
@@ -72,6 +62,8 @@ export default defineComponent({
 
 	--highlight-activable: #728BAB;
 	--highlight-active: #f3745c;
+	--highlight-downloaded: #458233;
+	--highlight-not-downloaded: #83322D;
 	
 	--background-color: var(--background-color-dark);
 	--nav-background-color: var(--nav-background-color-dark);

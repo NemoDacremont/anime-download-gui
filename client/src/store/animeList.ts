@@ -66,6 +66,8 @@ const filterFunction = (anime: Anime, searchString: string) => {
 					anime.title_romanji?.toLowerCase().includes(searchData);
 }
 
+const isValidVersion = (input: string): boolean => ['vostfr', 'vf'].includes(input);
+
 export default {
 	state: {
 		vostfr: null,
@@ -106,10 +108,17 @@ export default {
 				.filter(anime => filterFunction(anime, searchFilter))
 				.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
 		},
-		getAnime: (state) => (version: Version, id: number) => {
+		getAnime: (state) => (version: Version, idInput: number) => {
 			const animeList = state[version];
-			console.log(version, id);
 			if (!animeList) return null;
+
+			let id = idInput;
+			if (typeof idInput === 'string') {
+				id = parseInt(idInput);
+			}
+			if (!isValidVersion(version) || isNaN(id)) return false;
+
+			console.log(version, id);
 
 			for (let i=0 ; i<animeList.length ; i++) {
 				const anime = animeList[i];
@@ -119,7 +128,7 @@ export default {
 				}
 			}
 
-			return null;
+			return false;
 		}
 	},
 
