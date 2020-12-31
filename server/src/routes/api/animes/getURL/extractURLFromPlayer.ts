@@ -53,33 +53,30 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		*		Scraping video's src attribute
 		*		if it exist, return. else try source tag
 		*/
-	/*
+	
 		const videoSrc = await (page.$eval('video', (el) => el.getAttribute('src')).catch((err: Error) => console.log(err.message)));
 		if (videoSrc && typeof videoSrc === 'string' && !videoSrc.includes('blob')) {
 			resolve(videoSrc);
 		}
-	*/
+	
 
 		/*
 		*		Scraping source tag src attribute
 		*		if exist, return. else blob
 		*/
-/*
+
 		const sourceSrc = await (page.$eval('source', (el) => el.getAttribute('src')).catch((err: Error) => console.log(err.message)));
 		if (sourceSrc && !sourceSrc.includes('blob')) {
 			resolve(sourceSrc);
 		}
 		noSource = true;
-	*/
+	
 
 		/*
 		*		Blob scraping
 		*/
 
 		if (noBlob) {
-			console.log('noblob');
-			console.log('noblob');
-			console.log('noblob');
 			resolve(null);
 		}
 		// maybe latter, this means we can't get p-streaming file source.

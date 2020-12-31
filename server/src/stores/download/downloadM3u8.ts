@@ -3,6 +3,8 @@ import https from 'https';
 import fs from 'fs';
 
 import { LevelM3u8 } from '../../routes/api/animes/getURL/extractURL';
+import socketIOStore from '../socketIO';
+import { DownloadCallbacks, defaultCallbacks } from './downloadScript';
 
 const pipeData = (url: string, writeStream: fs.WriteStream): Promise<void> => {
 	return new Promise((resolve, reject) => {
@@ -22,9 +24,12 @@ const pipeData = (url: string, writeStream: fs.WriteStream): Promise<void> => {
 	});
 }
 
-export default function (outFilePath: string, source: LevelM3u8): Promise<boolean | null> {
+export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadCallbacks): Promise<boolean | null> {
 	return new Promise(async (resolve, reject) => {
 		if (!source.segments) reject('err, source is not very good like i wanted jflkfjiezohfnzebnfjb');
+
+		// merge .. .
+		const { forceReject, onData } = { ...defaultCallbacks, ...cbs };
 
 		// Create the files and the writeFileStream
 		try {
@@ -46,7 +51,18 @@ export default function (outFilePath: string, source: LevelM3u8): Promise<boolea
 
 		for (let segmentIndex in source.segments) {
 			const segment = source.segments[segmentIndex];
-			console.log(`segment ${segmentIndex} / ${length}`);
+
+			if (forceReject()) {
+				writeFileStream.close();
+				reject('download canceled');
+				return;
+			}
+
+			console.log('a');
+
+			const progress = Math.round(parseInt(segmentIndex) / length);
+			onData(progress);
+
 			await (pipeData(segment.url, writeFileStream).catch((err: Error) => console.log(err.message)));
 		}
 

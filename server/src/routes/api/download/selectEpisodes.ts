@@ -6,9 +6,8 @@ import { json as bodyParserJSON } from 'body-parser';
 const JSONParser = bodyParserJSON();
 
 // Store
-import { itemsToDownload } from '../../../stores/download';
+import { downloader } from '../../../stores/download';
 import { getAnimeFromID, Version } from '../../../stores/animes';
-import extractURL from '../animes/getURL/extractURL';
 
 const selectEpisodesRouter = Router();
 
@@ -20,49 +19,34 @@ interface BodyInput {
 	episodes?: number  | number[];
 }
 
+const onlyContainNumber = (arr: any[]): boolean => {
+	for (let i=0 ; i<arr.length ; i++) {
+		if (typeof arr[i] !== 'number') return false;
+	}
+	return true;
+}
+
 selectEpisodesRouter.post('/', async (req, res, next) => {
 	const { animeID, version, episodes } = req.body as BodyInput;
-	if (!animeID || !version || !episodes) {
+	
+	const isAnimeIDValid = typeof animeID === 'number';
+	const isVersionValid = version && (['vostfr', 'fr'].includes(version));
+	const isEpisodeValid = Array.isArray(episodes) && onlyContainNumber(episodes) || typeof episodes === 'number';
+
+	if (!isAnimeIDValid || !isVersionValid || !isEpisodeValid) {
 		next();
 		return;
 	}
 
-	const anime = getAnimeFromID(version, animeID);
-	if (!anime) {
-		next();
-		return;
-	}
-
-	// Check all entries and create them if needed
-	if (!itemsToDownload.has(animeID)) {
-		itemsToDownload.set(animeID, new Map());
-	}
-	const animeEntry = itemsToDownload.get(animeID);
-	if (!animeEntry) return;
-
-	if (!animeEntry.has(version)) {
-		animeEntry.set(version, new Set());
-	}
-	const versionEntry = animeEntry.get(version);
-	if (!versionEntry) return;
-
-	if (typeof episodes === 'number') {
-		versionEntry.add(episodes);
-
+	// Force types because ts doesn't like my test
+	// test if the animeID is linked to an anime
+	const anime = getAnimeFromID(version as Version, animeID as number);
+	if (!anime) next();
+	else {
+		// Force types for same reason
+		downloader.selectEpisode(animeID as number, version as Version, episodes as number | number[]);
 		res.sendStatus(200);
-		return;
 	}
-
-
-	if (Array.isArray(episodes)) {
-		for (let episode of episodes) {
-			versionEntry.add(episode);
-		}
-		res.sendStatus(200);
-		return;
-	}
-
-	next();
 });
 
 export default selectEpisodesRouter;

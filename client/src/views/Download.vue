@@ -44,20 +44,17 @@ export default defineComponent({
 		const { socket } = this.$data;
 
 		socket.on('connect', function() {
-			console.log('connected')
-		});
-		socket.on('test', (data: string) => {
-			console.log(data);
+			console.log('socket connected')
 		});
 
-		socket.on('downloadData', (data: unknown) => {
+		socket.on('progress', (data: unknown) => {
 			console.log(data);
 		});
 	},
 	beforeUnmount () {
 		const { socket } = this.$data;
 		if (socket) socket.disconnect();
-		console.log('socket should be closed');
+		console.log('socket closed');
 	}
 })
 </script>

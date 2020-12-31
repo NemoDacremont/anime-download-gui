@@ -57,7 +57,7 @@ export type M3u8JSON = MasterM3u8 | LevelM3u8 | {
 export default async function (animeID: number, version: 'vostfr' | 'vf', episode: number): Promise<string | M3u8JSON | null> {
 
 	const nekoSamaBaseURL = 'https://neko-sama.fr';
-	const episodeData = await downloader.getCachedEpisodes(animeID, version, episode);
+	const episodeData = await (downloader.getCachedEpisodes(animeID, version, episode).catch(err => console.log(err)));
 	if (!episodeData) return null;
 
 	const episodeURL = nekoSamaBaseURL + episodeData.url;

@@ -3,14 +3,22 @@ import https from 'https';
 import fs from 'fs';
 //import socketIOStore from '../../../stores/socketIO';
 
-interface Callbacks {
-	forceReject?: () => boolean;
+export interface DownloadCallbacks {
+	// The progress is a integer between 0 and 100
+	onData: (progress: number) => void;
+	forceReject: () => boolean;
 }
 
-export default function (filePath: string, url: string, cbs: Callbacks): Promise<boolean | null> {
+export const defaultCallbacks: DownloadCallbacks = {
+	forceReject: () => false,
+	onData: () => {}
+}
+
+export default function (filePath: string, url: string, cbs?: DownloadCallbacks): Promise<boolean | null> {
 	return new Promise((resolve, reject) => {
 		
-		const { forceReject } = cbs;
+		// merging callbacks and then extract you know
+		const { forceReject, onData } = { ...defaultCallbacks, ...cbs };
 
 		// Create file
 		try {
@@ -41,6 +49,8 @@ export default function (filePath: string, url: string, cbs: Callbacks): Promise
 				let totalChunkSize = 0;
 				let lastDate = Date.now();
 				let downloadSpeed: string | number = 0;
+				const fileSize = parseInt(res.headers["content-length"]? res.headers["content-length"]: '0', 10);
+				console.log('file size:', fileSize);
 
 				let startDate = Date.now();
 				
@@ -53,7 +63,7 @@ export default function (filePath: string, url: string, cbs: Callbacks): Promise
 				});
 
 				res.on('data', (chunk) => {
-					if (forceReject? forceReject(): false) {
+					if (forceReject()) {
 						request.destroy();
 						reject(new Error('download canceled'));
 						return;
@@ -66,9 +76,13 @@ export default function (filePath: string, url: string, cbs: Callbacks): Promise
 					totalChunkSize += chunk.length;
 
 					if (chunkCount % 128 === 0) {
-						downloadSpeed = (lastChunksSize / (Date.now() - lastDate)).toFixed(2);
+						const progress = Math.round(100 * totalChunkSize / fileSize);
+						console.log('totalChunkSize:', totalChunkSize);
+						console.log('progress:', progress);
+						onData(progress);
+						/*downloadSpeed = (lastChunksSize / (Date.now() - lastDate)).toFixed(2);
 						console.log('Downloading:', totalChunkSize / 1000, 'kB');
-
+						*/
 						lastDate = Date.now();
 						lastChunksSize = 0;
 					}

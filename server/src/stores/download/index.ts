@@ -11,6 +11,7 @@ export type EpisodeIndex = number;
 
 export const downloader = new Downloader();
 export const getCachedEpisodes = downloader.getCachedEpisodes;
+export const selectEpisodes = downloader.selectEpisode;
 
 export interface DownloadStore {
 	//itemsToDownload: Map<AnimeID, Map<EpisodeIndex, EpisodeLink>>
