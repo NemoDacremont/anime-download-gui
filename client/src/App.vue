@@ -75,12 +75,12 @@ export default defineComponent({
 	position: relative;
 	color: var(--font-color);
 	transition: color .25s;
-	width: 3em;
-	height: 3em;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	z-index: 2;
+
+	padding: .75em;
 
 	&::selection {
 		background-color: transparent;
@@ -118,6 +118,13 @@ export default defineComponent({
 		&::before {
 			opacity: 50%;
 			transform: scale(100%, 100%);
+		}
+	}
+
+	&.text {
+		padding: .75em 1em;
+		&::before {
+			border-radius: 25%;
 		}
 	}
 }

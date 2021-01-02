@@ -12,7 +12,7 @@
 					</span>
 
 					<span
-						class="clickable"
+						class="clickable text"
 						title="range selection"
 					>
 						range

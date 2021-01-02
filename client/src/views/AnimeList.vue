@@ -15,7 +15,7 @@
 				</label>
 
 				<label for="submit">
-					<span class="material-icons">
+					<span class="material-icons clickable">
 						search
 					</span>
 					<input
@@ -28,7 +28,7 @@
 
 			<div class="display-style">
 				<router-link
-					class="clickable"
+					class="clickable text"
 					:to="{
 						name: 'AnimeList',
 						params: {
@@ -43,7 +43,7 @@
 				</router-link>
 				
 				<router-link
-					class="clickable"
+					class="clickable text"
 					:to="{
 						name: 'AnimeList',
 						params: {
@@ -230,7 +230,7 @@ header {
 			justify-content: center;
 			align-items: center;
 			font-size: 2em;
-			padding: .5em;
+			padding: .1em;
 			color: var(--font-color);
 			transition: color .25s;
 
