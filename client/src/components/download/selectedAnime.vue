@@ -9,19 +9,19 @@
 				title="develop"
 				:style="{ '--progress': `${(versionProgress || 0) - 100}%`}"
 			>
-				<div class="title">
-					<div class="wrapper-container clickable" @click="toggleWrap()" :class="{ selected: progresses.isWrapped}">
+				<div class="title" @click="toggleWrap">
+					<div class="wrapper-container clickable" :class="{ selected: progresses.isWrapped}">
 						<span class="material-icons">
 							keyboard_arrow_right
 						</span>
 					</div>
 					<h3>{{ getAnime(version, animeID).title }} -- {{ version }}</h3>
 				</div>
-				<div>
+				<div class="selected-anime__progress">
 					<p>
 						progress: <span>{{ Math.round(versionProgress) || 0 }}%</span></p>
 					<p>
-						<span class="material-icons unselect" @click="unSelectVersion()">
+						<span class="material-icons unselect clickable" @click="unSelectVersion()">
 							clear
 						</span>
 					</p>
@@ -38,16 +38,20 @@
 					:style="{ '--progress': `${(getEpisodeProgress(animeID, version, episode) || 0) - 100}%`}"
 				>
 					<p>episode: {{ episode }}</p>
-					<p>progress:
-						<span>
-							{{ getEpisodeProgress(animeID, version, episode) || 0 }}%
-						</span>
-					</p>
-					<p>
-						<span class="material-icons unselect" @click="unSelectEpisode(episode)">
-							clear
-						</span>
-					</p>
+
+					<div class="selected-anime__progress">
+						<p>progress:
+							<span>
+								{{ getEpisodeProgress(animeID, version, episode) || 0 }}%
+							</span>
+						</p>
+						<p>
+							<span class="material-icons unselect clickable" @click="unSelectEpisode(episode)">
+								clear
+							</span>
+						</p>
+					</div>
+					
 				</li>
 			</ul>
 		</div>
@@ -232,7 +236,7 @@ ul {
 }
 
 .selected-anime__episodes-list-item {
-	padding: .8em 1.75em;
+	padding: .8em 1em .8em 1.75em;
 }
 
 .wrapper-container {
@@ -268,6 +272,17 @@ ul {
 	}
 }
 
-.unselect:hover { cursor: pointer; }
+.unselect {
+	padding: .1em;
 
+	&:hover {
+		cursor: pointer; 
+	}
+}
+
+.selected-anime__progress {
+	display: flex;
+	align-items: center;
+	gap: .25em;
+}
 </style>

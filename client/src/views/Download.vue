@@ -2,22 +2,14 @@
 	<div>
 		<header>
 			<h1>Download</h1>
+			<span class="material-icons clickable download-control" @click="toggleDownload" :title="isDownloading ? 'Stop Downloading': 'Start Downloading'">
+				{{ isDownloading ? 'stop': 'save_alt' }}
+			</span>
 		</header>
 
-		<main>
+		<section>
 			<div class="list" v-if="downloadList && Object.entries(downloadList).length">
-				<div class="download-control">
-					<p>
-						<span class="material-icons clickable" @click="startDownload" title="Start download">
-							save_alt
-						</span>
-					</p>
-					<p>
-						<span class="material-icons clickable" @click="stopDownload" title="Stop download">
-							save_alt
-						</span>
-					</p>
-				</div>
+				<h2 class="download-state">The application {{ isDownloading ? 'is': "isn't" }} downloading</h2>
 				<ul class="selected-anime-list">
 					<li v-for="(versions, animeID) in downloadList" :key="animeID">
 						<ul>
@@ -32,7 +24,7 @@
 				<p>Nothing is selected, go back to <router-link to="/animelist/vostfr/1">Anime List</router-link></p>
 				<h2>¯\_(ツ)_/¯</h2>
 			</div>
-		</main>
+		</section>
 	</div>
 </template>
 
@@ -60,16 +52,11 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		...mapGetters(['getProgresses'])
+		...mapGetters(['getProgresses', 'isDownloading'])
 	},
 	methods: {
-		startDownload () {
-			axios.post(API_BASE_URL + '/download/controlDownload', { action: 'start'});
-		},
-		stopDownload () {
-			axios.post(API_BASE_URL + '/download/controlDownload', { action: 'stop'});
-		},
-		...mapMutations(['updateProgresses'])
+		...mapMutations(['updateProgresses']),
+		...mapActions(['toggleDownload'])
 	},
 	async created () {
 		this.$data.downloadList = (await axios.get( API_BASE_URL + '/download/getSelectedEpisodes')).data;
@@ -106,7 +93,7 @@ header {
 	align-items: center;
 }
 
-main {
+section {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -125,12 +112,14 @@ ul {
 }
 
 .download-control {
-	&, span {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	padding: .5em;
+}
+
+.download-state {
+	padding: 1em;
 }
 
 </style>

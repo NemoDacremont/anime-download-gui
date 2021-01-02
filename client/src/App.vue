@@ -80,8 +80,6 @@ export default defineComponent({
 	align-items: center;
 	z-index: 2;
 
-	padding: .75em;
-
 	&::selection {
 		background-color: transparent;
 	}
