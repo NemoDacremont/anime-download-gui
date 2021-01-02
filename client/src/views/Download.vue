@@ -5,7 +5,12 @@
 		</header>
 
 		<main>
-			<div class="list" v-if="downloadList">
+			<div class="list" v-if="downloadList && Object.entries(downloadList).length">
+				<div class="download-control">
+					<span class="material-icons">
+						save_alt
+					</span>
+				</div>
 				<ul class="selected-anime-list">
 					<li v-for="(versions, animeID) in downloadList" :key="animeID">
 						<ul>
@@ -16,6 +21,10 @@
 					</li>
 				</ul>
 			</div>
+			<div class="no-selection" v-else>
+				<p>Nothing is selected, go back to <router-link to="/animelist/vostfr/1">Anime List</router-link></p>
+				<h2>¯\_(ツ)_/¯</h2>
+			</div>
 		</main>
 	</div>
 </template>
@@ -25,7 +34,10 @@ import { defineComponent } from 'vue'
 import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+
 import SelectedAnime from '../components/download/selectedAnime.vue';
+import { Progresses } from '../store/download';
 
 export default defineComponent({
 	name: 'Download',
@@ -38,6 +50,12 @@ export default defineComponent({
 			socket: null as Socket | null
 		}
 	},
+	computed: {
+		...mapGetters(['getProgresses'])
+	},
+	methods: {
+		...mapMutations(['updateProgresses'])
+	},
 	async created () {
 		this.$data.downloadList = (await axios.get('http://localhost:8080/api/download/getSelectedEpisodes')).data;
 		this.$data.socket = io('http://localhost:8080/');
@@ -47,8 +65,12 @@ export default defineComponent({
 			console.log('socket connected')
 		});
 
-		socket.on('progress', (data: unknown) => {
-			console.log(data);
+		socket.on('progress', (data: Progresses) => {
+			this.updateProgresses(data);
+		});
+
+		socket.on('updateSelectedAnime', async () => {
+			this.$data.downloadList = (await axios.get('http://localhost:8080/api/download/getSelectedEpisodes')).data;
 		});
 	},
 	beforeUnmount () {

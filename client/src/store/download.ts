@@ -2,16 +2,17 @@
 import { Module } from 'vuex';
 import { Version } from './animeList';
 
-interface Progresses {
+export interface Progresses {
 	[animeID: number]: {
-		[version in Version]: number[];
+		[version in Version]: {
+			[episodeIndex: number]: number;
+		}
 	};
 }
 
 export default {
 	state: {
-		progresses: {
-		} as Progresses
+		progresses: {} as Progresses
 	},
 
 	getters: {
@@ -22,16 +23,16 @@ export default {
 
 			return progresses[animeID][version] || null;
 		},
-		getEpisodeProgress: (state) => (animeID: number, version: Version, episodeIndex: number) => {
-			const {progresses} = state;
+		getEpisodeProgress: (state) => (animeID: number, version: Version, episode: number) => {
+			const { progresses } = state;
 			if (!progresses[animeID] || !progresses[animeID][version]) return null;
 
-			return progresses[animeID][version][episodeIndex] || null;
+			return progresses[animeID][version][episode] || null;
 		}
 	},
 
 	mutations: {
-		updateProgresses: (state) => (newProgresses: Progresses) => {
+		updateProgresses: (state, newProgresses: Progresses) => {
 			state.progresses = newProgresses;
 		}
 	}

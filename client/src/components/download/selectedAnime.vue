@@ -18,25 +18,34 @@
 					<h3>{{ getAnime(version, animeID).title }} -- {{ version }}</h3>
 				</div>
 				<div>
-					progress: <span>{{ Math.round(versionProgress) || 0 }}%</span>
+					<p>
+						progress: <span>{{ Math.round(versionProgress) || 0 }}%</span></p>
+					<p>
+						<span class="material-icons unselect" @click="unSelectVersion()">
+							clear
+						</span>
+					</p>
 				</div>
 			</div>
-			<ul
+		<ul
 				class="selected-anime__episodes-list"
 				v-show="!progresses.isWrapped"
 			>
 				<li
-					v-for="(episode, episodeIndex) in selectedVersion"
+					v-for="episode in selectedVersion"
 					:key="episode"
 					class="selected-anime__episodes-list-item"
-					:style="{ '--progress': `${progresses.episodes[episodeIndex].progress - 100}%`}"
+					:style="{ '--progress': `${(getEpisodeProgress(animeID, version, episode) || 0) - 100}%`}"
 				>
 					<p>episode: {{ episode }}</p>
 					<p>progress:
-						<span
-							v-if="progresses.episodes && progresses.episodes[episodeIndex]"
-						>
-							{{ Math.round(progresses.episodes[episodeIndex].progress) }}%
+						<span>
+							{{ getEpisodeProgress(animeID, version, episode) || 0 }}%
+						</span>
+					</p>
+					<p>
+						<span class="material-icons unselect" @click="unSelectEpisode(episode)">
+							clear
 						</span>
 					</p>
 				</li>
@@ -46,6 +55,7 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios';
 import { defineComponent } from 'vue';
 
 import { mapGetters, mapActions } from 'vuex';
@@ -84,21 +94,42 @@ export default defineComponent({
 	},
 	computed: {
 		versionProgress () {
+			console.log('update versionprogress');
 			const { progresses } = this.$data;
+			const { animeID, version } = this.$props;
 			if (!progresses || !progresses) return null;
 
 			let totalProgress = 0;
 			for (let i=0 ; i<progresses.size ; i++) {
-				totalProgress += progresses.episodes[i].progress / progresses.size;
+				totalProgress += this.getEpisodeProgress(animeID, version, i) / progresses.size;
 			}
 			return totalProgress;
 		},
-		...mapGetters(['getAnime', 'getVersionProgress'])
+		...mapGetters(['getAnime', 'getVersionProgress', 'getEpisodeProgress'])
 	},
 	methods: {
 		toggleWrap () {
 			const { progresses } = this.$data;
 			progresses.isWrapped = !progresses.isWrapped;
+		},
+		unSelectVersion () {
+			const { animeID, version } = this.$props
+			const options = {
+				animeID,
+				version
+			}
+			axios.post('http://localhost:8080/api/download/unSelectEpisodes', options);
+		},
+		unSelectEpisode (episodes: number) {
+			const { animeID, version } = this.$props
+			const options = {
+				animeID,
+				version,
+				episodes
+			}
+
+			console.table(options);
+			axios.post('http://localhost:8080/api/download/unSelectEpisodes', options);
 		},
 		...mapActions(['loadData'])
 	},
@@ -236,5 +267,7 @@ ul {
 		}
 	}
 }
+
+.unselect:hover { cursor: pointer; }
 
 </style>

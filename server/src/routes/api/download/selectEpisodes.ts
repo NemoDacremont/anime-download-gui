@@ -8,6 +8,7 @@ const JSONParser = bodyParserJSON();
 // Store
 import { downloader } from '../../../stores/download';
 import { getAnimeFromID, Version } from '../../../stores/animes';
+import socketIOStore from '../../../stores/socketIO';
 
 const selectEpisodesRouter = Router();
 
@@ -45,6 +46,7 @@ selectEpisodesRouter.post('/', async (req, res, next) => {
 	else {
 		// Force types for same reason
 		downloader.selectEpisode(animeID as number, version as Version, episodes as number | number[]);
+		socketIOStore.socketIOInstance?.emit('updateSelectedAnime');
 		res.sendStatus(200);
 	}
 });
