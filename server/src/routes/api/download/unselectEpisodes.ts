@@ -29,6 +29,7 @@ unselectRouter.post('/', JSONParser, (req, res, next) => {
 	const animeID = typeof rawAnimeID === 'string' ? parseInt(rawAnimeID): rawAnimeID;
 	if (animeID) {
 		downloader.unSelectEpisodes(animeID, version, episodes);
+		console.log('socketio: update selected anime');
 		socketIOStore.socketIOInstance?.emit('updateSelectedAnime');
 		res.sendStatus(200);
 	}

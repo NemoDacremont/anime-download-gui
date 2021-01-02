@@ -7,9 +7,16 @@
 		<main>
 			<div class="list" v-if="downloadList && Object.entries(downloadList).length">
 				<div class="download-control">
-					<span class="material-icons">
-						save_alt
-					</span>
+					<p>
+						<span class="material-icons clickable" @click="startDownload" title="Start download">
+							save_alt
+						</span>
+					</p>
+					<p>
+						<span class="material-icons clickable" @click="stopDownload" title="Stop download">
+							save_alt
+						</span>
+					</p>
 				</div>
 				<ul class="selected-anime-list">
 					<li v-for="(versions, animeID) in downloadList" :key="animeID">
@@ -39,6 +46,8 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 import SelectedAnime from '../components/download/selectedAnime.vue';
 import { Progresses } from '../store/download';
 
+import { API_BASE_URL, SOCKET_IO_URL } from '../constants';
+
 export default defineComponent({
 	name: 'Download',
 	components: {
@@ -54,23 +63,31 @@ export default defineComponent({
 		...mapGetters(['getProgresses'])
 	},
 	methods: {
+		startDownload () {
+			axios.post(API_BASE_URL + '/download/controlDownload', { action: 'start'});
+		},
+		stopDownload () {
+			axios.post(API_BASE_URL + '/download/controlDownload', { action: 'stop'});
+		},
 		...mapMutations(['updateProgresses'])
 	},
 	async created () {
-		this.$data.downloadList = (await axios.get('http://localhost:8080/api/download/getSelectedEpisodes')).data;
-		this.$data.socket = io('http://localhost:8080/');
+		this.$data.downloadList = (await axios.get( API_BASE_URL + '/download/getSelectedEpisodes')).data;
+		this.$data.socket = io(SOCKET_IO_URL);
 		const { socket } = this.$data;
 
 		socket.on('connect', function() {
-			console.log('socket connected')
+			console.log('socket connected');
 		});
 
 		socket.on('progress', (data: Progresses) => {
+			console.log('socketio progress event');
 			this.updateProgresses(data);
 		});
 
 		socket.on('updateSelectedAnime', async () => {
-			this.$data.downloadList = (await axios.get('http://localhost:8080/api/download/getSelectedEpisodes')).data;
+			console.log('update selected anime');
+			this.$data.downloadList = (await axios.get(API_BASE_URL + '/download/getSelectedEpisodes')).data;
 		});
 	},
 	beforeUnmount () {
@@ -105,6 +122,15 @@ ul {
 	flex-direction: column;
 	width: 100%;
 	gap: 1em;
+}
+
+.download-control {
+	&, span {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	padding: .5em;
 }
 
 </style>

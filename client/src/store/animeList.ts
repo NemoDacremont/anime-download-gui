@@ -118,12 +118,9 @@ export default {
 			}
 			if (!isValidVersion(version) || isNaN(id)) return false;
 
-			console.log(version, id);
-
 			for (let i=0 ; i<animeList.length ; i++) {
 				const anime = animeList[i];
 				if (anime.id === id) {
-					console.log(anime);
 					return anime;
 				}
 			}

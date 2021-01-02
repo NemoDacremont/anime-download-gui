@@ -21,6 +21,5 @@ export default function (httpServer: http.Server): void {
 			console.log(`socket ${socket.id} disconnected`);
 		})
 	});
-
 }
 

@@ -46,6 +46,7 @@ selectEpisodesRouter.post('/', async (req, res, next) => {
 	else {
 		// Force types for same reason
 		downloader.selectEpisode(animeID as number, version as Version, episodes as number | number[]);
+		console.log('socketio: update selected anime');
 		socketIOStore.socketIOInstance?.emit('updateSelectedAnime');
 		res.sendStatus(200);
 	}
