@@ -48,6 +48,7 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 
 		const writeFileStream = fs.createWriteStream(outFilePath);
 		const length = source.segments.length;
+		console.log(`playlist size:`, length);
 
 		for (let segmentIndex in source.segments) {
 			const segment = source.segments[segmentIndex];
@@ -58,10 +59,9 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 				return;
 			}
 
-			console.log('a');
-
-			const progress = Math.round(parseInt(segmentIndex) / length);
+			const progress = Math.round(100 * parseInt(segmentIndex) / length);
 			onData(progress);
+			console.log('progress:', progress);
 
 			await (pipeData(segment.url, writeFileStream).catch((err: Error) => console.log(err.message)));
 		}

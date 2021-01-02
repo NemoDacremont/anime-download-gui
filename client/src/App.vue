@@ -114,7 +114,7 @@ export default defineComponent({
 		}
 
 		&::before {
-			opacity: 50%;
+			opacity: 1;
 			transform: scale(100%, 100%);
 		}
 	}
