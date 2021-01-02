@@ -284,8 +284,9 @@ export class Downloader {
 		// return if is downloading to prevent multiple download instance
 		if (this.isDownloading) return;
 
-		const { itemsToDownload: downloadList} = this.store;
+		const { itemsToDownload: downloadList } = this.store;
 		this.isDownloading = true;
+		socketIOStore.socketIOInstance?.emit('updateDownloadState', this.isDownloading);
 
 		// A lot of for loops to iterate threw this stupidly giant object
 		for (let animeEntry of downloadList.entries()) {
@@ -355,6 +356,7 @@ export class Downloader {
 
 		console.log('Download finished');
 		this.isDownloading = false;
+		socketIOStore.socketIOInstance?.emit('updateDownloadState', this.isDownloading);
 	}
 	// End download method
 }

@@ -55,13 +55,15 @@ export default defineComponent({
 		...mapGetters(['getProgresses', 'isDownloading'])
 	},
 	methods: {
-		...mapMutations(['updateProgresses']),
-		...mapActions(['toggleDownload'])
+		...mapMutations(['updateProgresses', 'forceDownloadState']),
+		...mapActions(['toggleDownload', 'loadDownloadState'])
 	},
 	async created () {
 		this.$data.downloadList = (await axios.get( API_BASE_URL + '/download/getSelectedEpisodes')).data;
 		this.$data.socket = io(SOCKET_IO_URL);
 		const { socket } = this.$data;
+
+		this.loadDownloadState();
 
 		socket.on('connect', function() {
 			console.log('socket connected');
@@ -70,6 +72,10 @@ export default defineComponent({
 		socket.on('progress', (data: Progresses) => {
 			console.log('socketio progress event');
 			this.updateProgresses(data);
+		});
+
+		socket.on('updateDownloadState', (data: boolean) => {
+			this.forceDownloadState(data);
 		});
 
 		socket.on('updateSelectedAnime', async () => {
