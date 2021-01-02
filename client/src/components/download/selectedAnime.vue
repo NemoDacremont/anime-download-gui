@@ -173,7 +173,7 @@ ul {
 	list-style: none;
 }
 
-.selected-anime, .selected-anime__version-container {
+.selected-anime {
 	width: 100%;
 }
 
@@ -236,6 +236,7 @@ ul {
 }
 
 .selected-anime__episodes-list-item {
+	width: 98%;
 	padding: .8em 1em .8em 1.75em;
 }
 

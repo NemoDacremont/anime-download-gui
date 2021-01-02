@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="download">
 		<header>
 			<h1>Download</h1>
 			<span class="material-icons clickable download-control" @click="toggleDownload" :title="isDownloading ? 'Stop Downloading': 'Start Downloading'">
@@ -92,6 +92,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+
+.download {
+	height: 100vh;
+	overflow: auto;
+}
+
 header {
 	padding: 1em 3em;
 	display: flex;
