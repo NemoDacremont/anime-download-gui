@@ -55,13 +55,12 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 
 			if (forceReject()) {
 				writeFileStream.close();
-				reject('download canceled');
+				reject(new Error('download canceled'));
 				return;
 			}
 
 			const progress = Math.round(100 * parseInt(segmentIndex) / length);
 			onData(progress);
-			console.log('progress:', progress);
 
 			await (pipeData(segment.url, writeFileStream).catch((err: Error) => console.log(err.message)));
 		}

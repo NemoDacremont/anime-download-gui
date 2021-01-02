@@ -341,7 +341,7 @@ export class Downloader {
 
 					// If the source is m3u8 (ts files)
 					else if (typeof episodeSource === 'object') {
-						await downloadM3u8(filePath, episodeSource as LevelM3u8, downloadsCallbacks);
+						await (downloadM3u8(filePath, episodeSource as LevelM3u8, downloadsCallbacks).catch((err) => console.log(err.message)));
 					}
 
 					console.log(`${anime.title} ${episode.episode} Downloaded!`);
