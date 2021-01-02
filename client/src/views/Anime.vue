@@ -5,7 +5,7 @@
 				<h1>{{ anime.title }}</h1>
 				<div class="selection-type">
 					<span
-						class="material-icons clickable"
+						class="material-icons clickable medium"
 						title="list selection"
 					>
 						library_add

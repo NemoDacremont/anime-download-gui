@@ -314,7 +314,9 @@ export class Downloader {
 					if (!episodeSource) continue;
 
 					const fileExtension = typeof episodeSource === 'string' ? 'mp4': 'ts';
-					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/episode_${episodeIndex}.${fileExtension}`;
+					// Creating episode name by completing with 0 to sort by name
+					const formattedEpisode = `${'0'.repeat(episodesData.size.toString().length - episodeIndex.toString().length) }${episodeIndex}`
+					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/episode_${formattedEpisode}.${fileExtension}`;
 
 					console.log(`Downloading: ${anime.title} | ${version} | ${episode.episode}`);
 					console.log('outfile:', filePath);

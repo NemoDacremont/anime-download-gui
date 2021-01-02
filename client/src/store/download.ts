@@ -53,7 +53,7 @@ export default {
 			await axios.post(API_BASE_URL + '/download/controlDownload', { action });
 			dispatch('loadDownloadState');
 		},
-		loadDownloadState: async ({commit, state}) => {
+		loadDownloadState: async ({commit}) => {
 			const newState: boolean = (await axios.get(API_BASE_URL + '/download/isDownloading')).data;
 			if (typeof newState === 'boolean') commit('forceDownloadState', newState);
 		}

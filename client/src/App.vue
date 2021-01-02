@@ -121,9 +121,18 @@ export default defineComponent({
 
 	&.text {
 		padding: .75em 1em;
+		display: inline-flex;
 		&::before {
-			border-radius: 25%;
+			border-radius: .75em;
 		}
+	}
+
+	&.highlight {
+		color: var(--highlight-activable);
+	}
+
+	&.medium {
+		padding: .5em;
 	}
 }
 

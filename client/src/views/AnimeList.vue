@@ -15,7 +15,7 @@
 				</label>
 
 				<label for="submit">
-					<span class="material-icons clickable">
+					<span class="material-icons clickable medium">
 						search
 					</span>
 					<input
@@ -60,13 +60,13 @@
 				<hr>
 
 				<span
-					class="material-icons clickable"
+					class="material-icons clickable medium"
 					:class="{ active: isGridViewSelected }"
 					@click="selectGridView"
 				>view_module</span>
 
 				<span
-					class="material-icons clickable"
+					class="material-icons clickable medium"
 					:class="{ active: !isGridViewSelected}"
 					@click="selectListView"
 				>list</span>

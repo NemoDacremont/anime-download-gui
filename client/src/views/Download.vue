@@ -21,7 +21,7 @@
 				</ul>
 			</div>
 			<div class="no-selection" v-else>
-				<p>Nothing is selected, go back to <router-link to="/animelist/vostfr/1">Anime List</router-link></p>
+				<p>Nothing is selected, go back to <router-link to="/animelist/vostfr/1" class="clickable text highlight">Anime List</router-link></p>
 				<h2>¯\_(ツ)_/¯</h2>
 			</div>
 		</section>
