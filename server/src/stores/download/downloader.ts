@@ -60,7 +60,7 @@ const onlyIncludesNumber = (arr: any[]): boolean => {
 export class Downloader {
 	public readonly actionListener: ActionListener;
 	public readonly store: DownloadStore;
-	private isDownloading: boolean;
+	public isDownloading: boolean;
 	
 
 	// Constructor
