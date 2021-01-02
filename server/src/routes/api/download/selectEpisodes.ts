@@ -32,7 +32,7 @@ selectEpisodesRouter.post('/', async (req, res, next) => {
 	
 	const isAnimeIDValid = typeof animeID === 'number';
 	const isVersionValid = version && (['vostfr', 'fr'].includes(version));
-	const isEpisodeValid = Array.isArray(episodes) && onlyContainNumber(episodes) || typeof episodes === 'number';
+	const isEpisodeValid = (Array.isArray(episodes) && episodes.length > 0 && onlyContainNumber(episodes)) || typeof episodes === 'number';
 
 	if (!isAnimeIDValid || !isVersionValid || !isEpisodeValid) {
 		next();
