@@ -65,12 +65,7 @@ export default defineComponent({
 
 		this.loadDownloadState();
 
-		socket.on('connect', function() {
-			console.log('socket connected');
-		});
-
 		socket.on('progress', (data: Progresses) => {
-			console.log('socketio progress event');
 			this.updateProgresses(data);
 		});
 
@@ -79,14 +74,12 @@ export default defineComponent({
 		});
 
 		socket.on('updateSelectedAnime', async () => {
-			console.log('update selected anime');
 			this.$data.downloadList = (await axios.get(API_BASE_URL + '/download/getSelectedEpisodes')).data;
 		});
 	},
 	beforeUnmount () {
 		const { socket } = this.$data;
 		if (socket) socket.disconnect();
-		console.log('socket closed');
 	}
 })
 </script>

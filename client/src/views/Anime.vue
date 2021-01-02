@@ -90,14 +90,17 @@ import { defineComponent } from 'vue'
 
 import axios from 'axios';
 
+// in order to use this.$route
 // eslint-disable-next-line
 import { useRoute } from 'vue-router';
 
-import { mapGetters, mapActions } from 'vuex';
-import { Anime, Version } from '../store/animeList';
-
 // Store
+import { mapGetters, mapActions } from 'vuex';
+
+// constants / interfaces
 import { API_BASE_URL } from '../constants';
+import { Episode } from '../store/download';
+import { Anime, Version } from '../store/animeList';
 
 export default defineComponent({
 	name: 'Anime',
@@ -162,7 +165,7 @@ export default defineComponent({
 			axios.post(API_BASE_URL + '/download/selectEpisodes', postData);
 		},
 		selectAll () {
-			const { selectedEpisodes, episodes } = this.$data as { selectedEpisodes: Set<number>; episodes: null | any[] };
+			const { selectedEpisodes, episodes } = this.$data as { selectedEpisodes: Set<number>; episodes: null | Episode[] };
 			if (!episodes) return;
 			for (let i=0 ; i<episodes.length ; i++) {
 				selectedEpisodes.add(i + 1);

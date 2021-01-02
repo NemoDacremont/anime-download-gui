@@ -98,7 +98,6 @@ export default defineComponent({
 	},
 	computed: {
 		versionProgress () {
-			console.log('update versionprogress');
 			const { progresses } = this.$data;
 			const { animeID, version } = this.$props;
 			if (!progresses || !progresses) return null;
@@ -132,7 +131,6 @@ export default defineComponent({
 				episodes
 			}
 
-			console.table(options);
 			axios.post('http://localhost:8080/api/download/unSelectEpisodes', options);
 		},
 		...mapActions(['loadData'])

@@ -14,6 +14,14 @@ export interface Progresses {
 
 export type DownloadAction = 'start' | 'stop';
 
+export interface Episode {
+	time: string;
+	episode: string;
+	title: string;
+	url: string;
+	url_image: string;
+}
+
 export default {
 	state: {
 		progresses: {} as Progresses,
