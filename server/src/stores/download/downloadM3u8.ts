@@ -121,14 +121,17 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 				await (new Promise((resolve) => setTimeout(() => { resolve() }, 500)) as Promise<void>);
 				segmentsWritten = await pipeData(segmentsWritten, downloadedSegments, writeFileStream);
 
-				if (segmentsWritten === source.segments.length) {
-					// Here, the download should be done
-					writeFileStream.close();
-					resolve(true);
-				}
-
 				segmentIndex--;
 			}
 		}
+
+		while (downloadedSegments.size > 0) {
+			await (new Promise((resolve) => setTimeout(() => { resolve() }, 500)) as Promise<void>);
+			segmentsWritten = await pipeData(segmentsWritten, downloadedSegments, writeFileStream);
+		}
+
+		// Here, the download should be done
+		writeFileStream.close();
+		resolve(true);
 	});
 }
