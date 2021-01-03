@@ -13,7 +13,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		//const page = pages[pageIndex-1];
 		if (!page) return;
 
-		let noBlob = false, noSource = false;
+		let noBlob = false, noSource = false, noVideoSrc = false;
 
 		page.on('response', async (response) => {
 			// This will only support pstream site for and for security
@@ -39,7 +39,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 				}
 				else {
 					noBlob = true;
-					if (noSource) {
+					if (noSource && noVideoSrc) {
 						resolve(null);
 					}
 				}
@@ -58,6 +58,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		if (videoSrc && typeof videoSrc === 'string' && !videoSrc.includes('blob')) {
 			resolve(videoSrc);
 		}
+		noVideoSrc = true;
 	
 
 		/*
@@ -70,13 +71,17 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 			resolve(sourceSrc);
 		}
 		noSource = true;
-	
+
 
 		/*
 		*		Blob scraping
 		*/
 
-		if (noBlob) {
+		setTimeout(() => {
+			noBlob = true;
+		}, 10000);
+
+		if (noVideoSrc && noSource && noBlob) {
 			resolve(null);
 		}
 		// maybe latter, this means we can't get p-streaming file source.
