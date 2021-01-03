@@ -99,13 +99,14 @@ export default defineComponent({
 	computed: {
 		versionProgress () {
 			const { progresses } = this.$data;
-			const { animeID, version } = this.$props;
-			if (!progresses || !progresses) return null;
+			const { animeID, version, selectedVersion } = this.$props;
+			if (!progresses) return null;
 
 			let totalProgress = 0;
-			for (let i=0 ; i<progresses.size ; i++) {
-				totalProgress += this.getEpisodeProgress(animeID, version, i) / progresses.size;
+			for (const episode of selectedVersion as number[]) {
+				totalProgress += this.getEpisodeProgress(parseInt(animeID), version, episode) / selectedVersion.length;
 			}
+
 			return totalProgress;
 		},
 		...mapGetters(['getAnime', 'getVersionProgress', 'getEpisodeProgress'])

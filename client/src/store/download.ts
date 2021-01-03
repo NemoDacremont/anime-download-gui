@@ -36,9 +36,10 @@ export default {
 
 			return progresses[animeID][version] || null;
 		},
-		getEpisodeProgress: (state) => (animeID: number, version: Version, episode: number) => {
+		getEpisodeProgress: (state) => (animeID: number | string, version: Version, episode: number) => {
 			const { progresses } = state;
-			if (!progresses[animeID] || !progresses[animeID][version]) return null;
+			//
+			if (!progresses[animeID] || progresses[animeID] && !progresses[animeID][version]) return null;
 
 			return progresses[animeID][version][episode] || null;
 		},

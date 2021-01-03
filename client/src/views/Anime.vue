@@ -159,7 +159,7 @@ export default defineComponent({
 			const postData: PostData = {
 				animeID: parseInt(animeID as string),
 				version: version as Version,
-				episodes: [...selectedEpisodes]
+				episodes: [...selectedEpisodes].sort((a, b) => a - b)
 			}
 
 			axios.post(API_BASE_URL + '/download/selectEpisodes', postData);
