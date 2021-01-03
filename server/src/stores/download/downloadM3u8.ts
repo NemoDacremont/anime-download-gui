@@ -2,25 +2,67 @@
 import https from 'https';
 import fs from 'fs';
 
-import { LevelM3u8 } from '../../routes/api/animes/getURL/extractURL';
-import socketIOStore from '../socketIO';
+import { LevelM3u8, Segment } from '../../routes/api/animes/getURL/extractURL';
 import { DownloadCallbacks, defaultCallbacks } from './downloadScript';
 
-const pipeData = (url: string, writeStream: fs.WriteStream): Promise<void> => {
+export type DownloadedSegment = Buffer | null;
+
+const downloadSegment = (url: string, segmentIndex: number, downloadedSegments: Map<number, DownloadedSegment>): Promise<void> => {
 	return new Promise((resolve, reject) => {
-		const req = https.get(url, (res) => {
-			res.on('error', (err) => {
+		https.get(url, (res) => {
+			const data: Buffer[] = [];
+
+			res.on('error', (err: Error) => {
 				reject(err);
 			});
 
 			res.on('data', (chunk) => {
-				writeStream.write(chunk);
+				data.push(chunk);
 			});
 
 			res.on('close', () => {
+				downloadedSegments.set(segmentIndex, Buffer.concat(data));
 				resolve();
 			});
-		})
+		});
+	});
+}
+
+const write = (writeStream: fs.WriteStream, data: Buffer, key: number): Promise<void> => {
+	return new Promise((resolve) => {
+		if (!writeStream.write(data)) {
+			console.log('must drain,', key);
+			writeStream.once('drain', () => {
+				resolve();
+			});
+		}
+		else {
+			resolve();
+		}
+	});
+}
+
+const pipeData = (writtenSegments: number, downloadedSegments: Map<number, DownloadedSegment>, writeStream: fs.WriteStream): Promise<number> => {
+	return new Promise(async (resolve) => {
+		const start = writtenSegments;
+		let count = 0;
+		for (const segment of downloadedSegments) {
+			const [key, segmentData] = segment;
+
+			if (key === writtenSegments + count && segmentData !== null) {
+				console.log('write segment', key);
+				await write(writeStream, segmentData, key);
+				count++;
+			}
+			else {
+				break;
+			}
+		}
+
+		for (let i=start ; i<start+count ; i++) {
+			downloadedSegments.delete(i);
+		}
+		resolve(writtenSegments + count);
 	});
 }
 
@@ -50,23 +92,45 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 		const length = source.segments.length;
 		console.log(`playlist size:`, length);
 
-		for (let segmentIndex in source.segments) {
+		const downloadedSegments: Map<number, DownloadedSegment> = new Map();
+		let segmentsWritten = 0;
+
+		for (let segmentIndex=0 ; segmentIndex<source.segments.length ; segmentIndex++) {
 			const segment = source.segments[segmentIndex];
 
+			/*
+			*		Callbacks
+			*/
 			if (forceReject()) {
+				downloadedSegments.forEach((segment, index) => { downloadedSegments.delete(index) });
 				writeFileStream.close();
 				reject(new Error('download canceled'));
 				return;
 			}
 
-			const progress = Math.round(100 * parseInt(segmentIndex) / length);
+			const progress = Math.round(100 * segmentsWritten / length);
 			onData(progress);
+			//console.log(`Segments written: ${segmentsWritten}`);
+			//console.log(`Current segment: ${segmentIndex}`);
+	//		console.log('standing segment:', segmentIndex);
 
-			await (pipeData(segment.url, writeFileStream).catch((err: Error) => console.log(err.message)));
+			// Actual weird download thing ...
+			if (downloadedSegments.size <= 2) {
+				downloadedSegments.set(segmentIndex, null);
+				downloadSegment(segment.url, segmentIndex, downloadedSegments).catch((err: Error) => console.log(err.message));
+			}
+			else {
+				await (new Promise((resolve) => setTimeout(() => { resolve() }, 500)) as Promise<void>);
+				segmentsWritten = await pipeData(segmentsWritten, downloadedSegments, writeFileStream);
+
+				if (segmentsWritten === source.segments.length) {
+					// Here, the download should be done
+					writeFileStream.close();
+					resolve(true);
+				}
+
+				segmentIndex--;
+			}
 		}
-
-		// Here, the download should be done
-		writeFileStream.close();
-		resolve(true);
 	});
 }
