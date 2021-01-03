@@ -28,10 +28,9 @@ const downloadSegment = (url: string, segmentIndex: number, downloadedSegments: 
 	});
 }
 
-const write = (writeStream: fs.WriteStream, data: Buffer, key: number): Promise<void> => {
+const write = (writeStream: fs.WriteStream, data: Buffer): Promise<void> => {
 	return new Promise((resolve) => {
 		if (!writeStream.write(data)) {
-			console.log('must drain,', key);
 			writeStream.once('drain', () => {
 				resolve();
 			});
@@ -50,8 +49,7 @@ const pipeData = (writtenSegments: number, downloadedSegments: Map<number, Downl
 			const [key, segmentData] = segment;
 
 			if (key === writtenSegments + count && segmentData !== null) {
-				console.log('write segment', key);
-				await write(writeStream, segmentData, key);
+				await write(writeStream, segmentData);
 				count++;
 			}
 			else {
