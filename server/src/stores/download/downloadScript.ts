@@ -77,12 +77,7 @@ export default function (filePath: string, url: string, cbs?: DownloadCallbacks)
 
 					if (chunkCount % 128 === 0) {
 						const progress = Math.round(100 * totalChunkSize / fileSize);
-						console.log('totalChunkSize:', totalChunkSize);
-						console.log('progress:', progress);
 						onData(progress);
-						/*downloadSpeed = (lastChunksSize / (Date.now() - lastDate)).toFixed(2);
-						console.log('Downloading:', totalChunkSize / 1000, 'kB');
-						*/
 						lastDate = Date.now();
 						lastChunksSize = 0;
 					}
@@ -90,6 +85,9 @@ export default function (filePath: string, url: string, cbs?: DownloadCallbacks)
 
 				res.on('close', () => {
 					fileStream.close();
+
+					const progress = Math.round(100 * totalChunkSize / fileSize);
+					onData(progress);
 
 					console.log(`Download duration: ${((Date.now() - startDate) / 60000).toFixed(2)} min`);
 					resolve(true);
