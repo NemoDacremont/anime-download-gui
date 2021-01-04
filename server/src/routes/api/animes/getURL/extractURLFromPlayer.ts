@@ -35,6 +35,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 					if (manifest2 && typeof manifest2 === 'string') {
 						const output = m3u8Parser(manifest2, 'fake url');
 						resolve(output);
+						return;
 					}
 				}
 				else {
@@ -59,6 +60,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 			resolve(videoSrc);
 		}
 		noVideoSrc = true;
+		console.log('no video src');
 	
 
 		/*
@@ -69,8 +71,10 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		const sourceSrc = await (page.$eval('source', (el) => el.getAttribute('src')).catch((err: Error) => console.log(err.message)));
 		if (sourceSrc && !sourceSrc.includes('blob')) {
 			resolve(sourceSrc);
+			return;
 		}
 		noSource = true;
+		console.log('nosource');
 
 
 		/*
@@ -78,11 +82,15 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		*/
 
 		setTimeout(() => {
+			console.log('no blob')
 			noBlob = true;
+			resolve(null);
+			return;
 		}, 10000);
 
 		if (noVideoSrc && noSource && noBlob) {
 			resolve(null);
+			return;
 		}
 		// maybe latter, this means we can't get p-streaming file source.
 	});

@@ -28,10 +28,12 @@ const downloadSegment = (url: string, segmentIndex: number, downloadedSegments: 
 	});
 }
 
-const write = (writeStream: fs.WriteStream, data: Buffer): Promise<void> => {
+const write = (writeStream: fs.WriteStream, data: Buffer, key: number): Promise<void> => {
 	return new Promise((resolve) => {
+		console.log('download', key);
 		if (!writeStream.write(data)) {
 			writeStream.once('drain', () => {
+				console.log('drain', key);
 				resolve();
 			});
 		}
@@ -49,7 +51,7 @@ const pipeData = (writtenSegments: number, downloadedSegments: Map<number, Downl
 			const [key, segmentData] = segment;
 
 			if (key === writtenSegments + count && segmentData !== null) {
-				await write(writeStream, segmentData);
+				await write(writeStream, segmentData, key);
 				count++;
 			}
 			else {
@@ -113,7 +115,7 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 	//		console.log('standing segment:', segmentIndex);
 
 			// Actual weird download thing ...
-			if (downloadedSegments.size <= 2) {
+			if (downloadedSegments.size <= 3) {
 				downloadedSegments.set(segmentIndex, null);
 				downloadSegment(segment.url, segmentIndex, downloadedSegments).catch((err: Error) => console.log(err.message));
 			}
