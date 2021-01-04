@@ -1,4 +1,5 @@
 {
 	"chromePath": "",
-	"outputDir": "~/Vidéos"
+	"outputDir": "~/Vidéos",
+	"openOnLocalNetwork": false
 }

@@ -14,7 +14,7 @@ import cors from './cors';
 /*
 *		Import Config
 */
-import { PORT } from './constants';
+import { PORT, HOSTNAME } from './constants';
 import initScript from './scripts/init';
 
 /*
@@ -51,7 +51,7 @@ app.use('/', clientRouter);
 *		Start
 */
 
-const httpServer = app.listen(PORT, 'localhost',  () => {
+const httpServer = app.listen(PORT, HOSTNAME,  () => {
 	console.log(`\nServer listening on port ${PORT}`);
 	console.log('Server loaded, downloading data...');
 

@@ -3,6 +3,7 @@ import config from './config.json';
 import path from 'path';
 
 export const PORT = parseInt(process.env.PORT ?process.env.PORT :'8080');
+export const HOSTNAME = config.openOnLocalNetwork ? '0.0.0.0': 'localhost';
 
 export const logStyle: 'dev' | 'combined'
 	= (process.env.NODE_ENV === 'production') ?'combined' :'dev';
