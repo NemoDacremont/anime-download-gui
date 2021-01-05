@@ -1,14 +1,14 @@
 {
   "name": "anime-download-gui",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A nodejs/expressjs based app with vue frontend to download animes",
+  "main": "dist/",
   "scripts": {
-    "build": "tsc && cp -rf server/client dist/",
     "dev": "tsc --watch",
-    "start": "node dist/",
-		"start:prod": "pm2 start dist",
-		"stop:prod": "pm2 stop dist"
+		"prebuild": "rm -r dist",
+		"build": "tsc",
+		"postbuild": "cp -rf server/client dist/",
+		"start": "node dist"
   },
   "keywords": [],
   "author": "",
