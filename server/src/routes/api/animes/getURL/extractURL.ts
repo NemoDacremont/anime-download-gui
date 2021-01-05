@@ -9,7 +9,6 @@ import { downloader } from '../../../../stores/download';
 export type AttrInfo = string | number | Array<string | number> | Object;
 export type TagInfo = {
     [propName: string]: AttrInfo;
-    //url?: string;
 };
 export type Segment = {
     start: number;

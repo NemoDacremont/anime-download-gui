@@ -359,6 +359,7 @@ export class Downloader {
 		console.log('Download finished');
 		this.isDownloading = false;
 		socketIOStore.socketIOInstance?.emit('updateDownloadState', this.isDownloading);
+		socketIOStore.socketIOInstance?.emit('updateSelectedAnime');
 	}
 	// End download method
 }

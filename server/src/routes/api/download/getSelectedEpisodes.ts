@@ -1,7 +1,6 @@
 
 import { Router } from 'express';
 
-import { Version } from '../../../stores/animes';
 import { downloader } from '../../../stores/download';
 
 const router = Router();

@@ -22,6 +22,8 @@ export async function initPuppeteer(): Promise<void> {
 }
 
 export async function createPage (): Promise<puppeteer.Page> {
-	if (!page) page = await browser.newPage();
+	if (!page || page.isClosed()) {
+		page = await browser.newPage();
+	}
 	return page;
 }

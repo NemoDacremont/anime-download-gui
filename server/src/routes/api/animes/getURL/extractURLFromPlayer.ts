@@ -7,7 +7,13 @@ import { page as pageStored, createPage } from '../../../../stores/puppeteer';
 
 export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 	return new Promise(async (resolve, reject) => {
-		const page = pageStored ? pageStored: await createPage();
+		// If pageStored is null, this means puppeteer hasn't been initialized
+		if (!pageStored) {
+			resolve(null);
+			return;
+		}
+		// Recreate the page if it has been closed
+		const page = pageStored.isClosed() ? await createPage(): pageStored;
 
 		let noBlob = false, noSource = false, noVideoSrc = false;
 
@@ -33,13 +39,13 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 
 					if (manifest2 && typeof manifest2 === 'string') {
 						const output = m3u8Parser(manifest2, 'fake url');
+						await page.close();
 						resolve(output);
-						return;
 					}
 				}
 				else {
-					noBlob = true;
 					if (noSource && noVideoSrc) {
+						await page.close();
 						resolve(null);
 					}
 				}
@@ -61,6 +67,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 	
 		const videoSrc = await (page.$eval('video', (el) => el.getAttribute('src')).catch((err: Error) => console.log(err.message)));
 		if (videoSrc && typeof videoSrc === 'string' && !videoSrc.includes('blob')) {
+			await page.close();
 			resolve(videoSrc);
 		}
 		noVideoSrc = true;
@@ -74,6 +81,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 
 		const sourceSrc = await (page.$eval('source', (el) => el.getAttribute('src')).catch((err: Error) => console.log(err.message)));
 		if (sourceSrc && !sourceSrc.includes('blob')) {
+			await page.close();
 			resolve(sourceSrc);
 		}
 		noSource = true;
@@ -84,15 +92,17 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		*		Blob scraping
 		*/
 
-		setTimeout(() => {
-			if (noBlob) {
+		setTimeout(async () => {
+			if (!page.isClosed()) {
 				console.log('no blob')
 				noBlob = true;
+				await page.close();
 				resolve(null);
 			}
 		}, 10000);
 
 		if (noVideoSrc && noSource && noBlob) {
+			await page.close();
 			resolve(null);
 		}
 		// maybe latter, this means we can't get p-streaming file source.
