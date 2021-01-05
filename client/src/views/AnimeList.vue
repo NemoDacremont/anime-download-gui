@@ -28,7 +28,6 @@
 
 			<div class="display-style">
 				<router-link
-					class="clickable text"
 					:to="{
 						name: 'AnimeList',
 						params: {
@@ -37,13 +36,12 @@
 						}
 					}"
 				>
-					<span :class="{ active: isVOSTFRSelected }" >
+					<span class="clickable text" :class="{ active: isVOSTFRSelected }" >
 						vostfr
 					</span>
 				</router-link>
 				
 				<router-link
-					class="clickable text"
 					:to="{
 						name: 'AnimeList',
 						params: {
@@ -52,7 +50,7 @@
 						}
 					}"
 				>
-					<span :class="{ active: !isVOSTFRSelected }">
+					<span class="clickable text" :class="{ active: !isVOSTFRSelected }">
 						vf
 					</span>
 				</router-link>
