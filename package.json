@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc && cp -rf server/client dist/",
     "dev": "tsc --watch",
-    "start": "node dist/"
+    "start": "node dist/",
+		"start-prod": "pm2 start dist"
   },
   "keywords": [],
   "author": "",
