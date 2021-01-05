@@ -7,7 +7,8 @@
     "build": "tsc && cp -rf server/client dist/",
     "dev": "tsc --watch",
     "start": "node dist/",
-		"start-prod": "pm2 start dist"
+		"start:prod": "pm2 start dist",
+		"stop:prod": "pm2 stop dist"
   },
   "keywords": [],
   "author": "",
