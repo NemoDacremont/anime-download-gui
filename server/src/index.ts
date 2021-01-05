@@ -66,7 +66,7 @@ const httpServer = app.listen(PORT, HOSTNAME,  () => {
 			console.log('Exit in 5 sec');
 
 			setTimeout(() => {
-				process.exit(2);
+				process.exit(0);
 			}, 5000);
 		});
 });
