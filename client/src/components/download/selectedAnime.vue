@@ -63,6 +63,7 @@ import axios from 'axios';
 import { defineComponent } from 'vue';
 
 import { mapGetters, mapActions } from 'vuex';
+import { API_BASE_URL } from '../../constants';
 
 interface EpisodeProgress {
 	progress: number;
@@ -122,7 +123,7 @@ export default defineComponent({
 				animeID,
 				version
 			}
-			axios.post('http://localhost:8080/api/download/unSelectEpisodes', options);
+			axios.post(API_BASE_URL + '/download/unSelectEpisodes', options);
 		},
 		unSelectEpisode (episodes: number) {
 			const { animeID, version } = this.$props
@@ -132,7 +133,7 @@ export default defineComponent({
 				episodes
 			}
 
-			axios.post('http://localhost:8080/api/download/unSelectEpisodes', options);
+			axios.post(API_BASE_URL + '/download/unSelectEpisodes', options);
 		},
 		...mapActions(['loadData'])
 	},
