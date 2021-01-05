@@ -2,7 +2,7 @@
 import cors from 'cors';
 
 const middleWare = cors({
-	origin: 'http://localhost:8081'
+	origin: '*'
 });
 
 export default middleWare;

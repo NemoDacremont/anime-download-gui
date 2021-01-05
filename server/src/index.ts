@@ -39,7 +39,7 @@ const app = express();
 app.use(logger);
 
 // Cors
-app.use(cors);
+if (HOSTNAME !== 'localhost') app.use(cors);
 
 //	Routers
 app.use(duringLoadHandler);
