@@ -20,3 +20,8 @@ export async function initPuppeteer(): Promise<void> {
 
 	page = await browser.newPage();
 }
+
+export async function createPage (): Promise<puppeteer.Page> {
+	if (!page) page = await browser.newPage();
+	return page;
+}

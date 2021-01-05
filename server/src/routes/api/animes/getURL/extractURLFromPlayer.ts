@@ -3,22 +3,21 @@ import { m3u8Parser } from 'mpd-m3u8-to-json';
 import { M3u8JSON } from './extractURL';
 
 //import axios from 'axios';
-import { browser, page } from '../../../../stores/puppeteer';
+import { page as pageStored, createPage } from '../../../../stores/puppeteer';
 
 export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 	return new Promise(async (resolve, reject) => {
-		//const playerPage = (await axios.get(playerURL)).data;
-
-		//const pageIndex = pages.push(await browser.newPage());
-		//const page = pages[pageIndex-1];
-		if (!page) return;
+		const page = pageStored ? pageStored: await createPage();
 
 		let noBlob = false, noSource = false, noVideoSrc = false;
 
+		/*
+		*		Trying to scrap blob things through weird and complicated things but it works!
+		*/
 		page.on('response', async (response) => {
 			// This will only support pstream site for and for security
-			const manifestRegex = /^https:\/\/www\.pstream\.net\/\w\/\w*?\.m3u8/i;
-			if (manifestRegex.test(response.url())) {
+			const pStreamManifestRegex = /^https:\/\/www\.pstream\.net\/\w\/\w*?\.m3u8/i;
+			if (pStreamManifestRegex.test(response.url())) {
 
 				const manifests = await response.text();
 
@@ -48,6 +47,11 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 			}
 		});
 
+		/*
+		*		End of blob thing
+		*/
+
+		// 	Request the player page
 		await page.goto(playerURL);
 
 		/*
@@ -71,7 +75,6 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		const sourceSrc = await (page.$eval('source', (el) => el.getAttribute('src')).catch((err: Error) => console.log(err.message)));
 		if (sourceSrc && !sourceSrc.includes('blob')) {
 			resolve(sourceSrc);
-			return;
 		}
 		noSource = true;
 		console.log('nosource');
@@ -82,15 +85,15 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		*/
 
 		setTimeout(() => {
-			console.log('no blob')
-			noBlob = true;
-			resolve(null);
-			return;
+			if (noBlob) {
+				console.log('no blob')
+				noBlob = true;
+				resolve(null);
+			}
 		}, 10000);
 
 		if (noVideoSrc && noSource && noBlob) {
 			resolve(null);
-			return;
 		}
 		// maybe latter, this means we can't get p-streaming file source.
 	});
