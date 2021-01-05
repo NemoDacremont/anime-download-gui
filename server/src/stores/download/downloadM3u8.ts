@@ -30,10 +30,8 @@ const downloadSegment = (url: string, segmentIndex: number, downloadedSegments: 
 
 const write = (writeStream: fs.WriteStream, data: Buffer, key: number): Promise<void> => {
 	return new Promise((resolve) => {
-		console.log('download', key);
 		if (!writeStream.write(data)) {
 			writeStream.once('drain', () => {
-				console.log('drain', key);
 				resolve();
 			});
 		}
@@ -83,7 +81,6 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 				fs.mkdirSync(dirPath, { recursive: true });
 				fs.writeFileSync(outFilePath, '');
 			} catch (error) {
-				console.log(`File ${outFilePath} can't be created ouais ferme ta gueule`);
 				resolve(false)
 			}
 		};
@@ -110,9 +107,6 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 
 			const progress = Math.round(100 * segmentsWritten / length);
 			onData(progress);
-			//console.log(`Segments written: ${segmentsWritten}`);
-			//console.log(`Current segment: ${segmentIndex}`);
-	//		console.log('standing segment:', segmentIndex);
 
 			// Actual weird download thing ...
 			if (downloadedSegments.size <= 3) {
@@ -130,6 +124,10 @@ export default function (outFilePath: string, source: LevelM3u8, cbs?: DownloadC
 		while (downloadedSegments.size > 0) {
 			await (new Promise((resolve) => setTimeout(() => { resolve() }, 500)) as Promise<void>);
 			segmentsWritten = await pipeData(segmentsWritten, downloadedSegments, writeFileStream);
+
+			// Still update in front end
+			const progress = Math.round(100 * segmentsWritten / length);
+			onData(progress);
 		}
 
 		// Here, the download should be done
