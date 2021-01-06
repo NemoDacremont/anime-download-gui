@@ -5,10 +5,13 @@
   "main": "dist/",
   "scripts": {
     "dev": "tsc --watch",
-		"prebuild": "rm -r dist",
+		"prebuild": "./prebuild.sh",
 		"build": "tsc",
 		"postbuild": "cp -rf server/client dist/",
-		"start": "node dist"
+		"start": "node dist",
+		"start:monit": "pm2 start dist && pm2 monit",
+		"monit": "pm2 monit",
+		"stop": "pm2 stop dist"
   },
   "keywords": [],
   "author": "",
