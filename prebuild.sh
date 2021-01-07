@@ -1,11 +1,7 @@
 
-function BUILD_CLIENT() {
-	cd client/
-	npm run build
-}
+rm -rf dist
 
-#
-rm -r dist
-BUILD_CLIENT
+cd client/
+npm run build
 
 

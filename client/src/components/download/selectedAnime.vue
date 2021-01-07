@@ -6,10 +6,9 @@
 		>
 			<div
 				class="selected-anime__anime-title"
-				title="develop"
 				:style="{ '--progress': `${(versionProgress || 0) - 100}%`}"
 			>
-				<div class="title" @click="toggleWrap">
+				<div class="title" @click="toggleWrap" title="Develop anime">
 					<div class="wrapper-container clickable" :class="{ selected: progresses.isWrapped}">
 						<span class="material-icons">
 							keyboard_arrow_right
@@ -20,7 +19,7 @@
 				<div class="selected-anime__progress">
 					<p>
 						progress: <span>{{ Math.round(versionProgress) || 0 }}%</span></p>
-					<p>
+					<p title="Remove from download list">
 						<span class="material-icons unselect clickable" @click="unSelectVersion()">
 							clear
 						</span>

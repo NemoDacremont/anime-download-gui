@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 
 module.exports = {
-	outputDir: '../server/client'
+	outputDir: '../server/client',
+	//mode: "production"
 }

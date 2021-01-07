@@ -1,8 +1,10 @@
 
 import { Router } from 'express';
 
-import animeStore from '../../../../stores/animes';
 import extractURL from './extractURL';
+
+// types
+import { Version } from '../../../../stores/animes';
 
 const getURL = Router();
 
@@ -11,21 +13,20 @@ getURL.get('/getURL/:animeIDRaw/:version/:episodeRaw', (req, res, next) => {
 
 	console.log(req.params);
 
+		const areParamsValid = !isNaN(parseInt(animeIDRaw)) && !isNaN(parseInt(episodeRaw));
+
 	//	Checking if the version is valid
-	if (version !== 'vostfr' && version !== 'vf') next();
+	if (['vostfr', 'vf'].includes(version)) next();
 
 	//	Then check if the anime is valid
-	else if (
-			!parseInt(animeIDRaw) ||
-			!parseInt(episodeRaw)
-		) next();
+	else if (!areParamsValid) next();
 
 	//	We can finally proceed to the extract
 	else {
 		const animeID = parseInt(animeIDRaw);
 		const episode = parseInt(episodeRaw);
 
-		extractURL( animeID, version, episode )
+		extractURL( animeID, version as Version, episode )
 			.then((url) => {
 				res.send(url);
 			})

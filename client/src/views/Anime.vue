@@ -4,11 +4,15 @@
 			<header>
 				<h1>{{ anime.title }}</h1>
 				<div class="selection-type">
+					<span class="clickable text submit-selection" @click="submitUnselect">
+						Unselect
+					</span>
+
 					<span class="clickable text submit-selection" @click="submitSelect">
 						Select
 					</span>
 
-					<hr>
+					<!--hr>
 
 					<span
 						class="material-icons clickable medium"
@@ -21,10 +25,10 @@
 					<span
 						class="clickable text"
 						title="range selection"
-						@click="selectRange"
+						@click="selectRange";
 					>
 						range
-					</span>
+					</span-->
 				</div>
 			</header>
 
@@ -68,8 +72,7 @@
 					<form @submit.prevent v-else>
 						<ul class="episode-list">
 							<li v-for="(episode, index) in episodes" :key="index">
-								<label class="episode-list-item clickable text" :for="`episode${index}`" @input="toggle(index + 1)" :class="{ selected: selectedEpisodes.has(index + 1) }">
-									<input type="checkbox" :name="`episode${index}`" :id="`episode${index}`">
+								<label class="episode-list-item clickable text" @click.prevent="toggle(index + 1)" :class="{ selected: selectedEpisodes.has(index + 1), 'server-selected': serverSelectedEpisodes.has(index + 1) }">
 									<span>{{ episode.episode }}</span>
 								</label>
 							</li>
@@ -101,6 +104,8 @@ import { mapGetters, mapActions } from 'vuex';
 import { API_BASE_URL } from '../constants';
 import { Episode } from '../store/download';
 import { Anime, Version } from '../store/animeList';
+import unselectRouter from '../../../server/src/routes/api/download/unselectEpisodes';
+import { selectEpisodes } from '../../../server/src/stores/download';
 
 export default defineComponent({
 	name: 'Anime',
@@ -110,6 +115,7 @@ export default defineComponent({
 			endSelection: 2,
 			episodes: null,
 			selectedEpisodes: new Set() as Set<number>,
+			serverSelectedEpisodes: new Set() as Set<number>,
 			isRangeSelectMethod: false
 		}
 	},
@@ -138,11 +144,13 @@ export default defineComponent({
 			this.isRangeSelectMethod = false;
 		},
 		toggle (index: number) {
+			console.log('toggle:', index);
 			if (this.$data.selectedEpisodes.has(index)) this.$data.selectedEpisodes.delete(index);
 			else this.$data.selectedEpisodes.add(index);
+			console.log(this.$data.selectedEpisodes);
 		},
 		submitSelect () {
-			const { selectedEpisodes } = this.$data;
+			const { selectedEpisodes, serverSelectedEpisodes } = this.$data;
 			const { version, id: animeID } = this.$route.params;
 
 			interface PostData {
@@ -152,17 +160,53 @@ export default defineComponent({
 			}
 
 			const isAnimeIDValid = typeof animeID === 'string' && !isNaN(parseInt(animeID));
-			const isVersionValid = version === 'vostfr' || version === 'vf';
+			const isVersionValid = ['vostfr', 'vf'].includes(version as string);
 
 			if (!isAnimeIDValid || !isVersionValid) return;
+
+			const parsedEpisodes = [...selectedEpisodes].sort((a, b) => a - b);
+
 
 			const postData: PostData = {
 				animeID: parseInt(animeID as string),
 				version: version as Version,
-				episodes: [...selectedEpisodes].sort((a, b) => a - b)
+				episodes: parsedEpisodes
 			}
 
+			parsedEpisodes.forEach((episode) => {
+				serverSelectedEpisodes.add(episode);
+			});
+
 			axios.post(API_BASE_URL + '/download/selectEpisodes', postData);
+		},
+		submitUnselect () {
+			const { selectedEpisodes, serverSelectedEpisodes } = this.$data;
+			const { version, id: animeID } = this.$route.params;
+
+			interface PostData {
+				animeID: number;
+				version: Version;
+				episodes?: number[];
+			}
+
+			const isAnimeIDValid = typeof animeID === 'string' && !isNaN(parseInt(animeID));
+			const isVersionValid = ['vostfr', 'vf'].includes(version as string);
+
+			if (!isAnimeIDValid || !isVersionValid) return;
+
+			const parsedEpisodes = [...selectedEpisodes].sort((a, b) => a - b);
+			
+			const postData: PostData = {
+				animeID: parseInt(animeID as string),
+				version: version as Version,
+				episodes: selectedEpisodes.size === 0 ? undefined : parsedEpisodes
+			}
+
+			parsedEpisodes.forEach((episode) => {
+				serverSelectedEpisodes.delete(episode);
+			});
+
+			axios.post(API_BASE_URL + '/download/unSelectEpisodes', postData);
 		},
 		selectAll () {
 			const { selectedEpisodes, episodes } = this.$data as { selectedEpisodes: Set<number>; episodes: null | Episode[] };
@@ -180,7 +224,7 @@ export default defineComponent({
 		...mapActions(['loadData'])
 	},
 	created () {
-		const { version } = this.$route.params;
+		const { id: animeID, version } = this.$route.params;
 		if (!this.anime) {
 			this.loadData(version)
 				.then(() => {
@@ -190,6 +234,19 @@ export default defineComponent({
 		else {
 			this.loadEpisodes();
 		}
+
+		const versionURL = API_BASE_URL + `/download/getSelectedEpisodes/${animeID}/${version}`;
+		axios.get(versionURL).then(res => {
+			const selectedEpisodes = res.data;
+
+			if (Array.isArray(selectedEpisodes)) {
+				selectedEpisodes.forEach((selectedEpisode) => {
+					this.$data.serverSelectedEpisodes.add(selectedEpisode);
+				});
+			}
+
+			console.log(this.$data.serverSelectedEpisodes);
+		});
 	}
 })
 </script>
@@ -257,9 +314,22 @@ input[type=number] {
 		height: 100%;
 		background-color: var(--nav-background-color);
 		border-radius: .75em;
+		transition: background-color .25s;
 
 		&.selected span {
 			color: var(--highlight-active);
+		}
+
+		&.server-selected {
+			background-color: var(--highlight-selected);
+			
+			span {
+				//color: var(--background-color);
+			}
+
+			&.selected span {
+				//color: var(--highlight-actove);
+			}
 		}
 
 		&:hover {

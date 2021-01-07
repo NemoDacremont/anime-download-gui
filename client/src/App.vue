@@ -61,7 +61,8 @@ export default defineComponent({
 	--font-color-dark: #f8f8f7;
 
 	--highlight-activable: #728BAB;
-	--highlight-active: #f3745c;
+	--highlight-active: #FBC02D;
+	--highlight-selected: #388E3C;
 	--highlight-downloaded: #458233;
 	--highlight-not-downloaded: #83322D;
 	
@@ -114,7 +115,7 @@ export default defineComponent({
 		}
 
 		&::before {
-			opacity: 1;
+			opacity: .5;
 			transform: scale(100%, 100%);
 		}
 	}
