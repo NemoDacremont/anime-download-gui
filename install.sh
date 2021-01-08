@@ -1,8 +1,8 @@
 
 #	Install server dependencies
-npm run install
+npm install
 
 #	Install client dependencies in order to build it
 cd client
-npm run install
+npm install
 
