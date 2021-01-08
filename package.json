@@ -5,7 +5,6 @@
   "main": "dist/",
   "scripts": {
     "dev": "tsc --watch",
-		"install": "./install.sh",
 		"prebuild": "./prebuild.sh",
 		"build": "tsc",
 		"postbuild": "cp -rf server/client dist/",
