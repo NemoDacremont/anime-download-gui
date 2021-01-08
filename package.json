@@ -5,13 +5,22 @@
   "main": "dist/",
   "scripts": {
     "dev": "tsc --watch",
+		"install": "./install.sh",
 		"prebuild": "./prebuild.sh",
 		"build": "tsc",
 		"postbuild": "cp -rf server/client dist/",
-		"start": "node dist",
-		"start:monit": "pm2 start dist && pm2 monit",
+		"start": "pm2 start dist",
+		"stop": "pm2 stop dist",
 		"monit": "pm2 monit",
-		"stop": "pm2 stop dist"
+
+		"start:monit": "npm run start",
+		"poststart:monit": "npm run monit",
+
+		"prerestart": "npm run stop",
+		"restart": "npm run start",
+
+		"restart:monit": "npm run restart",
+		"postrestart:monit": "npm run monit"
   },
   "keywords": [],
   "author": "",
