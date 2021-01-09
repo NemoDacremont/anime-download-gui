@@ -100,8 +100,6 @@ import { mapGetters, mapActions } from 'vuex';
 import { API_BASE_URL } from '../constants';
 import { Episode } from '../store/download';
 import { Anime, Version } from '../store/animeList';
-import unselectRouter from '../../../server/src/routes/api/download/unselectEpisodes';
-import { selectEpisodes } from '../../../server/src/stores/download';
 
 export default defineComponent({
 	name: 'Anime',
@@ -134,10 +132,8 @@ export default defineComponent({
 			this.$data.episodes = (await axios.get(url)).data;
 		},
 		toggle (index: number) {
-			console.log('toggle:', index);
 			if (this.$data.selectedEpisodes.has(index)) this.$data.selectedEpisodes.delete(index);
 			else this.$data.selectedEpisodes.add(index);
-			console.log(this.$data.selectedEpisodes);
 		},
 		submitSelect () {
 			const { selectedEpisodes, serverSelectedEpisodes } = this.$data;
@@ -254,8 +250,6 @@ export default defineComponent({
 					this.$data.serverSelectedEpisodes.add(selectedEpisode);
 				});
 			}
-
-			console.log(this.$data.serverSelectedEpisodes);
 		});
 	}
 })
