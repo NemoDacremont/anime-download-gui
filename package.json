@@ -8,15 +8,13 @@
 		"prebuild": "./prebuild.sh",
 		"build": "tsc",
 		"postbuild": "cp -rf server/client dist/",
-		"start": "pm2 start dist",
+		"start": "pm2 start dist --no-autorestart --time -i max",
+		"restart": "pm2 restart dist --no-autorestart --time -i max",
 		"stop": "pm2 stop dist",
 		"monit": "pm2 monit",
 
 		"start:monit": "npm run start",
 		"poststart:monit": "npm run monit",
-
-		"prerestart": "npm run stop",
-		"restart": "npm run start",
 
 		"restart:monit": "npm run restart",
 		"postrestart:monit": "npm run monit"

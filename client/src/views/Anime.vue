@@ -4,72 +4,68 @@
 			<header>
 				<h1>{{ anime.title }}</h1>
 				<div class="selection-type">
-					<span class="clickable text submit-selection" @click="submitUnselect">
-						Unselect
+					<span class="clickable text submit-selection" @click="submitUnselect" title="Remove from download list">
+						Remove selection
 					</span>
 
-					<span class="clickable text submit-selection" @click="submitSelect">
-						Select
+					<span class="clickable text submit-selection" @click="submitSelect" title="Add to download list">
+						Add selection
 					</span>
-
-					<!--hr>
-
-					<span
-						class="material-icons clickable medium"
-						title="list selection"
-						@click="selectList"
-					>
-						library_add
-					</span>
-
-					<span
-						class="clickable text"
-						title="range selection"
-						@click="selectRange";
-					>
-						range
-					</span-->
 				</div>
 			</header>
 
 			<section>
 				<div class="episodes" v-if="episodes">
 					<div class="top">
-						<p>Nombre d'épisodes: {{ episodes.length }}</p>
-						<div class="actions">
-							<span class="clickable text" @click="selectAll">
-								select all
-							</span>
-							<span class="clickable text" @click="unSelectAll">
-								unselect all
-							</span>
+						<div class="actions-container">
+							<p>Nombre d'épisodes: {{ episodes.length }}</p>
+							<div class="actions">
+								<span class="clickable text" @click="selectAll" title="Add all episodes to selection">
+									select all
+								</span>
+								<span class="clickable text" @click="unSelectAll" title="Remove all episodes from selection">
+									unselect all
+								</span>
+							</div>
+						</div>
+						
+
+						<div class="range-selection">
+							<div class="inputs">
+								<label for="start">
+									<input type="number" name="start" id="start"
+										min="1"
+										:max="episodes.length - 1"
+										v-model="startSelection"
+									>
+								</label>
+
+								<label for="end">
+									<input type="number" name="end" id="end"
+										min="2"
+										:max="episodes.length"
+										v-model="endSelection"
+									>
+								</label>
+							</div>
+
+							<div class="submits">
+								<span class="clickable text submit-range" title="Add range to selection" @click="selectRange">
+									Select Range
+								</span>
+
+								<span class="clickable text submit-range" title="Remove range from selection" @click="unSelectRange">
+									Unselect Range
+								</span>
+							</div>
+							
+							
 						</div>
 					</div>
+
 					<hr>
-					<form 
-						@submit.prevent
-						class="form__selection"
-						v-if="isRangeSelectMethod"
-					>
-						<label for="start">
-							<input type="number" name="start" id="start"
-								min="1"
-								:max="episodes.length - 1"
-								v-model="startSelection"
-							>
-						</label>
-
-						<label for="end">
-							<input type="number" name="end" id="end"
-								min="2"
-								:max="episodes.length"
-								v-model="endSelection"
-							>
-						</label>
-
-						<input type="submit" value="Select">
-					</form>
-					<form @submit.prevent v-else>
+					
+					<form @submit.prevent>
 						<ul class="episode-list">
 							<li v-for="(episode, index) in episodes" :key="index">
 								<label class="episode-list-item clickable text" @click.prevent="toggle(index + 1)" :class="{ selected: selectedEpisodes.has(index + 1), 'server-selected': serverSelectedEpisodes.has(index + 1) }">
@@ -111,9 +107,9 @@ export default defineComponent({
 	name: 'Anime',
 	data () {
 		return {
-			startSelection: 1,
-			endSelection: 2,
-			episodes: null,
+			startSelection: "1",
+			endSelection: "2",
+			episodes: null as null | Episode[],
 			selectedEpisodes: new Set() as Set<number>,
 			serverSelectedEpisodes: new Set() as Set<number>,
 			isRangeSelectMethod: false
@@ -136,12 +132,6 @@ export default defineComponent({
 			const url = API_BASE_URL + apiURL;
 
 			this.$data.episodes = (await axios.get(url)).data;
-		},
-		selectRange () {
-			this.isRangeSelectMethod = true;
-		},
-		selectList () {
-			this.isRangeSelectMethod = false;
 		},
 		toggle (index: number) {
 			console.log('toggle:', index);
@@ -220,6 +210,26 @@ export default defineComponent({
 			selectedEpisodes.forEach((value) => {
 				selectedEpisodes.delete(value);
 			});
+		},
+		selectRange () {
+			const { startSelection, endSelection, selectedEpisodes, episodes } = this.$data;
+			const start = parseInt(startSelection), end = parseInt(endSelection);
+
+			if (start <= 0 || (episodes && end > episodes.length - 1)) return;
+
+			for (let i=start ; i<=end ; i++) {
+				selectedEpisodes.add(i);
+			}
+		},
+		unSelectRange () {
+			const { startSelection, endSelection, selectedEpisodes, episodes } = this.$data;
+			const start = parseInt(startSelection), end = parseInt(endSelection);
+
+			if (start <= 0 || (episodes && end > episodes.length - 1)) return;
+
+			for (let i=start ; i<=end ; i++) {
+				selectedEpisodes.delete(i);
+			}
 		},
 		...mapActions(['loadData'])
 	},
@@ -347,10 +357,18 @@ input[type=number] {
 
 .top {
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 7.5em;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
 	padding: .5em;
+}
+
+.actions-container, .range-selection {
+	display: flex;
+	align-items: center;
+	gap: 7.5em;
+	justify-content: space-between;
+
 }
 
 .episodes {
