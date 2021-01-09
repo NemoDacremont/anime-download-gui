@@ -1,6 +1,9 @@
 
 import axios from 'axios';
 
+// Constants
+import { NEKO_SAMA_BASE_URL } from '../../constants';
+
 // Store
 import { Anime } from '.';
 
@@ -29,7 +32,7 @@ export function ExtractEpisodeList(anime: Anime, episode: number): Promise<Episo
 export async function ExtractEpisodeList (anime: Anime, episode?: number): Promise<Episode | Episode[] | null> {
 	if (!anime.url) return null;
 	
-	const baseURL = process.env['NEKO-SAMA_BASE-URL'];
+	const baseURL = NEKO_SAMA_BASE_URL;
 	const infoPage = (await axios.get(baseURL + anime.url)).data as string;
 	const rawEpisodes = infoPage.match(/episodes = \[(\{.*?\},?)*?\]/g)
 

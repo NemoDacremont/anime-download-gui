@@ -1,6 +1,8 @@
 
 import axios from 'axios';
+
 import animeStore, { Anime } from '../../stores/animes';
+import { NEKO_SAMA_ANIMELIST_URL_VOSTFR, NEKO_SAMA_ANIMELIST_URL_VF } from '../../constants';
 
 const animeMapper = (anime: Anime): Anime => {
 	const { id, title, title_english, title_romanji, url, status, url_image, nb_eps } = anime;
@@ -29,14 +31,14 @@ const animeSorter = (anime1: Anime, anime2: Anime): number => {
 
 //
 export default async function (): Promise<void> {
-	if (process.env["NEKO-SAMA_ANIMELIST-URL_VOSTFR"]) {
-		animeStore.animeList.vostfr = (await axios.get(process.env["NEKO-SAMA_ANIMELIST-URL_VOSTFR"])).data
+	if (NEKO_SAMA_ANIMELIST_URL_VOSTFR) {
+		animeStore.animeList.vostfr = (await axios.get(NEKO_SAMA_ANIMELIST_URL_VOSTFR)).data
 			.map(animeMapper)
 			.sort(animeSorter);
 	}
 
-	if (process.env["NEKO-SAMA_ANIMELIST-URL_VF"]) {
-		animeStore.animeList.vf = (await axios.get(process.env["NEKO-SAMA_ANIMELIST-URL_VF"])).data
+	if (NEKO_SAMA_ANIMELIST_URL_VF) {
+		animeStore.animeList.vf = (await axios.get(NEKO_SAMA_ANIMELIST_URL_VF)).data
 			.map(animeMapper)
 			.sort(animeSorter);
 	}

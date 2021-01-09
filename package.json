@@ -5,11 +5,14 @@
   "main": "dist/",
   "scripts": {
     "dev": "tsc --watch",
+		"build:server": "tsc",
+		"postbuild:server": "cp -rf server/client dist/",
+
 		"prebuild": "./prebuild.sh",
-		"build": "tsc",
-		"postbuild": "cp -rf server/client dist/",
-		"start": "pm2 start dist --no-autorestart --time -i max",
-		"restart": "pm2 restart dist --no-autorestart --time -i max",
+		"build": "npm run build:server",
+
+		"start": "pm2 start dist --no-autorestart --time",
+		"restart": "pm2 restart dist --no-autorestart --time",
 		"stop": "pm2 stop dist",
 		"monit": "pm2 monit",
 
