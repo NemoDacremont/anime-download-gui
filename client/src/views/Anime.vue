@@ -215,7 +215,7 @@ export default defineComponent({
 			const { startSelection, endSelection, selectedEpisodes, episodes } = this.$data;
 			const start = parseInt(startSelection), end = parseInt(endSelection);
 
-			if (start <= 0 || (episodes && end > episodes.length - 1)) return;
+			if (start <= 0 || (episodes && end > episodes.length)) return;
 
 			for (let i=start ; i<=end ; i++) {
 				selectedEpisodes.add(i);

@@ -1,44 +1,35 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
-import Home from '@/views/Home.vue'
-import notFound from '@/views/notFound.vue';
-import Anime from '@/views/Anime.vue';
-import AnimeList from '@/views/AnimeList.vue';
-import Download from '@/views/Download.vue';
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue')
 	},
 	{
 		path: '/anime/:version/:id',
 		name: 'Anime',
-		component: Anime
+    component: () => import(/* webpackChunkName: "anime" */ '../views/Anime.vue')
 	},
 	{
 		path: '/animelist/:version/:page',
 		name: 'AnimeList',
-		component: AnimeList
+    component: () => import(/* webpackChunkName: "animelist" */ '../views/AnimeList.vue')
 	},
 	{
 		path: '/download',
 		name: 'Download',
-		component: Download
+    component: () => import(/* webpackChunkName: "download" */ '../views/Download.vue')
 	},
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
 	},
 	{
 		path: '/:pathMatch(.*)*',
 		name: '404',
-		component: notFound
+    component: () => import(/* webpackChunkName: "notfound" */ '../views/notFound.vue')
 	}
 ]
 
