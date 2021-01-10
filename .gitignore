@@ -4,11 +4,13 @@
 
 # Builded folders
 node_modules/
+server/client/
 dist/
 
-server/client/
-
-chromium/*
-test.js
-
+# Prod things
 prod.zip
+prod/
+
+# local chromium bin
+chromium/*
+

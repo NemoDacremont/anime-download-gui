@@ -5,22 +5,18 @@
   "main": "dist/",
   "scripts": {
     "dev": "tsc --watch",
-		"build:server": "tsc",
-		"postbuild:server": "cp -rf server/client dist/",
-
-		"prebuild": "./prebuild.sh",
-		"build": "npm run build:server",
-
-		"start": "pm2 start dist --no-autorestart --time",
-		"restart": "pm2 restart dist --no-autorestart --time",
-		"stop": "pm2 stop dist",
-		"monit": "pm2 monit",
-
-		"start:monit": "npm run start",
-		"poststart:monit": "npm run monit",
-
-		"restart:monit": "npm run restart",
-		"postrestart:monit": "npm run monit"
+    "build:server": "tsc",
+    "postbuild:server": "cp -rf server/client dist/",
+    "prebuild": "./prebuild.sh",
+    "build": "npm run build:server",
+    "start": "pm2 start dist --no-autorestart --time",
+    "restart": "pm2 restart dist --no-autorestart --time",
+    "stop": "pm2 stop dist",
+    "monit": "pm2 monit",
+    "start:monit": "npm run start",
+    "poststart:monit": "npm run monit",
+    "restart:monit": "npm run restart",
+    "postrestart:monit": "npm run monit"
   },
   "keywords": [],
   "author": "",
