@@ -327,13 +327,13 @@ input[type=number] {
 		&.server-selected {
 			background-color: var(--highlight-selected);
 			
-			span {
+			/*span {
 				//color: var(--background-color);
 			}
 
 			&.selected span {
 				//color: var(--highlight-actove);
-			}
+			}*/
 		}
 
 		&:hover {

@@ -31,13 +31,10 @@ selectEpisodesRouter.post('/', async (req, res, next) => {
 	const { animeID, version, episodes } = req.body as BodyInput;
 	
 	const isAnimeIDValid = typeof animeID === 'number';
-	const isVersionValid = version && (['vostfr', 'fr'].includes(version));
+	const isVersionValid = version && ['vostfr', 'vf'].includes(version);
 	const isEpisodeValid = (Array.isArray(episodes) && episodes.length > 0 && onlyContainNumber(episodes)) || typeof episodes === 'number';
 
-	if (!isAnimeIDValid || !isVersionValid || !isEpisodeValid) {
-		next();
-		return;
-	}
+	if (!(isAnimeIDValid && isVersionValid && isEpisodeValid)) { next(); return; }
 
 	// Force types because ts doesn't like my test
 	// test if the animeID is linked to an anime
