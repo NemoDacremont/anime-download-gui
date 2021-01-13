@@ -10,6 +10,7 @@ export let page: puppeteer.Page | null = null;
 export async function initPuppeteer(): Promise<void> {
 	browser = await puppeteer.launch({
 		headless: true,
+		ignoreHTTPSErrors: true,
 		executablePath: chromiumPath
 	});
 

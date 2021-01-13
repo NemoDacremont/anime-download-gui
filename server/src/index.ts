@@ -22,7 +22,6 @@ import initScript from './scripts/init';
 */
 
 import globalStore from './stores/global';
-import socketIOStore from './stores/socketIO';
 
 console.log('Server is loading...');
 
@@ -70,6 +69,4 @@ const httpServer = app.listen(PORT, HOSTNAME,  () => {
 			}, 5000);
 		});
 });
-
-
 
