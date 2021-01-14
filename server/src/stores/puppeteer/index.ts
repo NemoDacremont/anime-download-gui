@@ -7,8 +7,19 @@ import { chromiumPath } from '../../constants';
 export let browser: puppeteer.Browser;
 export let page: puppeteer.Page | null = null;
 
+const args = [
+	'--disable-gpu',
+	'--disable-dev-shm-usage',
+	'--disable-setuid-sandbox',
+	'--no-first-run',
+	'--no-sandbox',
+	'--no-zygote',
+	'--single-process',
+]
+
 export async function initPuppeteer(): Promise<void> {
 	browser = await puppeteer.launch({
+		args,
 		headless: true,
 		ignoreHTTPSErrors: true,
 		executablePath: chromiumPath

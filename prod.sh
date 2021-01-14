@@ -41,7 +41,8 @@ npm install --only=prod
 
 
 # This file shouldn't be usefull in production mode, only scripts in package.json are
-rm package-lock.json
+#rm package-lock.json
+
 # Remove .map files from the builded client
 rm dist/client/js/*.map
 

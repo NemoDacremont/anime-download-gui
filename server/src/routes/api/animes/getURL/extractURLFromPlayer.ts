@@ -1,12 +1,12 @@
 
-import { m3u8Parser } from 'mpd-m3u8-to-json';
+import catchPStreamM3u8 from './catchPStreamM3U8';
+import fetchM3u8 from './fetchM3U8';
 import { M3u8JSON } from './extractURL';
 
-//import axios from 'axios';
 import { page as pageStored, createPage } from '../../../../stores/puppeteer';
 
 export default function (playerURL: string): Promise<string | M3u8JSON | null> {
-	return new Promise(async (resolve, reject) => {
+	return new Promise(async (resolve) => {
 		// If pageStored is null, this means puppeteer hasn't been initialized
 		if (!pageStored) {
 			resolve(null);
@@ -15,42 +15,21 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		// Recreate the page if it has been closed
 		const page = pageStored.isClosed() ? await createPage(): pageStored;
 
-		let noBlob = false, noSource = false, noVideoSrc = false;
+		let /*noBlob = false, */withBlob = false, noSource = false, noVideoSrc = false;
 
 		/*
 		*		Trying to scrap blob things through weird and complicated things but it works!
 		*/
 		page.on('response', async (response) => {
 			// This will only support pstream site for and for security
-			const pStreamManifestRegex = /^https:\/\/www\.pstream\.net\/\w\/\w*?\.m3u8/i;
-			if (pStreamManifestRegex.test(response.url())) {
+			const manifestURL = await catchPStreamM3u8(response);
+			if (!manifestURL) return;
 
-				const manifests = await response.text();
+			const manifest = await fetchM3u8(manifestURL, page);
+			if (!manifest) return;
 
-				const manifestRegex = /^https:\/\/www\.pstream\.net\/h\/\d+\/\w*?\.m3u8\?expires=\d+&signature=\w+/m;
-				const bestManifests = manifests.match(manifestRegex)
-
-				const bestManifestURL = bestManifests ? bestManifests[0]: null;
-
-				if (bestManifestURL) {
-					const manifest2 = await page?.evaluate(async (url) => {
-						return await (await fetch(url)).text();
-					}, bestManifestURL);
-
-					if (manifest2 && typeof manifest2 === 'string') {
-						const output = m3u8Parser(manifest2, 'fake url');
-						await page.close();
-						resolve(output);
-					}
-				}
-				else {
-					if (noSource && noVideoSrc) {
-						await page.close();
-						resolve(null);
-					}
-				}
-
-			}
+			withBlob = true;
+			resolve(manifest);
 		});
 
 		/*
@@ -85,26 +64,19 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 			resolve(sourceSrc);
 		}
 		noSource = true;
-		console.log('nosource');
+		console.log('no source tag');
 
 
 		/*
-		*		Blob scraping
+		*		Time out and close the page
 		*/
 
 		setTimeout(async () => {
-			if (!page.isClosed()) {
+			await page.close();
+			if (!withBlob) {
 				console.log('no blob')
-				noBlob = true;
-				await page.close();
 				resolve(null);
 			}
 		}, 10000);
-
-		if (noVideoSrc && noSource && noBlob) {
-			await page.close();
-			resolve(null);
-		}
-		// maybe latter, this means we can't get p-streaming file source.
 	});
 }
