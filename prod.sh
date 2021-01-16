@@ -1,7 +1,7 @@
 
 ## Functions
 function CREATE_NEW_DOT_ENV {
-	VARIABLES=(PORT=8080 NODE_ENV=production)
+	VARIABLES=(PORT=8080 NODE_ENV=production NODE_DEBUG=net,tls,http,https)
 	for VAR in ${VARIABLES[*]}
 	do
 		echo $VAR >> .env
