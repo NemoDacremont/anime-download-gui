@@ -20,7 +20,10 @@ export type EpisodeIndex = number;
 export type ItemsToDownload = Map< AnimeID, Map< Version, Set<EpisodeIndex> >>
 export type AnimeEpisodesInformation = Map<AnimeID, Map<Version, Map<EpisodeIndex, Episode> >>
 
-export type EpisodeProgress = number;
+export interface EpisodeProgress {
+	progress: number;
+	state: string;
+}
 export type Progresses = Map< AnimeID, Map< Version, Map<EpisodeIndex, EpisodeProgress> >>
 
 export interface DownloadStore {
@@ -37,7 +40,7 @@ export interface  ParsedDownloadList {
 }
 
 export interface ParsedProgressesVersionEntry {
-	[episodeIndex: number]: number;
+	[episodeIndex: number]: EpisodeProgress;
 }
 export interface ParsedProgresses {
 	[animeID: number]: {
@@ -111,13 +114,23 @@ export class Downloader {
 		if (typeof episodes === 'number') {
 			// Version entry is a set, no need to check value
 			versionEntry.add(episodes);
-			if (!versionProgress.has(episodes)) versionProgress.set(episodes, 0);
+			const progress: EpisodeProgress = {
+				progress: 0,
+				state: 'waiting'
+			}
+
+			if (!versionProgress.has(episodes)) versionProgress.set(episodes, progress);
 		}
 		else if (Array.isArray(episodes) && onlyIncludesNumber(episodes)) {
 			for (let episode of episodes) {
 				// Again, versionEntry is a set
 				versionEntry.add(episode);
-				if (!versionProgress.has(episode)) versionProgress.set(episode, 0);
+				const progress: EpisodeProgress = {
+					progress: 0,
+					state: "waiting"
+				}
+
+				if (!versionProgress.has(episode)) versionProgress.set(episode, progress);
 			}
 		}
 
@@ -176,19 +189,27 @@ export class Downloader {
 		}
 	}
 
-	private updateProgresses (animeID: AnimeID, version: Version, episode: number, newProgress: number): void {
+	private getProgress (animeID: AnimeID, version: Version, episode: number): EpisodeProgress | null {
 		const { progresses } = this.store;
 
 		const animeEntry = progresses.get(animeID);
-		if (!animeEntry) return;
+		if (!animeEntry) return null;
 
 		const versionEntry = animeEntry.get(version);
-		if (!versionEntry) return;
+		if (!versionEntry) return null;
 
-		versionEntry.set(episode, newProgress);
+		return versionEntry.get(episode) || null;
 	}
 
-	getParsedProgresses () {
+	private updateProgresses (animeID: AnimeID, version: Version, episode: number, newProgress: EpisodeProgress): void {
+		const { progresses } = this.store;
+
+		if (!this.getProgress(animeID, version, episode)) return;
+
+		progresses.get(animeID)?.get(version)?.set(episode, newProgress);
+	}
+
+	public getParsedProgresses () {
 		const { progresses } = this.store;
 
 		const output: ParsedProgresses = {};
@@ -208,7 +229,7 @@ export class Downloader {
 		return output;
 	}
 
-	getParsedDownloadList () {
+	public getParsedDownloadList () {
 		const { itemsToDownload } = this.store;
 
 		const output: ParsedDownloadList = {};
@@ -309,7 +330,14 @@ export class Downloader {
 
 					const formattedTitle = anime.title?.replace(/ /g, '_').replace(/\W/g, "").toLocaleLowerCase();
 
-					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err) => console.log(err)));
+					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err) => {
+						console.error(`Error while extracting URL, the file may not exist,error: ${err.message}`);
+						const updatedProgress = this.getProgress(animeID, version, episodeIndex);
+						if (!updatedProgress) return;
+
+						updatedProgress.state = "File deleted";
+						this.updateProgresses(animeID, version, episodeIndex, updatedProgress);
+					}));
 					// test if source is null
 					if (!episodeSource) continue;
 
@@ -326,7 +354,13 @@ export class Downloader {
 							return !this.isDownloading;
 						},
 						onData: (progress: number): void => {
-							this.updateProgresses(animeID, version, episodeIndex, progress);
+							const updatedProgress = this.getProgress(animeID, version, episodeIndex);
+							if (!updatedProgress) return;
+
+							updatedProgress.progress = progress;
+							this.updateProgresses(animeID, version, episodeIndex, updatedProgress);
+
+							// Update in the client
 							const output = this.getParsedProgresses();
 							socketIOStore.socketIOInstance?.emit('progress', output);
 						}

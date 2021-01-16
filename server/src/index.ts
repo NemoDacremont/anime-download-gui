@@ -70,3 +70,11 @@ const httpServer = app.listen(PORT, HOSTNAME,  () => {
 		});
 });
 
+
+// HTTPS things
+/*
+import httpsRedirect from './httpsRedirect';
+httpsRedirect.listen(4433, HOSTNAME, () => {
+	console.log(`HTTP redirect has been set up on port 4433`);
+});
+*/

@@ -34,14 +34,14 @@
 					v-for="episode in selectedVersion"
 					:key="episode"
 					class="selected-anime__episodes-list-item"
-					:style="{ '--progress': `${(getEpisodeProgress(animeID, version, episode) || 0) - 100}%`}"
+					:style="{ '--progress': `${(getEpisodeProgress(animeID, version, episode)?.progress || 0) - 100}%`}"
 				>
-					<p>episode: {{ episode }}</p>
+					<p>episode: {{ episode }} | <span class="episode-state">state: {{ getEpisodeProgress(animeID, version, episode)?.state }}</span></p>
 
 					<div class="selected-anime__progress">
 						<p>progress:
 							<span>
-								{{ getEpisodeProgress(animeID, version, episode) || 0 }}%
+								{{ getEpisodeProgress(animeID, version, episode)?.progress || 0 }}%
 							</span>
 						</p>
 						<p>
@@ -66,6 +66,7 @@ import { API_BASE_URL } from '../../constants';
 
 interface EpisodeProgress {
 	progress: number;
+	state: string;
 }
 
 interface Progresses {
@@ -147,7 +148,12 @@ export default defineComponent({
 		const episodes = selectedVersion;
 		const versionEntry = this.$data.progresses = { episodes: [] as EpisodeProgress[], progress: 0, isWrapped: true, size: 0 };
 		for (let i=0 ; i<episodes.length ; i++) {
-			versionEntry.episodes.push({ progress: Math.random() * 100 });
+			const item = {
+				progress: Math.random() * 100,
+				state: 'waiting'
+			}
+
+			versionEntry.episodes.push(item);
 			versionEntry.size++;
 		}
 	}

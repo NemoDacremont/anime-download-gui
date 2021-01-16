@@ -59,7 +59,17 @@ export default defineComponent({
 		...mapActions(['toggleDownload', 'loadDownloadState'])
 	},
 	async created () {
-		this.$data.downloadList = (await axios.get( API_BASE_URL + '/download/getSelectedEpisodes')).data;
+		// Force downloader data loading
+		axios.get( API_BASE_URL + '/download/getSelectedEpisodes').then((response) => {
+			this.$data.downloadList = response.data;
+		});
+
+		axios.get(API_BASE_URL + '/download/getProgresses').then((response) => {
+			this.updateProgresses(response.data);
+		});
+
+		// Setup socketio to sync downloader data
+
 		this.$data.socket = io(SOCKET_IO_URL);
 		const { socket } = this.$data;
 

@@ -77,6 +77,7 @@ export default function (filePath: string, url: string, cbs?: DownloadCallbacks)
 
 					if (chunkCount % 128 === 0) {
 						const progress = Math.round(100 * totalChunkSize / fileSize);
+
 						onData(progress);
 						lastDate = Date.now();
 						lastChunksSize = 0;

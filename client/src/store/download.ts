@@ -4,10 +4,15 @@ import { Version } from './animeList';
 import { API_BASE_URL } from '../constants';
 import axios from 'axios';
 
+export interface Progress {
+	progress: number;
+	state: string;
+}
+
 export interface Progresses {
 	[animeID: number]: {
 		[version in Version]: {
-			[episodeIndex: number]: number;
+			[episodeIndex: number]: Progress;
 		}
 	};
 }
