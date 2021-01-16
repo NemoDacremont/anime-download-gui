@@ -325,6 +325,12 @@ export class Downloader {
 					const [ index, episodeIndex] = episodeEntry;
 					console.log('episode:', episodeIndex);
 
+					const episodeProgress = this.getProgress(animeID, version, episodeIndex);
+					// Actually this case shouldn't happen, I'll handle it later
+					if (!episodeProgress) continue;
+					this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'downloading' });
+					socketIOStore.socketIOInstance?.emit('progress', this.getParsedProgresses());
+
 					const episode = episodesData.get(episodeIndex);
 					if (!episode) continue;
 
@@ -332,11 +338,8 @@ export class Downloader {
 
 					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err) => {
 						console.error(`Error while extracting URL, the file may not exist,error: ${err.message}`);
-						const updatedProgress = this.getProgress(animeID, version, episodeIndex);
-						if (!updatedProgress) return;
-
-						updatedProgress.state = "File deleted";
-						this.updateProgresses(animeID, version, episodeIndex, updatedProgress);
+						this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'File deleted' });
+						socketIOStore.socketIOInstance?.emit('progress', this.getParsedProgresses());
 					}));
 					// test if source is null
 					if (!episodeSource) continue;
@@ -379,6 +382,9 @@ export class Downloader {
 					}
 
 					console.log(`${anime.title} ${episode.episode} Downloaded!`);
+					this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'Downloaded' });
+					socketIOStore.socketIOInstance?.emit('progress', this.getParsedProgresses());
+
 					// Stop downloading if a cancel request has been used
 					if (!this.isDownloading) return;
 				}
