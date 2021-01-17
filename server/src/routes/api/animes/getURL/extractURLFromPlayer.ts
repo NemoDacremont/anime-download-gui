@@ -45,10 +45,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		*/
 	
 		const videoSrc = await (page.$eval('video', (el) => el.getAttribute('src')).catch((err: Error) => console.log(err.message)));
-		if (videoSrc && typeof videoSrc === 'string' && !videoSrc.includes('blob')) {
-			await page.close();
-			resolve(videoSrc);
-		}
+		if (videoSrc && typeof videoSrc === 'string' && !videoSrc.includes('blob')) resolve(videoSrc);
 		noVideoSrc = true;
 		console.log('no video src');
 	
@@ -59,10 +56,7 @@ export default function (playerURL: string): Promise<string | M3u8JSON | null> {
 		*/
 
 		const sourceSrc = await (page.$eval('source', (el) => el.getAttribute('src')).catch((err: Error) => console.log(err.message)));
-		if (sourceSrc && !sourceSrc.includes('blob')) {
-			await page.close();
-			resolve(sourceSrc);
-		}
+		if (sourceSrc && !sourceSrc.includes('blob')) resolve(sourceSrc);
 		noSource = true;
 		console.log('no source tag');
 
