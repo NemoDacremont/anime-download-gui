@@ -59,9 +59,9 @@ const httpServer = app.listen(PORT, HOSTNAME,  () => {
 			globalStore.isServerLoaded = true;
 			console.log('Server is loaded');
 		})
-		.catch((err) => {
+		.catch((err: Error | string) => {
 			console.error('An error occurred during data loading, you should verify your internet connection');
-			console.log('err:', err?.message);
+			console.log('err:', err);
 			console.log('Exit in 5 sec');
 
 			setTimeout(() => {

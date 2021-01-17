@@ -105,7 +105,7 @@ export default defineComponent({
 
 			let totalProgress = 0;
 			for (const episode of selectedVersion as number[]) {
-				totalProgress += this.getEpisodeProgress(parseInt(animeID), version, episode) / selectedVersion.length;
+				totalProgress += (this.getEpisodeProgress(parseInt(animeID), version, episode)?.progress) / selectedVersion.length;
 			}
 
 			return totalProgress;

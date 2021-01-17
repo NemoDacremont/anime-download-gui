@@ -5,6 +5,7 @@ import http from 'http';
 import cacheAnimeList from './cacheAnimeList';
 import { initPuppeteer } from '../../stores/puppeteer';
 import initSocketIOInstance from './initSocketIOInstance';
+import initCron, { updateNewsCron } from '../cron';
 
 async function initScript (httpServer: http.Server): Promise<void> {
 	await cacheAnimeList();
@@ -14,7 +15,10 @@ async function initScript (httpServer: http.Server): Promise<void> {
 			console.log(err?.message);
 		}));
 
+	updateNewsCron();
+
 	initSocketIOInstance(httpServer);
+	initCron();
 }
 
 export default initScript;

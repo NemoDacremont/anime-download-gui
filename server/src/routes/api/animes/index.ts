@@ -5,6 +5,7 @@ import { Router } from 'express';
 import animeList from './animeList';
 import getURL from './getURL';
 import episodesRouter from './episodes';
+import getNewsRouter from './getNews';
 
 // Store
 import { getAnimeFromID } from '../../../stores/animes';
@@ -17,6 +18,7 @@ const animesRouter = Router();
 animesRouter.use(animeList);
 animesRouter.use(getURL);
 animesRouter.use('/episodes/', episodesRouter);
+animesRouter.use('/getNews', getNewsRouter);
 
 
 /*

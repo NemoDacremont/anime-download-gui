@@ -350,7 +350,7 @@ export class Downloader {
 					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/episode_${formattedEpisode}.${fileExtension}`;
 
 					console.log(`Downloading: ${anime.title} | ${version} | ${episode.episode}`);
-					console.log('outfile:', filePath);
+					console.log('outFile:', filePath);
 
 					const downloadsCallbacks: DownloadCallbacks = {
 						forceReject: (): boolean => {
@@ -382,7 +382,10 @@ export class Downloader {
 					}
 
 					console.log(`${anime.title} ${episode.episode} Downloaded!`);
-					this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'Downloaded' });
+
+					// Have to re-get because of progress value
+					const updateState = this.getProgress(animeID, version, episodeIndex);
+					if (updateState) this.updateProgresses(animeID, version, episodeIndex, { ...updateState, state: 'Downloaded' });
 					socketIOStore.socketIOInstance?.emit('progress', this.getParsedProgresses());
 
 					// Stop downloading if a cancel request has been used

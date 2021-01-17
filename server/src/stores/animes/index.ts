@@ -3,6 +3,7 @@
 *		Types|Interfaces, ts things
 */
 
+import { News } from '../../scripts/getNews';
 
 /*
 	Example of Anime:
@@ -47,14 +48,16 @@ export interface AnimeStore {
 	animeList: {
 		vostfr: Anime[];
 		vf: Anime[];
-	}
+	},
+	news: News;
 }
 
 const animeStore: AnimeStore = {
 	animeList: {
 		vostfr: [],
 		vf: []
-	}
+	},
+	news: []
 }
 
 export type Version = 'vostfr' | 'vf';
@@ -62,6 +65,11 @@ export type Version = 'vostfr' | 'vf';
 export const vf = animeStore.animeList.vf;
 export const vostfr = animeStore.animeList.vostfr;
 export const animeList = animeStore.animeList;
+
+export const updateNews = (newNews: News): News => animeStore.news = newNews;
+
+// cache vostfr and vf functions
+export * from './cacheAnimeList';
 
 /*
 *		Actual store
