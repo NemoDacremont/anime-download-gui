@@ -1,5 +1,5 @@
 
-import axios from 'axios';
+import axios, { AxiosAdapter, AxiosResponse } from 'axios';
 
 import extractURLFromPlayer from './extractURLFromPlayer';
 import { downloader } from '../../../../stores/download';
@@ -61,8 +61,14 @@ export default async function (animeID: number, version: 'vostfr' | 'vf', episod
 
 	const episodeURL = nekoSamaBaseURL + episodeData.url;
 
-	const animePage: string = (await axios.get(episodeURL)).data;
-	const playersSources = animePage.match(/^https?:\/\/((www)|(embed))\.((pstream)|(mystream))\.((net)|(to))\/(\w+\/)?\w+$/g);
+	const animePageResponse = await axios.get(episodeURL).catch((err) => console.log(err));
+	if (!animePageResponse) return null;
+
+	const animePage: string = animePageResponse.data;
+	console.log(animePage);
+
+	const playersSources = animePage.match(/https?:\/\/((www)|(embed))\.((pstream)|(mystream))\.((net)|(to))\/(\w+\/)?\w+/g);
+	console.log(playersSources);
 	if (!playersSources) throw new Error(`The episode you're looking for doesn't look like existing`);
 
 	for (let i=playersSources.length-1 ; i>=0 ; i--) {
