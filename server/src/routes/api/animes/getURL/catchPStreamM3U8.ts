@@ -1,8 +1,8 @@
 
-import { Response, Page } from 'puppeteer-core';
+import { Response } from 'puppeteer-core';
 
-const pStreamManifestRegex = /^https:\/\/www\.pstream\.net\/\w\/\w*?\.m3u8/i;
-const manifestsRegex = /^https:\/\/www\.pstream\.net\/h\/\d+\/\w*?\.m3u8\?expires=\d+&signature=\w+/m;
+const pStreamManifestRegex = /^https:\/\/www\.pstream\.net\/\w\/\w*?$\.m3u8/i;
+const manifestsRegex = /^https:\/\/www\.pstream\.net\/h\/\d+\/\w*?\.m3u8\?expires=\d+&signature=\w+$/m;
 
 
 export default async function (response: Response): Promise<string | null> {

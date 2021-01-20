@@ -78,3 +78,12 @@ httpsRedirect.listen(4433, HOSTNAME, () => {
 	console.log(`HTTP redirect has been set up on port 4433`);
 });
 */
+
+// Uncaught Error, in order to catch the Error: connect ECONNREFUSED 127.0.0.1:443
+// Let's hope this works :( The issue will be the process won't restart
+process.on('uncaughtException', (err) => {
+	console.error("UNCAUGHT EXCEPTION");
+	console.error(err);
+	console.error('THEN THE PROCESS STOPS');
+	process.exit(0);
+});
