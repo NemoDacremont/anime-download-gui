@@ -11,7 +11,7 @@ function CREATE_NEW_DOT_ENV {
 ## Variables
 OUTDIR=prod
 OUTZIP=prod.zip
-FILES=(package.json package-lock.json LICENSE.md README.md)
+FILES=(package.json package-lock.json LICENSE.md README.md ecosystem.config.js)
 DIRECTORIES=(dist)
 
 ## Script

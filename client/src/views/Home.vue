@@ -1,28 +1,52 @@
 <template>
   <div class="home">
-		<h1>¯\_(ツ)_/¯</h1>
+		<div class="headers">
+			<h1>Home</h1>
+		</div>
+
+		<div class="content">
+			<News />
+		</div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import News from '../components/Home';
+
 export default defineComponent({
+	components: {
+		News
+	},
   name: 'Home',
 });
 </script>
 
 <style lang="scss" scoped>
 .home {
-	height: 100%;
+	height: 100vh;
 	width: 100%;
 
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	--header-height: 8%;
+
+	.headers {
+		height: var(--header-height);
+		padding: 0 5em;
+		display: flex;
+		align-items: center;
+	}
 }
 
-h1 {
-	font-size: 92px;
+.content {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: 1fr;
+
+	width: 100%;
+	height: calc(100% - var(--header-height));
+
+	gap: 1em;
+	padding: 1em;
 }
 </style>
