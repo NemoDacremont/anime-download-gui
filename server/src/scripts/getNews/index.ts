@@ -1,5 +1,5 @@
 
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 // Constants
 import { NEKO_SAMA_BASE_URL } from '../../constants';
@@ -35,13 +35,13 @@ export interface News {
 
 export default function (): Promise<News> {
 	return new Promise((resolve, reject) => {
-		axios.get(NEKO_SAMA_BASE_URL).then((response) => {
+		axios.get(NEKO_SAMA_BASE_URL).then((response: AxiosResponse<string>) => {
 			const html: string = response.data;
-			const rawMatch = html.match(/var lastEpisodes = .*?;/g);
+			const rawMatch = html.match(/lastEpisodes = .*?\n/g);
 
 			if (!rawMatch || !rawMatch[0]) reject(new Error('Match failed when getting news from neko sama'));
 			else {
-				const match = rawMatch[0].replace(/(var lastEpisodes = )|(;)/g, '');
+				const match = rawMatch[0].replace(/(lastEpisodes = )|(;)/g, '');
 				try {
 					const output = JSON.parse(match);
 					resolve(output);
