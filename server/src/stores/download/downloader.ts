@@ -8,15 +8,18 @@ import { outputDir } from '../../constants';
 // Doing TS things
 
 import { getAnimeFromID, Version, Episode, ExtractEpisodeList } from '../animes';
-import extractURL, { LevelM3u8 } from '../../routes/api/animes/getURL/extractURL';
+import extractURL from '../../scripts/getURL/extractURL';
 import socketIOStore from '../socketIO';
+
+//	Actually getSourceFile is used in the extractURL function
+//import { getSourceFile } from '../../scripts/getURL/URLExtractor';
 
 export type EpisodeLink = string;
 export type EpisodeURL = string;
 export type AnimeID = number;
 export type EpisodeIndex = number;
 
-// Some stupidly complex items to store anime information
+// Some stupidly complex items to store anime information, may obviously be improved
 export type ItemsToDownload = Map< AnimeID, Map< Version, Set<EpisodeIndex> >>
 export type AnimeEpisodesInformation = Map<AnimeID, Map<Version, Map<EpisodeIndex, Episode> >>
 
@@ -341,11 +344,11 @@ export class Downloader {
 						this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'File deleted' });
 						socketIOStore.socketIOInstance?.emit('progress', this.getParsedProgresses());
 					}));
-					// test if source is null
+					// test if source is void, if yes, download next episode
 					if (!episodeSource) continue;
 
-					const fileExtension = typeof episodeSource === 'string' ? 'mp4': 'ts';
-					// Creating episode name by completing with 0 to sort by name
+					const fileExtension = "mp4"; /*old system, now all should be mp4*/ //typeof episodeSource === 'string' ? 'mp4': 'ts';
+					// Creating episode name by completing with 0 to be able to sort by name
 					const formattedEpisode = `${'0'.repeat(episodesData.size.toString().length - episodeIndex.toString().length) }${episodeIndex}`
 					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/episode_${formattedEpisode}.${fileExtension}`;
 
@@ -369,16 +372,22 @@ export class Downloader {
 						}
 					}
 
+					console.log("Source:");
+					console.log(episodeSource);
+
 					// If the source is an url, download the file normally
-					if(typeof episodeSource === 'string') {
-						const episodeURL = episodeSource;
+					if(episodeSource.type === "MP4") {
+						const episodeURL = episodeSource.URL;
 
 						await (downloadEpisode(filePath, episodeURL, downloadsCallbacks).catch((err: Error) => console.log(err.message)));
 					}
 
-					// If the source is m3u8 (ts files)
-					else if (typeof episodeSource === 'object') {
-						await (downloadM3u8(filePath, episodeSource as LevelM3u8, downloadsCallbacks).catch((err) => console.log(err.message)));
+					// If the source is m3u8 (ts files) => download with ffmpeg
+					else if (episodeSource.type === "M3U8") {
+						await (
+							downloadM3u8(filePath, episodeSource, downloadsCallbacks).catch((err) => console.log(err.message))
+								.catch((err: Error) => console.error(err))
+						);
 					}
 
 					console.log(`${anime.title} ${episode.episode} Downloaded!`);
