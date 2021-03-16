@@ -1,7 +1,7 @@
 
 import { Router } from 'express';
 
-import extractURL from './extractURL';
+import extractURL from '../../../../scripts/getURL/extractURL';
 
 // types
 import { Version } from '../../../../stores/animes';
