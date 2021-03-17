@@ -4,6 +4,7 @@ import { page as pageStored, createPage } from '../../../../stores/puppeteer';
 
 export default class URLExtractorMyStream implements URLExtractor {
 	private readonly URLRegex = /^https:\/\/embed\.mystream\.to\/\w+$/;
+	public readonly name = "MyStream Extractor";
 
 	public test (url: string): boolean {
 		return this.URLRegex.test(url);

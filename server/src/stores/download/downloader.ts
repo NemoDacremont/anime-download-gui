@@ -339,13 +339,13 @@ export class Downloader {
 
 					const formattedTitle = anime.title?.replace(/ /g, '_').replace(/\W/g, "").toLocaleLowerCase();
 
-					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err) => {
+					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err: Error) => {
 						console.error(`Error while extracting URL, the file may not exist,error: ${err.message}`);
 						this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'File deleted' });
 						socketIOStore.socketIOInstance?.emit('progress', this.getParsedProgresses());
 					}));
 					// test if source is void, if yes, download next episode
-					if (!episodeSource) continue;
+					if (!(episodeSource && episodeSource.URL)) continue;
 
 					const fileExtension = "mp4"; /*old system, now all should be mp4*/ //typeof episodeSource === 'string' ? 'mp4': 'ts';
 					// Creating episode name by completing with 0 to be able to sort by name

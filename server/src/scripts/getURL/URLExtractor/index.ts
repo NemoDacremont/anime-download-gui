@@ -8,6 +8,7 @@ import MyStreamExtractor from './mystream';
  *	extract() method return the url source
 */
 export interface URLExtractor {
+	name: string;
 	test (playerURL: string): boolean;
 	extract (playerURL: string): Promise<Source>;
 }
@@ -27,6 +28,7 @@ const getSourceFile = (playerURL: string): Promise<Source | null> => {
 	return new Promise(async (resolve, reject) => {
 		for (const extractor of extractors) {
 			if (!extractor.test(playerURL)) continue;
+			console.log(`${extractor.name} Matched the source ${playerURL}`);
 
 			let output = null;
 			await extractor.extract(playerURL).then((source) => {

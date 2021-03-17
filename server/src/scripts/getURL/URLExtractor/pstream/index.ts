@@ -4,6 +4,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 export default class URLExtractorPStream implements URLExtractor {
 	private readonly urlRegex = /^https:\/\/www\.pstream\.net\/\w\/\w+$/;
+	public readonly name = "PStream Extractor";
 
 	public test (playerURL: string): boolean {
 		return this.urlRegex.test(playerURL);
