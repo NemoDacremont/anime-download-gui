@@ -146,7 +146,7 @@ export interface ProgressData {
 // }
 
 const durationRegExp = /Duration: (\d+:)+/;
-	const progressTimeRegExp = /time=(\d+:)+/;
+const progressTimeRegExp = /time=(\d+:)+/;
 
 //	Returns the duration in milliseconds
 const getDuration = (message: string): number | null => {
