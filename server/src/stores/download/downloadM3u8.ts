@@ -251,6 +251,9 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 					progressData.progress = Math.ceil(100 * progressData.progressTime / progressData.duration);
 				}
 
+				console.log("PROGRESS:");
+				console.table(progressData);
+
 				onData(progressData.progress);
 
 				if (forceReject()) {

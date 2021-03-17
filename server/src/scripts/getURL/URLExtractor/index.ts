@@ -31,9 +31,11 @@ const getSourceFile = (playerURL: string): Promise<Source | null> => {
 			console.log(`${extractor.name} Matched the source ${playerURL}`);
 
 			let output = null;
-			await extractor.extract(playerURL).then((source) => {
-				output = source;
-			}).catch((err: Error) => console.error(err));
+			await (
+				extractor.extract(playerURL).then((source) => {
+					output = source;
+				}).catch((err: Error) => console.error(err))
+			);
 
 			if (output) resolve(output);
 		}
