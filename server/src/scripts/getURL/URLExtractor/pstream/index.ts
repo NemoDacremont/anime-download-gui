@@ -1,10 +1,18 @@
 
 import { Source, URLExtractor } from '../index';
 import axios, { AxiosRequestConfig } from 'axios';
+import { decodeB64 } from '../../../base64';
+
+type M3U8ScraperFunction = (playerHTML: string) => string | null;
 
 export default class URLExtractorPStream implements URLExtractor {
 	private readonly urlRegex = /^https:\/\/www\.pstream\.net\/\w\/\w+$/;
 	public readonly name = "PStream Extractor";
+	private readonly M3U8Scrapers: M3U8ScraperFunction[];
+
+	constructor () {
+		this.M3U8Scrapers = [ this.scrapeMasterM3U8B64, this.scrapeMasterM3U8Direct ];
+	}
 
 	public test (playerURL: string): boolean {
 		return this.urlRegex.test(playerURL);
@@ -21,17 +29,10 @@ export default class URLExtractorPStream implements URLExtractor {
 				}
 			}
 
-			// The error 127.0.0.1:443 things probably comes from here
 			const html: string = (await axios.request({ url: playerURL, ...axiosOptions })).data;
-
-			const masterM3U8RegExp = /https:\/\/w.+ww\.pstream\.net\/\w\/\w*\.m3u8\?expires=\d*?&signature=\w*?"/m;
-			const masterM3U8Matches = html.match(masterM3U8RegExp);
-			if (!(masterM3U8Matches && masterM3U8Matches[0]))	{
-				reject(new Error("Pstream extractor: no master m3u8 matched"));
-				return;
-			}
-
-			const masterM3U8URL = (masterM3U8Matches[0] as string).replace(/ |\+|"/g, "");
+			
+			const masterM3U8URL = this.scrapeMasterM3U8(html);
+			if (!masterM3U8URL)	{ reject(new Error("Pstream extractor: no master m3u8 matched")); return; }
 
 			const masterM3U8: string = (await axios.request({ url: masterM3U8URL, ...axiosOptions })).data;
 			
@@ -46,5 +47,42 @@ export default class URLExtractorPStream implements URLExtractor {
 
 			resolve({ type: "M3U8", URL: mediaM3U8URL });
 		});
+	}
+
+	private scrapeMasterM3U8Direct (playerHTML: string): string | null {
+		const masterM3U8RegExp = /https:\/\/w.+ww\.pstream\.net\/\w\/\w*\.m3u8\?expires=\d*?&signature=\w*?"/m;
+		const masterM3U8Matches = playerHTML.match(masterM3U8RegExp);
+
+		if (masterM3U8Matches) return masterM3U8Matches[0].replace(/ |\+|"/g, "");
+		return null;
+	}
+
+	private scrapeMasterM3U8B64 (playerHTML: string): string | null {
+		const B64RegExp = /var playerOptsB64 = "\w+";/;
+		const B64Matches = playerHTML.match(B64RegExp);
+		if (!B64Matches) return null;
+
+		const rawDecode = decodeB64(
+			B64Matches[0].replace(/(var playerOptsB64 = )|;/g, "")
+		);
+
+		try {
+			return JSON.parse(rawDecode).url;
+		} catch (error) {
+			console.log("Can't parse JSON from pStream extractor.")
+		}
+
+		return null;
+	}
+
+	private scrapeMasterM3U8 (playerHTML: string): string | null {
+		const { M3U8Scrapers } = this;
+
+		for (let i=0 ; i<M3U8Scrapers.length ; i++) {
+			const out = M3U8Scrapers[i](playerHTML);
+			if (out) return out;
+		}
+
+		return null;
 	}
 }
