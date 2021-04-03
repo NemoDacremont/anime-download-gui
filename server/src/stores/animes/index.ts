@@ -3,7 +3,7 @@
 *		Types|Interfaces, ts things
 */
 
-import { News } from '../../scripts/getNews';
+import { News } from '../../utils/getNews';
 
 /*
 	Example of Anime:

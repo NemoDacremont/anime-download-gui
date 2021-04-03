@@ -6,7 +6,7 @@ import { DownloadCallbacks, defaultCallbacks } from './downloadScript';
 import { exec } from 'child_process';
 
 //	TS interface
-import { Source } from '../../scripts/getURL/URLExtractor';
+import { Source } from '../../utils/getURL/URLExtractor';
 
 export interface ProgressData {
 	duration: number | null;
@@ -251,8 +251,8 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 					progressData.progress = Math.ceil(100 * progressData.progressTime / progressData.duration);
 				}
 
-				console.log("PROGRESS:");
-				console.table(progressData);
+				/*console.log("PROGRESS:");
+				console.table(progressData);*/
 
 				onData(progressData.progress);
 

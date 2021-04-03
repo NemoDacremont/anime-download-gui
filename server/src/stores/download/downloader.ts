@@ -8,7 +8,7 @@ import { outputDir } from '../../constants';
 // Doing TS things
 
 import { getAnimeFromID, Version, Episode, ExtractEpisodeList } from '../animes';
-import extractURL from '../../scripts/getURL/extractURL';
+import extractURL from '../../utils/getURL/extractURL';
 import socketIOStore from '../socketIO';
 
 //	Actually getSourceFile is used in the extractURL function

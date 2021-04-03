@@ -14,3 +14,5 @@ prod/
 # local chromium bin
 chromium/*
 
+# tmp things
+server/src/utils/downloadStructure.ts

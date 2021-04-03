@@ -15,7 +15,7 @@ import cors from './cors';
 *		Import Config
 */
 import { PORT, HOSTNAME } from './constants';
-import initScript from './scripts/init';
+import initScript from './utils/init';
 
 /*
 *		Import Stores

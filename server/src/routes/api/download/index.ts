@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { json as bodyParserJSON } from 'body-parser';
 
 // local modules
-import extractURL from '../../../scripts/getURL/extractURL';
+import extractURL from '../../../utils/getURL/extractURL';
 // This is probably useless
 //import { isValidURL } from './urlValidator';
 

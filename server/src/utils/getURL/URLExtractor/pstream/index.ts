@@ -58,7 +58,7 @@ export default class URLExtractorPStream implements URLExtractor {
 	}
 
 	private scrapeMasterM3U8B64 (playerHTML: string): string | null {
-		const B64RegExp = /var playerOptsB64 = "\w+";/;
+		const B64RegExp = /var playerOptsB64 = "(\w|=)*?";/;
 		const B64Matches = playerHTML.match(B64RegExp);
 		if (!B64Matches) return null;
 
@@ -69,7 +69,7 @@ export default class URLExtractorPStream implements URLExtractor {
 		try {
 			return JSON.parse(rawDecode).url;
 		} catch (error) {
-			console.log("Can't parse JSON from pStream extractor.")
+			console.error("Can't parse JSON from pStream extractor.")
 		}
 
 		return null;
