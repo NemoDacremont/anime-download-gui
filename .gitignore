@@ -16,3 +16,6 @@ chromium/*
 
 # tmp things
 server/src/utils/downloadStructure.ts
+server/src/utils/getURL/extractURLFromPlayer.ts
+server/src/utils/getURL/fetchM3U8.ts
+server/src/utils/getURL/catchPStreamM3U8.ts
