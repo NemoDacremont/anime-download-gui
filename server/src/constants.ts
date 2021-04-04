@@ -10,9 +10,6 @@ export const HOSTNAME = config.openOnLocalNetwork ? '0.0.0.0': 'localhost';
 export const logStyle: 'dev' | 'combined'
 	= (process.env.NODE_ENV === 'production') ?'combined' :'dev';
 
-// chromium path ..;/;.
-export const chromiumPath = config.chromePath ? config.chromePath : path.join(__dirname, '../chromium/chromium-linux/chrome');
-
 // Out dir, is using /home/{USER}/ as alias to '~'
 if (!process.env.HOME) throw new Error("process.env.HOME doesn't exist");
 export const outputDir = config.outputDir.replace(/\/$/, '').replace('~', process.env.HOME);

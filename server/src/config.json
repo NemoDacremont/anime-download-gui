@@ -1,5 +1,5 @@
 {
-	"chromePath": "/usr/bin/chromium",
 	"outputDir": "~/Vidéos",
+	"ffmpegPath": "",
 	"openOnLocalNetwork": false
 }
