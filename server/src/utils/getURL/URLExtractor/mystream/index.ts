@@ -1,37 +1,43 @@
 
 import { Source, URLExtractor } from '../index';
-import { page as pageStored, createPage } from '../../../../stores/puppeteer';
+import axios from "axios";
+import JJDecodeMyStream from "./JJDecodeMyStream";
 
 export default class URLExtractorMyStream implements URLExtractor {
 	private readonly URLRegex = /^https:\/\/embed\.mystream\.to\/\w+$/;
 	public readonly name = "MyStream Extractor";
 
-	public test (url: string): boolean {
-		return this.URLRegex.test(url);
+	public test (playerURL: string): boolean {
+		return this.URLRegex.test(playerURL);
 	}
 
-	public async extract (url: string): Promise<Source> {
+	public async extract (playerURL: string): Promise<Source> {
 		return new Promise(async (resolve, reject) => {
-			// If pageStored is null means puppeteer hasn't been initialized
-			if (!pageStored)	{ reject(new Error("Mystream extractor: Puppeteer isn't initialized")); return; }
+			const playerHTML = (await axios.get(playerURL)).data;
+			
+			const JJEncodedMatch = playerHTML.match(/\$=~\[\].+;$/m);
+			if (!JJEncodedMatch) { reject(new Error("No JJencoded match.")); return; }
 
-			//	Recreate the page if it as been closed
-			const page = !(pageStored && pageStored.isClosed()) ? await createPage(): pageStored;
+			let JJDecoded = null;
+			try {
+				JJDecoded = JJDecodeMyStream(JJEncodedMatch[0]);
+			}
+			catch (err) {
+				console.error(err);
+				return;
+			}
+			if (!JJDecoded) return;
 
-			let error: Error | null = null;
+			console.log(JJDecoded);
 
-			await (page.goto(url).catch((err: Error) => error = err));
-			if (error) { reject(error); return; }
+			const URLRegExp = /https?:\/\/\w+\.mscontent.net(\/(\w|-|_|\.)+)+.mp4/;
+			const urlMatch = JJDecoded.match(URLRegExp);
+			if (!urlMatch) {
+				reject(new Error("URL not matched"));
+				return;
+			}
 
-			//	Get the src attribute of the video tag
-			const videoSrc = await (
-				page.$eval('video', (el) => {
-					return el.getAttribute('src')
-				}).catch((err: Error) => error = err)
-			);
-			if (error) { reject(error); return; }
-
-			resolve({ type: "MP4", URL: videoSrc as string} );
+			resolve({type: "MP4", URL: urlMatch[0]});
 		});
 	}
 }
