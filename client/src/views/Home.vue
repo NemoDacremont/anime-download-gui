@@ -34,6 +34,7 @@ export default defineComponent({
 		height: var(--header-height);
 		padding: 0 5em;
 		display: flex;
+		background-color: var(--nav-background-color);
 		align-items: center;
 	}
 }
@@ -48,5 +49,9 @@ export default defineComponent({
 
 	gap: 1em;
 	padding: 1em;
+
+	.news {
+		grid-column: 1/5;
+	}
 }
 </style>

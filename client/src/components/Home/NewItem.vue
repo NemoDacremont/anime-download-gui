@@ -22,6 +22,7 @@ export default defineComponent({
 
 .new {
 	padding: 1em 2em;
+	width: 22em;
 
 	display: flex;
 	flex-direction: column;
