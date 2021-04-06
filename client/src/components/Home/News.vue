@@ -4,7 +4,7 @@
 
 		<ul class="news__episode-list" v-if="news">
 			<li v-for="(episode, index) in recentNews" :key="index">
-				<router-link :to="episode.url">
+				<router-link :to="formatNewURL(episode.url)">
 					<new-item :data="episode" />
 				</router-link>
 			</li>
@@ -38,11 +38,28 @@ export default defineComponent({
 	computed: {
 		recentNews () {
 			const { news } = this.$data as { news: Episode[] | undefined };
-			return news?.slice(0, 10);
+			return news?.slice(0, 40);
+		}
+	},
+	methods: {
+		formatNewURL (url: string): string {
+			const input = url.replace("/anime/info/", "");
+
+			const idMatch = input.match(/\d+/);
+			if (!idMatch) return "#";
+
+			const versionMatch = input.match(/(vostfr)|(vf)/);
+			if (!versionMatch) return "#";
+
+			const version = versionMatch[0];
+			const id = idMatch[0];
+
+			return `/anime/${version}/${id}`;
 		}
 	},
 	async created () {
 		this.news = (await axios.get(API_BASE_URL + '/animes/getNews')).data;
+		console.table(this.news);
 	}
 });
 </script>
@@ -50,12 +67,14 @@ export default defineComponent({
 <style lang="scss" scoped>
 
 .news {
-	width: 22em;
+	//width: 22em;
 	height: 100%;
 	background-color: var(--nav-background-color);
 
 	overflow: hidden;
 	padding: 1em;
+
+	border-radius: 4px;
 
 	--header-height: 10%;
 
@@ -69,9 +88,13 @@ export default defineComponent({
 
 .news__episode-list {
 	list-style: none;
-	display: flex;
+	/*display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: center;*/
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(22em, 1fr));
+	grid-auto-rows: auto;
+	gap: 1em;
 
 	width: 100%;
 	height: calc(100% - var(--header-height));
@@ -86,6 +109,10 @@ export default defineComponent({
 		border-radius: 4px;
 
 		transition: background-color .25s;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
 		&:hover {
 			background-color: var(--background-color-highlight);
