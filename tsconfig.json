@@ -2,10 +2,12 @@
 	"compilerOptions": {
 		"outDir": "dist",
 		"module": "commonjs",
-		"target": "ESnext",
+		"target": "ES6",
 		"removeComments": true,
 		"strict": true,
 		"esModuleInterop": true,
+		"noImplicitThis": true,
+		
 		"resolveJsonModule": true
 	},
 	"files": [
