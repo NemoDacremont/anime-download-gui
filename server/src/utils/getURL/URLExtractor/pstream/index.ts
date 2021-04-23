@@ -2,8 +2,10 @@
 import { Source, URLExtractor } from '../index';
 import axios, { AxiosRequestConfig } from 'axios';
 import { decodeB64 } from '../../../base64';
+import B64Scraper from './B64Scraper';
 
 type M3U8ScraperFunction = (playerHTML: string) => string | null;
+const b64Scraper = new B64Scraper();
 
 export default class URLExtractorPStream implements URLExtractor {
 	private readonly urlRegex = /^https:\/\/www\.pstream\.net\/\w\/\w+$/;
@@ -11,7 +13,7 @@ export default class URLExtractorPStream implements URLExtractor {
 	private readonly M3U8Scrapers: M3U8ScraperFunction[];
 
 	constructor () {
-		this.M3U8Scrapers = [ this.scrapeMasterM3U8B64, this.scrapeMasterM3U8Direct ];
+		this.M3U8Scrapers = [ this.scrapeMasterM3U8Direct ];
 	}
 
 	public test (playerURL: string): boolean {
@@ -57,26 +59,11 @@ export default class URLExtractorPStream implements URLExtractor {
 		return null;
 	}
 
-	private scrapeMasterM3U8B64 (playerHTML: string): string | null {
-		const B64RegExp = /var playerOptsB64 = "(\w|=)*?";/;
-		const B64Matches = playerHTML.match(B64RegExp);
-		if (!B64Matches) return null;
-
-		const rawDecode = decodeB64(
-			B64Matches[0].replace(/(var playerOptsB64 = )|;/g, "")
-		);
-
-		try {
-			return JSON.parse(rawDecode).url;
-		} catch (error) {
-			console.error("Can't parse JSON from pStream extractor.")
-		}
-
-		return null;
-	}
-
 	private scrapeMasterM3U8 (playerHTML: string): string | null {
 		const { M3U8Scrapers } = this;
+
+		const out = b64Scraper.scrape(playerHTML);
+		if (out) return out;
 
 		for (let i=0 ; i<M3U8Scrapers.length ; i++) {
 			const out = M3U8Scrapers[i](playerHTML);
