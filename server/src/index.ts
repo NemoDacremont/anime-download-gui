@@ -1,6 +1,7 @@
 
 require('dotenv').config();
 import express from 'express';
+import open from 'open';
 
 /*
 *		Import middlewares
@@ -50,26 +51,33 @@ app.use('/', clientRouter);
 *		Start
 */
 
-const httpServer = app.listen(PORT, HOSTNAME,  () => {
-	console.log(`\nServer listening on port ${PORT}`);
-	console.log('Server loaded, downloading data...');
+try {
+	const httpServer = app.listen(PORT, HOSTNAME,  () => {
+		console.log(`\nServer listening on port ${PORT}`);
+		console.log('Server loaded, downloading data...');
 
-	initScript(httpServer)
-		.then(() => {
-			globalStore.isServerLoaded = true;
-			console.log('Server is loaded');
-		})
-		.catch((err: Error | string) => {
-			console.error('An error occurred during data loading, you should verify your internet connection');
-			console.log('err:', err);
-			console.log('Exit in 5 sec');
+		initScript(httpServer)
+			.then(() => {
+				globalStore.isServerLoaded = true;
+				console.log('Server is loaded');
+			})
+			.catch((err: Error | string) => {
+				console.error('An error occurred during data loading, you should verify your internet connection');
+				console.log('err:', err);
+				console.log('Exit in 5 sec');
 
-			setTimeout(() => {
-				process.exit(0);
-			}, 5000);
-		});
-});
-
+				setTimeout(() => {
+					process.exit(0);
+				}, 5000);
+			});
+	});
+}
+catch (err) {
+	console.error(err);
+	console.log("The program is already using, opening in browser");
+	open(`http://localhost:${PORT}/`);
+	process.exit(0);
+}
 
 // HTTPS things
 /*
