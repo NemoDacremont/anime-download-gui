@@ -1,9 +1,10 @@
 
-import { decodeB64 } from '../../../base64';
+import { MasterScraper } from '.';
+import { decodeB64 } from '../../../../base64';
 
 type PStreamMasterScraper = (playerHTML: string) => string | null;
 
-export default class B64Scraper {
+export class B64Scraper implements MasterScraper {
 	public scrapers: PStreamMasterScraper[] = [];
 	private testB64: RegExp;
 
@@ -83,3 +84,5 @@ export default class B64Scraper {
 		return null;
 	}
 }
+
+export default B64Scraper;

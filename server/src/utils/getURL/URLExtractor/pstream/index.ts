@@ -1,25 +1,26 @@
 
 import { Source, URLExtractor } from '../index';
 import axios, { AxiosRequestConfig } from 'axios';
-import { decodeB64 } from '../../../base64';
-import B64Scraper from './B64Scraper';
-
-type M3U8ScraperFunction = (playerHTML: string) => string | null;
-const b64Scraper = new B64Scraper();
+import { B64Scraper, directScraper, MasterScraper } from './masterScrapers';
 
 export default class URLExtractorPStream implements URLExtractor {
 	private readonly urlRegex = /^https:\/\/www\.pstream\.net\/\w\/\w+$/;
 	public readonly name = "PStream Extractor";
-	private readonly M3U8Scrapers: M3U8ScraperFunction[];
+	private readonly M3U8Scrapers: MasterScraper[];
 
 	constructor () {
-		this.M3U8Scrapers = [ this.scrapeMasterM3U8Direct ];
+		this.M3U8Scrapers = [
+			new B64Scraper(),
+			new directScraper()
+		];
 	}
 
+	//	Test if the extractor is associated to the player URL
 	public test (playerURL: string): boolean {
 		return this.urlRegex.test(playerURL);
 	}
 
+	//	Extract the URL
 	public extract (playerURL: string): Promise<Source> { 
 		return new Promise(async (resolve, reject) => {
 			//	This headers are required to bypass servers tests
@@ -51,22 +52,9 @@ export default class URLExtractorPStream implements URLExtractor {
 		});
 	}
 
-	private scrapeMasterM3U8Direct (playerHTML: string): string | null {
-		const masterM3U8RegExp = /https:\/\/w.+ww\.pstream\.net\/\w\/\w*\.m3u8\?expires=\d*?&signature=\w*?"/m;
-		const masterM3U8Matches = playerHTML.match(masterM3U8RegExp);
-
-		if (masterM3U8Matches) return masterM3U8Matches[0].replace(/ |\+|"/g, "");
-		return null;
-	}
-
 	private scrapeMasterM3U8 (playerHTML: string): string | null {
-		const { M3U8Scrapers } = this;
-
-		const out = b64Scraper.scrape(playerHTML);
-		if (out) return out;
-
-		for (let i=0 ; i<M3U8Scrapers.length ; i++) {
-			const out = M3U8Scrapers[i](playerHTML);
+		for (let i=0 ; i<this.M3U8Scrapers.length ; i++) {
+			const out = this.M3U8Scrapers[i].scrape(playerHTML);
 			if (out) return out;
 		}
 
