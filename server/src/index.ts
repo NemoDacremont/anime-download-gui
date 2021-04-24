@@ -15,7 +15,7 @@ import cors from './cors';
 /*
 *		Import Config
 */
-import { PORT, HOSTNAME } from './constants';
+import { PORT, HOSTNAME, openInBrowserOnLoad } from './constants';
 import initScript from './utils/init';
 
 /*
@@ -51,33 +51,26 @@ app.use('/', clientRouter);
 *		Start
 */
 
-try {
-	const httpServer = app.listen(PORT, HOSTNAME,  () => {
-		console.log(`\nServer listening on port ${PORT}`);
-		console.log('Server loaded, downloading data...');
+const httpServer = app.listen(PORT, HOSTNAME,  () => {
+	console.log(`\nServer listening on port ${PORT}`);
+	console.log('Server loaded, downloading data...');
 
-		initScript(httpServer)
-			.then(() => {
-				globalStore.isServerLoaded = true;
-				console.log('Server is loaded');
-			})
-			.catch((err: Error | string) => {
-				console.error('An error occurred during data loading, you should verify your internet connection');
-				console.log('err:', err);
-				console.log('Exit in 5 sec');
+	initScript(httpServer)
+		.then(() => {
+			globalStore.isServerLoaded = true;
+			console.log('Server is loaded');
+			if (openInBrowserOnLoad) open(`http://localhost:${PORT}/`);
+		})
+		.catch((err: Error | string) => {
+			console.error('An error occurred during data loading, you should verify your internet connection');
+			console.log('err:', err);
+			console.log('Exit in 5 sec');
 
-				setTimeout(() => {
-					process.exit(0);
-				}, 5000);
-			});
-	});
-}
-catch (err) {
-	console.error(err);
-	console.log("The program is already using, opening in browser");
-	open(`http://localhost:${PORT}/`);
-	process.exit(0);
-}
+			setTimeout(() => {
+				process.exit(0);
+			}, 5000);
+		});
+});
 
 // HTTPS things
 /*
@@ -89,7 +82,13 @@ httpsRedirect.listen(4433, HOSTNAME, () => {
 
 // Uncaught Error, in order to catch the Error: connect ECONNREFUSED 127.0.0.1:443
 // Let's hope this works :( The issue will be the process won't restart
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', async (err: { code?: string }) => {
+	if (err.code === 'EADDRINUSE') {
+		console.log("Another instance of the program is already running, opening in the browser");
+		if (openInBrowserOnLoad) await open(`http://localhost:${PORT}/`);
+		process.exit(0);
+	}
+	
 	console.error("UNCAUGHT EXCEPTION");
 	console.error(err);
 	console.error('THEN THE PROCESS STOPS');

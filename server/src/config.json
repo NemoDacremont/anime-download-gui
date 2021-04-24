@@ -1,5 +1,6 @@
 {
 	"outputDir": "~/Vidéos",
 	"ffmpegPath": "",
-	"openOnLocalNetwork": false
+	"openOnLocalNetwork": false,
+	"openInBrowserOnLoad": true
 }
