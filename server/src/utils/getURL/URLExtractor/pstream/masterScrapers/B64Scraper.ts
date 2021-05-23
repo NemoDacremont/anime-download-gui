@@ -13,7 +13,8 @@ export class B64Scraper implements MasterScraper {
 		this.scrapers = [
 			this.scrapeMasterM3U8B64,
 			this.scrapeMasterM3U8B64Separated,
-			this.scrapeMasterM3U8B64MultiPart
+			this.scrapeMasterM3U8B64TwoPart,
+			this.scrapeMasterM3U8B64ThreePart
 		];
 	}
 
@@ -64,7 +65,7 @@ export class B64Scraper implements MasterScraper {
 		return null;
 	}
 
-	private scrapeMasterM3U8B64MultiPart (playerHTML: string): string | null {
+	private scrapeMasterM3U8B64TwoPart (playerHTML: string): string | null {
 		const p1RegExp = /p1 = "(\w|=)*?"/, p2RegExp = /p2 = "(\w|=)*?"/;
 		if (!(p1RegExp.test(playerHTML) && p2RegExp.test(playerHTML))) return null;
 
@@ -76,6 +77,25 @@ export class B64Scraper implements MasterScraper {
 		const p2Raw = p2Match[0].replace(/(p2 = )|"/g, "");
 
 		const decoded = decodeB64(p1Raw + p2Raw);
+		try {
+			return JSON.parse(decoded).url;
+		} catch (err) {
+			console.error(err);
+		}
+		return null;
+	}
+
+	private scrapeMasterM3U8B64ThreePart (playerHTML: string): string | null {
+		const p1RegExp = /p1\s*=\s*"(\w|=)*?"/, p2RegExp = /c4\s*=\s*"(\w|=)*?"/, p3RegExp = /v7\s*=\s*"(\w|=)*?"/;
+		const p1Match = playerHTML.match(p1RegExp), p2Match = playerHTML.match(p2RegExp), p3Match = playerHTML.match(p3RegExp);
+
+		if (!(p1Match && p2Match && p3Match)) return null;
+
+		const p1Raw = p1Match[0].replace(/(p1\s*=\s*)|"/g, "");
+		const p2Raw = p2Match[0].replace(/(c4\s*=\s*)|"/g, "");
+		const p3Raw = p3Match[0].replace(/(v7\s*=\s*)|"/g, "");
+
+		const decoded = decodeB64(p1Raw + p2Raw + p3Raw);
 		try {
 			return JSON.parse(decoded).url;
 		} catch (err) {
