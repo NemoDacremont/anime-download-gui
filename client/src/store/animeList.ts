@@ -2,7 +2,7 @@
 import { Module } from 'vuex';
 import axios from 'axios';
 
-import { API_BASE_URL, ANIME_PER_PAGE } from '../constants';
+import { API_BASE_URL, ANIME_PER_PAGE } from '@/constants';
 
 export interface Anime {
 	id?: number;
@@ -108,14 +108,12 @@ export default {
 				.filter(anime => filterFunction(anime, searchFilter))
 				.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
 		},
-		getAnime: (state) => (version: Version, idInput: number) => {
+		getAnime: (state) => (version: Version, idInput: number | string) => {
 			const animeList = state[version];
 			if (!animeList) return null;
 
-			let id = idInput;
-			if (typeof idInput === 'string') {
-				id = parseInt(idInput);
-			}
+			const id = typeof idInput === 'string' ? parseInt(idInput): idInput;
+
 			if (!isValidVersion(version) || isNaN(id)) return false;
 
 			for (let i=0 ; i<animeList.length ; i++) {

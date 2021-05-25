@@ -1,7 +1,7 @@
 
 import { Module } from 'vuex';
 import { Version } from './animeList';
-import { API_BASE_URL } from '../constants';
+import { API_BASE_URL } from '@/constants';
 import axios from 'axios';
 
 export interface Progress {
@@ -68,7 +68,7 @@ export default {
 			dispatch('loadDownloadState');
 		},
 		loadDownloadState: async ({commit}) => {
-			const newState: boolean = (await axios.get(API_BASE_URL + '/download/isDownloading')).data;
+			const newState = (await axios.get(API_BASE_URL + '/download/isDownloading')).data;
 			if (typeof newState === 'boolean') commit('forceDownloadState', newState);
 		}
 	}

@@ -35,10 +35,10 @@ import { io, Socket } from 'socket.io-client';
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
-import SelectedAnime from '../components/download/selectedAnime.vue';
-import { Progresses } from '../store/download';
+import SelectedAnime from '@/components/download/selectedAnime.vue';
+import { Progresses } from '@/store/download';
 
-import { API_BASE_URL, SOCKET_IO_URL } from '../constants';
+import { API_BASE_URL, SOCKET_IO_URL } from '@/constants';
 
 export default defineComponent({
 	name: 'Download',
@@ -69,11 +69,10 @@ export default defineComponent({
 		});
 
 		// Setup socketio to sync downloader data
-
 		this.$data.socket = io(SOCKET_IO_URL);
 		const { socket } = this.$data;
 
-		this.loadDownloadState();
+		await this.loadDownloadState();
 
 		socket.on('progress', (data: Progresses) => {
 			this.updateProgresses(data);
