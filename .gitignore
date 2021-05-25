@@ -1,6 +1,13 @@
 
 # Editor
 .vscode/
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Builded folders
 node_modules/
