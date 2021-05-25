@@ -15,7 +15,7 @@ import cors from './cors';
 /*
 *		Import Config
 */
-import { PORT, HOSTNAME, openInBrowserOnLoad } from './constants';
+import { port, HOSTNAME, openInBrowserOnLoad } from './constants';
 import initScript from './utils/init';
 
 /*
@@ -32,7 +32,7 @@ console.log('Server is loading...');
 const app = express();
 
 /*
-*		Midlewares declarations
+*		Middlewares declarations
 */
 
 //	Logger
@@ -51,15 +51,15 @@ app.use('/', clientRouter);
 *		Start
 */
 
-const httpServer = app.listen(PORT, HOSTNAME,  () => {
-	console.log(`\nServer listening on port ${PORT}`);
+const httpServer = app.listen(port, HOSTNAME,  () => {
+	console.log(`\nServer listening on port ${port}`);
 	console.log('Server loaded, downloading data...');
 
 	initScript(httpServer)
 		.then(() => {
 			globalStore.isServerLoaded = true;
 			console.log('Server is loaded');
-			if (openInBrowserOnLoad) open(`http://localhost:${PORT}/`);
+			if (openInBrowserOnLoad) open(`http://localhost:${port}/`);
 		})
 		.catch((err: Error | string) => {
 			console.error('An error occurred during data loading, you should verify your internet connection');
@@ -85,7 +85,7 @@ httpsRedirect.listen(4433, HOSTNAME, () => {
 process.on('uncaughtException', async (err: { code?: string }) => {
 	if (err.code === 'EADDRINUSE') {
 		console.log("Another instance of the program is already running, opening in the browser");
-		if (openInBrowserOnLoad) await open(`http://localhost:${PORT}/`);
+		if (openInBrowserOnLoad) await open(`http://localhost:${port}/`);
 		process.exit(0);
 	}
 	
