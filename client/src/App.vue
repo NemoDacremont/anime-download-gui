@@ -38,7 +38,7 @@ export default defineComponent({
 }
 
 .material-icons {
-  font-family: 'Material Icons';
+  font-family: 'Material Icons', sans-serif;
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -103,7 +103,7 @@ export default defineComponent({
 
 		opacity: 0;
 		z-index: -1;
-		transform: scale(50%, 50%);
+		transform: scale(0.5, 0.5);
 		transition: opacity .25s, transform .25s;
 	}
 
@@ -116,7 +116,7 @@ export default defineComponent({
 
 		&::before {
 			opacity: .5;
-			transform: scale(100%, 100%);
+			transform: scale(1, 1);
 		}
 	}
 
@@ -186,6 +186,11 @@ nav {
 
 header, footer {
 	background-color: var(--nav-background-color);
+}
+
+h1 {
+	font-family: Poppins, sans-serif;
+	font-weight: 600;
 }
 
 
