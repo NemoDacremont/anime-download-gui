@@ -3,10 +3,10 @@ import config from './config.json';
 //import path from 'path';
 
 // other things
-export const PORT = parseInt(process.env.PORT ?process.env.PORT :'8080');
+export const port = config.port || 8080;
 export const HOSTNAME = config.openOnLocalNetwork ? '0.0.0.0': 'localhost';
 
-export const { openInBrowserOnLoad } = config;
+export const { openInBrowserOnLoad, openOnLocalNetwork, ffmpegPath } = config;
 
 // things
 export const logStyle: 'dev' | 'combined'
