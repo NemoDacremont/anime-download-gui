@@ -1,15 +1,16 @@
+<!--suppress ES6UnusedImports -->
 <template>
 	<div class="anime-list-view">
 		<header>
-			<form @submit.prevent>
+			<form @submit.prevent="submitSearch">
 				<label for="search-filter">
 					<input
 						type="text"
 						name="search-filter"
 						id="search-filter"
 						v-model.trim="searchFilterRaw"
-						maxlength="10"
-						@input="search"
+						maxlength="15"
+						@input="searchInput"
 						placeholder="Ex: One Piece"
 					>
 				</label>
@@ -109,14 +110,14 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { useRoute } from 'vue-router';
 
 // Types
-import { Version } from '../store/animeList';
+import { Version } from '@/store/animeList';
 
 // Components
-import PageNavigation from '../components/pageNavigation';
-import { /*AnimeCard*/ AnimeList as AnimeListComponent } from '../components/animeList';
+import PageNavigation from '@/components/pageNavigation';
+import { /*AnimeCard*/ AnimeList as AnimeListComponent } from '@/components/animeList';
 
 // Constants data
-import { ANIME_PER_PAGE } from '../constants';
+import { ANIME_PER_PAGE } from '@/constants';
 
 export default defineComponent({
 	name: 'AnimeListView',
@@ -129,7 +130,9 @@ export default defineComponent({
 		return {
 			version: this.$route.params.version as Version,
 			baseUrl: '/animelist/vostfr/{{newPage}}',
-			searchFilterRaw: this.$route.query.search
+			searchFilterRaw: this.$route.query.search,
+			pushNextURL: false,
+			lastSearchInputTimeout: null as number | undefined | null
 		}
 	},
 	computed: {
@@ -152,20 +155,34 @@ export default defineComponent({
 		selectListView () {
 			if (this.isGridViewSelected) this.setAnimeListView('list');
 		},
-		search () {
-			const { version } = this.$route.params;
-			const { searchFilterRaw } = this.$data;
+		searchInput () {
+			if (this.lastSearchInputTimeout) clearTimeout(this.lastSearchInputTimeout);
 
-			this.$router.push({
-				name: 'AnimeList',
-				params: {
-					version,
-					page: 1
-				},
-				query: {
-					search: searchFilterRaw
-				}
+			this.lastSearchInputTimeout = setTimeout(() => {
+				this.search();
+			}, 300)
+		},
+		search () {
+			const { searchFilterRaw, pushNextURL } = this.$data;
+			if (this.lastSearchInputTimeout) clearTimeout(this.lastSearchInputTimeout);
+			//const { version }  = this.$route.params;
+
+			//	Update URL without pushing to history stack
+			if (pushNextURL) {
+				this.$router.push({
+					query: { search: searchFilterRaw }
+				});
+				this.$data.pushNextURL = false;
+				return;
+			}
+
+			this.$router.replace({
+				query: { search: searchFilterRaw || "" }
 			});
+		},
+		submitSearch () {
+			this.search();
+			this.$data.pushNextURL = true;
 		},
 		...mapMutations(['setAnimeListView']),
 		...mapActions(['loadData'])
@@ -183,7 +200,7 @@ export default defineComponent({
 			page > Math.floor(animeDataLength / ANIME_PER_PAGE) + 1
 		) {
 			// Using .replace because it allows go back
-			this.$router.replace({
+			await this.$router.replace({
 				name: '404'
 			});
 		}
@@ -191,9 +208,9 @@ export default defineComponent({
 		/*
 		*		Cache animeList if it isn't already
 		*/
-		if (!this.getAnimeList(version)) this.loadData(version);
+		if (!this.getAnimeList(version)) await this.loadData(version);
 	}
-})
+});
 </script>
 
 <style lang="scss" scoped>
