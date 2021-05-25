@@ -38,7 +38,7 @@ export default defineComponent({
 }
 
 .material-icons {
-  font-family: 'Material Icons', sans-serif;
+  font-family: 'Material Icons', cursive;
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -53,6 +53,20 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
 }
 
+//	Fonts, Poppins and Montserrat
+@font-face {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: 500;
+	src: url(/Poppins-Medium.ttf) format('truetype');
+}
+
+@font-face {
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: 400;
+	src: url(/Montserrat-Regular.ttf) format('truetype');
+}
 
 :root {
 	--background-color-dark: #303335;

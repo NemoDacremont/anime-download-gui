@@ -44,8 +44,9 @@ export default defineComponent({
 
 		border-radius: 4px;
 
+		font-family: Poppins, sans-serif;
 		font-size: 1.2em;
-		font-weight: 700;
+		font-weight: 600;
 
 		transition: background-color .25s, color .25s;
 
