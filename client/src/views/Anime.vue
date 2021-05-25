@@ -97,9 +97,9 @@ import { useRoute } from 'vue-router';
 import { mapGetters, mapActions } from 'vuex';
 
 // constants / interfaces
-import { API_BASE_URL } from '../constants';
-import { Episode } from '../store/download';
-import { Anime, Version } from '../store/animeList';
+import { API_BASE_URL } from '@/constants';
+import { Episode } from '@/store/download';
+import { Anime, Version } from '@/store/animeList';
 
 export default defineComponent({
 	name: 'Anime',
