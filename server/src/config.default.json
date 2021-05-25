@@ -1,0 +1,7 @@
+{
+  "outputDir": "~/Vidéos",
+  "ffmpegPath": "",
+  "openOnLocalNetwork": false,
+  "port": 8080,
+  "openInBrowserOnLoad": true
+}
