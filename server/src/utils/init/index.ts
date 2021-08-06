@@ -8,7 +8,7 @@ import initCron, { updateNewsCron } from '../cron';
 
 async function initScript (httpServer: http.Server): Promise<void> {
 	await cacheAnimeList();
-	updateNewsCron();
+	await updateNewsCron();
 
 	initSocketIOInstance(httpServer);
 	initCron();
