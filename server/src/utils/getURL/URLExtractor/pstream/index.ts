@@ -32,12 +32,26 @@ export default class URLExtractorPStream implements URLExtractor {
 				}
 			}
 
-			const html: string = (await axios.request({ url: playerURL, ...axiosOptions })).data;
-			
-			const masterM3U8URL = this.scrapeMasterM3U8(html);
-			if (!masterM3U8URL)	{ reject(new Error("Pstream extractor: no master m3u8 matched")); return; }
+			const playerRequest = await axios.request({ url: playerURL, ...axiosOptions }).catch(err => console.error(err));
+			if (!playerRequest) {
+				reject(new Error("Pstream extractor: no master m3u8 matched"));
+				return null;
+			}
 
-			const masterM3U8: string = (await axios.request({ url: masterM3U8URL, ...axiosOptions })).data;
+			const html = playerRequest.data;
+			
+			const masterM3U8URL = await (this.scrapeMasterM3U8(html).catch(err => console.error(err)));
+			if (!masterM3U8URL)	{
+				reject(new Error("Pstream extractor: no master m3u8 matched"));
+				return null;
+			}
+
+			const masterM3U8Request = await axios.request({ url: masterM3U8URL, ...axiosOptions }).catch(err => console.error(err));
+			if (!masterM3U8Request) {
+				reject(new Error("Pstream extractor: masterM3U8 request failed"));
+				return null;
+			}
+			const masterM3U8 = masterM3U8Request.data;
 			
 			const mediaM3U8RegExp = /^https:\/\/www\.pstream\.net\/\w\/\d+\/\w+\.m3u8\?expires=\d+&signature=\w+$/m;
 			const mediaM3U8Matches = masterM3U8.match(mediaM3U8RegExp);
@@ -52,9 +66,9 @@ export default class URLExtractorPStream implements URLExtractor {
 		});
 	}
 
-	private scrapeMasterM3U8 (playerHTML: string): string | null {
+	private async scrapeMasterM3U8 (playerHTML: string): Promise<string | null> {
 		for (let i=0 ; i<this.M3U8Scrapers.length ; i++) {
-			const out = this.M3U8Scrapers[i].scrape(playerHTML);
+			const out = await this.M3U8Scrapers[i].scrape(playerHTML).catch(err => console.error(err));
 			if (out) return out;
 		}
 
