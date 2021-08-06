@@ -234,33 +234,34 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 			console.log(`${outFilePath}.mp4 downloaded.`);
 	  });
 
+		ffmpegProcess.stderr?.on("data", (chunk: string) => {
+			const messageString = chunk;//.toString("utf-8");
+
+			if (!progressData.duration && durationRegExp.test(messageString)) {
+				progressData.duration = getDuration(messageString);
+			}
+
+			if (progressTimeRegExp.test(messageString)) {
+				progressData.progressTime = getProgressTime(messageString);
+			}
+
+			if (progressData.duration && progressData.progressTime) {
+				progressData.progress = Math.ceil(100 * progressData.progressTime / progressData.duration);
+			}
+
+			/*console.log("PROGRESS:");
+			console.table(progressData);*/
+
+			onData(progressData.progress);
+
+			if (forceReject()) {
+				const killSuccess = ffmpegProcess.kill();
+				if (!killSuccess) console.log("kill didn't succeed, don't know why and hjflkjqhfjkldsqh");
+			}
+		});
+
 		ffmpegProcess.on("spawn", () => {
 			console.log("FFMPEG Download Started")
-			ffmpegProcess.stderr?.on("data", (chunk: string) => {
-				const messageString = chunk;//.toString("utf-8");
-
-				if (!progressData.duration && durationRegExp.test(messageString)) {
-					progressData.duration = getDuration(messageString);
-				}
-
-				if (progressTimeRegExp.test(messageString)) {
-					progressData.progressTime = getProgressTime(messageString);
-				}
-
-				if (progressData.duration && progressData.progressTime) {
-					progressData.progress = Math.ceil(100 * progressData.progressTime / progressData.duration);
-				}
-
-				/*console.log("PROGRESS:");
-				console.table(progressData);*/
-
-				onData(progressData.progress);
-
-				if (forceReject()) {
-					const killSuccess = ffmpegProcess.kill();
-					if (!killSuccess) console.log("kill didn't succeed, don't know why and hjflkjqhfjkldsqh");
-				}
-			});
 		});
 
 		ffmpegProcess.on("exit", () => {
