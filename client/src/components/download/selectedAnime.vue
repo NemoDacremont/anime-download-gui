@@ -36,7 +36,7 @@
 					class="selected-anime__episodes-list-item"
 					:style="{ '--progress': `${(getEpisodeProgress(animeID, version, episode)?.progress || 0) - 100}%`}"
 				>
-					<p>episode: {{ episode }} | <span class="episode-state">state: {{ getEpisodeProgress(animeID, version, episode)?.state }}</span></p>
+					<p>{{ }} | <span class="episode-state">state: {{ getEpisodeProgress(animeID, version, episode)?.state }}</span></p>
 
 					<div class="selected-anime__progress">
 						<p>progress:
@@ -62,7 +62,7 @@ import axios from 'axios';
 import { defineComponent } from 'vue';
 
 import { mapGetters, mapActions } from 'vuex';
-import { API_BASE_URL } from '../../constants';
+import { API_BASE_URL } from '@/constants';
 
 interface EpisodeProgress {
 	progress: number;
@@ -269,7 +269,7 @@ ul {
 		cursor: pointer;
 
 		span {
-			transform: translate(15deg);
+			transform: rotate(15deg);
 		}
 
 		&:not(.selected) span {
