@@ -230,6 +230,7 @@ header {
 			padding: .5em 1em;
 			font-size: 1em;
 			border: .2em solid var(--highlight-activable);
+			outline: 0;
 			transition: border-color .25s, border-radius .25s;
 			background-color: var(--font-color);
 			width: 20em;
