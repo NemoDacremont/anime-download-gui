@@ -1,7 +1,7 @@
 
-import { updateVOSTFRAnimeList, updateVFAnimeList } from '../../stores/animes/cacheAnimeList';
+import { updateVOSTFRAnimeList, updateVFAnimeList } from '../../stores/animes';
 
 export default async function (): Promise<void> {
-	updateVOSTFRAnimeList();
-	updateVFAnimeList();
+	await updateVOSTFRAnimeList();
+	await updateVFAnimeList();
 }

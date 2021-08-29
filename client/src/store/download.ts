@@ -9,6 +9,17 @@ export interface Progress {
 	state: string;
 }
 
+export interface SelectedEpisode {
+	episodeIndex: number;
+	title: string;
+}
+
+export interface SelectedEpisodes {
+	[animeId: number]: {
+		[version in Version]: SelectedEpisode[]
+	};
+}
+
 export interface Progresses {
 	[animeID: number]: {
 		[version in Version]: {
@@ -70,6 +81,6 @@ export default {
 		loadDownloadState: async ({commit}) => {
 			const newState = (await axios.get(API_BASE_URL + '/download/isDownloading')).data;
 			if (typeof newState === 'boolean') commit('forceDownloadState', newState);
-		}
+		},
 	}
 } as Module<any, any>;
