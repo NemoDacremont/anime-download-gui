@@ -52,11 +52,11 @@ export class B64Scraper implements MasterScraper {
 		if (!videojsRaw)
 			return null;
 
-		const b64Matches = videojsRaw.match(/atob\(('|")ey\w*?('|")/);
+		const b64Matches = videojsRaw.match(/('|")eyJ\w*?('|")/);
 		if (!(b64Matches && b64Matches[0]))
 			return null;
 
-		const b64 = b64Matches[0].replace(/"|atob|\(/g, "");
+		const b64 = b64Matches[0].replace(/"/g, "");
 		const decoded = decodeB64(b64);
 		try {
       return JSON.parse(decoded).url;
