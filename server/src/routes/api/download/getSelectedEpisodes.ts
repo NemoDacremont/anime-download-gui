@@ -1,4 +1,5 @@
 
+
 import { Router } from 'express';
 import { Version } from '../../../stores/animes';
 
@@ -16,14 +17,14 @@ router.get('/:animeID?/:version?', (req, res) => {
 	const { animeID, version } = req.params;
 	const output = downloader.getParsedDownloadList();
 
-	const isVersionValid = ['vostfr', 'vf'].includes(version);
-	const isAnimeIDValid = !isNaN(parseInt(animeID));
+	const isVersionValid = ['vostfr', 'vf'].includes(version as string);
+	const isAnimeIDValid = !isNaN(parseInt(animeID as string));
 
 	// Test if the params are valid
 	if (!isAnimeIDValid) { res.json(output); return; }
 
 	// Test if asked data exist, otherwise send the entire object
-	const parsedAnimeID = parseInt(animeID);
+	const parsedAnimeID = parseInt(animeID as string);
 	const animeEntry = output[parsedAnimeID];
 	if (!animeEntry) { res.json({}); return; }
 
