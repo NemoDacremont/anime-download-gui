@@ -325,7 +325,7 @@ export class Downloader {
 				if (!episodesData) continue;
 
 				for (let episodeEntry of episodes.entries()) {
-					const [ index, episodeIndex] = episodeEntry;
+					const [ , episodeIndex ] = episodeEntry;
 					console.log('episode:', episodeIndex);
 
 					const episodeProgress = this.getProgress(animeID, version, episodeIndex);
