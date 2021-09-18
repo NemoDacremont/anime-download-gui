@@ -337,7 +337,9 @@ export class Downloader {
 					const episode = episodesData.get(episodeIndex);
 					if (!episode) continue;
 
-					const formattedTitle = anime.title?.replace(/ /g, "_").replace(/\W/g, "").toLocaleLowerCase();
+					const formattedTitle = (anime.title_english)
+						?	anime.title_english.replace(/ /g, "_").toLocaleLowerCase()
+						: anime.title?.replace(/ /g, "_").replace(/\W/g, "").toLocaleLowerCase();
 
 					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err: Error) => {
 						console.error(`Error while extracting URL, the file may not exist,error: ${err.message}`);
@@ -349,7 +351,10 @@ export class Downloader {
 
 					const fileExtension = "mp4"; /*old system, now all should be mp4*/ //typeof episodeSource === 'string' ? 'mp4': 'ts';
 					// Creating episode name by completing with 0 to be able to sort by name
-					const formattedEpisode = episode.episode.replace(/ /g, "_").replace(/\./g, "");
+					const formattedEpisode = (anime.type == "m0v1e")
+						? formattedTitle
+						: episode.episode.replace(/ /g, "_").replace(/\./g, "");
+
 					//`${'0'.repeat(episodesData.size.toString().length - episodeIndex.toString().length) }${episodeIndex}`
 					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/${formattedEpisode}.${fileExtension}`;
 
