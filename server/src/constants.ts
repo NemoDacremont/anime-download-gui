@@ -14,7 +14,7 @@ export const logStyle: 'dev' | 'combined'
 
 // Out dir, is using /home/{USER}/ as alias to '~'
 if (!process.env.HOME) throw new Error("process.env.HOME doesn't exist");
-export const outputDir = config.outputDir.replace(/\/$/, '').replace('~', process.env.HOME);
+export let outputDir = config.outputDir.replace(/\/$/, '').replace('~', process.env.HOME);
 
 
 // NEKO-SAMA URLs

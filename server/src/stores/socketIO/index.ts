@@ -5,7 +5,7 @@ export interface SocketIOStore {
 	socketIOInstance: socketIO.Server | null;
 }
 
-const socketIOStore: SocketIOStore = {
+export const socketIOStore: SocketIOStore = {
 	socketIOInstance: null
 }
 
