@@ -1,7 +1,7 @@
 
 import { Source, URLExtractor } from '../index';
 import axios, { AxiosRequestConfig } from 'axios';
-import { B64Scraper, directScraper, MasterScraper } from './masterScrapers';
+import { B64Scraper, /*directScraper,*/ MasterScraper } from './masterScrapers';
 
 export default class URLExtractorPStream implements URLExtractor {
 	private readonly urlRegex = /^https:\/\/www\.pstream\.net\/\w\/\w+$/;
@@ -10,8 +10,8 @@ export default class URLExtractorPStream implements URLExtractor {
 
 	constructor () {
 		this.M3U8Scrapers = [
-			new B64Scraper(),
-			new directScraper()
+			new B64Scraper()
+			//new directScraper()
 		];
 	}
 
@@ -34,7 +34,7 @@ export default class URLExtractorPStream implements URLExtractor {
 
 			const playerRequest = await axios.request({ url: playerURL, ...axiosOptions }).catch(err => console.error(err));
 			if (!playerRequest) {
-				reject(new Error("Pstream extractor: no master m3u8 matched"));
+				reject(new Error("Pstream extractor: playerRequest failed"));
 				return null;
 			}
 
@@ -42,7 +42,7 @@ export default class URLExtractorPStream implements URLExtractor {
 			
 			const masterM3U8URL = await (this.scrapeMasterM3U8(html).catch(err => console.error(err)));
 			if (!masterM3U8URL)	{
-				reject(new Error("Pstream extractor: no master m3u8 matched"));
+				reject(new Error("Pstream extractor: scraping of masterM3U8 failed"));
 				return null;
 			}
 
