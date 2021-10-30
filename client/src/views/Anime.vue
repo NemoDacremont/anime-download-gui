@@ -98,8 +98,8 @@ import { mapGetters, mapActions } from 'vuex';
 
 // constants / interfaces
 import { API_BASE_URL } from '@/constants';
-import { Episode } from '@/store/download';
-import { Anime, Version } from '@/store/animeList';
+import { Episode } from '@/store/download/downloadTypes';
+import { Anime, Version } from '@/store/animeList/animeListTypes';
 
 export default defineComponent({
 	name: 'Anime',

@@ -28,10 +28,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Anime } from '../../store/animeList';
+import { Anime } from '@/store/animeList/animeListTypes';
 
 // eslint-disable-next-line
 import { useRoute } from 'vue-router';
+
+interface AnimeCardData {
+	title: string;
+}
 
 export default defineComponent({
 	name: 'AnimeCard',
@@ -39,11 +43,15 @@ export default defineComponent({
 		anime: {
 			type: Object,
 			required: true
+		},
+		title: {
+			type: String,
+			required: true
 		}
 	},
-	data () {
+	data (): AnimeCardData {
 		return {
-			title: this.$props.anime.title as string
+			title: this.$props.anime.title
 		}
 	},
 	computed: {

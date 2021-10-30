@@ -20,10 +20,10 @@ import axios from 'axios';
 
 // Components
 import NewItem from './NewItem.vue';
-import { Episode } from '../../store/download';
+import { Episode } from '@/store/download/downloadTypes';
 
 // Constants
-import { API_BASE_URL } from '../../constants';
+import { API_BASE_URL } from '@/constants';
 
 export default defineComponent({
 	name: 'news',

@@ -14,7 +14,7 @@
 					<li v-for="(versions, animeID) in downloadList" :key="animeID">
 						<ul>
 							<li v-for="(episodes, version) in versions" :key="version">
-								<SelectedAnime :animeID="animeID" :selectedVersion="episodes" :version="version"/>
+								<SelectedAnime :animeID="animeID.toString()" :selectedVersion="episodes" :version="version"/>
 							</li>
 						</ul>
 					</li>
@@ -36,7 +36,7 @@ import { io, Socket } from 'socket.io-client';
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import SelectedAnime from '@/components/download/selectedAnime.vue';
-import { Progresses } from '@/store/download';
+import { Progresses } from '@/store/download/downloadTypes';
 
 import { API_BASE_URL, SOCKET_IO_URL } from '@/constants';
 
@@ -47,7 +47,7 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			downloadList: null,
+			downloadList: null as Progresses | null,
 			socket: null as Socket | null
 		}
 	},
@@ -61,7 +61,7 @@ export default defineComponent({
 	async created () {
 		// Force downloader data loading
 		axios.get( API_BASE_URL + '/download/getSelectedEpisodes').then((response) => {
-			this.$data.downloadList = response.data;
+			this.downloadList = response.data;
 		});
 
 		axios.get(API_BASE_URL + '/download/getProgresses').then((response) => {
@@ -69,25 +69,26 @@ export default defineComponent({
 		});
 
 		// Setup socketio to sync downloader data
-		this.$data.socket = io(SOCKET_IO_URL);
-		const { socket } = this.$data;
+		this.socket = io(SOCKET_IO_URL);
 
 		await this.loadDownloadState();
 
-		socket.on('progress', (data: Progresses) => {
-			this.updateProgresses(data);
-		});
+		if (this.socket) {
+			this.socket.on('progress', (data: Progresses) => {
+				this.updateProgresses(data);
+			});
 
-		socket.on('updateDownloadState', (data: boolean) => {
-			this.forceDownloadState(data);
-		});
+			this.socket.on('updateDownloadState', (data: boolean) => {
+				this.forceDownloadState(data);
+			});
 
-		socket.on('updateSelectedAnime', async () => {
-			this.$data.downloadList = (await axios.get(API_BASE_URL + '/download/getSelectedEpisodes')).data;
-		});
+			this.socket.on('updateSelectedAnime', async () => {
+				this.downloadList = (await axios.get(API_BASE_URL + '/download/getSelectedEpisodes')).data;
+			});
+		}
 	},
 	beforeUnmount () {
-		const { socket } = this.$data;
+		const socket = this.socket;
 		if (socket) socket.disconnect();
 	}
 })

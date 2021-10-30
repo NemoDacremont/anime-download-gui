@@ -110,7 +110,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { useRoute } from 'vue-router';
 
 // Types
-import { Version } from '@/store/animeList';
+import { Version } from '@/store/animeList/animeListTypes';
 
 // Components
 import PageNavigation from '@/components/pageNavigation';
