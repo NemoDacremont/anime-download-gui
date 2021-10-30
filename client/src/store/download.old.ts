@@ -1,12 +1,24 @@
 
-import { Module } from 'vuex';
+import { createStore } from 'vuex';
 import { Version } from './animeList';
 import { API_BASE_URL } from '@/constants';
 import axios from 'axios';
 
+
+/*
+ * 	Interfaces declaration
+ */
 export interface Progress {
 	progress: number;
 	state: string;
+}
+
+export interface Progresses {
+	[animeID: number]: {
+		[version in Version]: {
+			[episodeIndex: number]: Progress;
+		}
+	};
 }
 
 export interface SelectedEpisode {
@@ -20,14 +32,6 @@ export interface SelectedEpisodes {
 	};
 }
 
-export interface Progresses {
-	[animeID: number]: {
-		[version in Version]: {
-			[episodeIndex: number]: Progress;
-		}
-	};
-}
-
 export type DownloadAction = 'start' | 'stop';
 
 export interface Episode {
@@ -38,7 +42,25 @@ export interface Episode {
 	url_image: string;
 }
 
-export default {
+/*
+ * 	End of interfaces declaration
+ */
+
+
+/*
+ * 	Download state declaration
+ */
+
+export interface DownloadState {
+	progresses: Progresses;
+	isDownloading: boolean;
+}
+
+/*
+ * 	End of download state declaration
+ */
+
+export const downloadStore = createStore<DownloadState>({
 	state: {
 		progresses: {} as Progresses,
 		isDownloading: false
@@ -54,10 +76,15 @@ export default {
 		},
 		getEpisodeProgress: (state) => (animeID: number | string, version: Version, episode: number) => {
 			const { progresses } = state;
-			//
-			if (!progresses[animeID] || progresses[animeID] && !progresses[animeID][version]) return null;
 
-			return progresses[animeID][version][episode] || null;
+			// parse animeID as an int
+			const animeid = (typeof animeID === 'string')
+				? parseInt(animeID)
+				: animeID;
+
+			if (!progresses[animeid] || progresses[animeid] && !progresses[animeid][version]) return null;
+
+			return progresses[animeid][version][episode] || null;
 		},
 		isDownloading: (state) => state.isDownloading,
 		downloadingState: (state) => state.isDownloading ? 'start': 'stop'
@@ -83,4 +110,6 @@ export default {
 			if (typeof newState === 'boolean') commit('forceDownloadState', newState);
 		},
 	}
-} as Module<any, any>;
+});
+
+export default downloadStore;

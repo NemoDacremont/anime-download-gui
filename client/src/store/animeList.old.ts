@@ -1,8 +1,13 @@
 
-import { Module } from 'vuex';
+import { createStore, Store} from 'vuex';
+import { InjectionKey } from 'vue';
 import axios from 'axios';
 
 import { API_BASE_URL, ANIME_PER_PAGE } from '@/constants';
+
+/*
+ * 	Interfaces declaration
+ */
 
 export interface Anime {
 	id?: number;
@@ -35,12 +40,6 @@ export interface SelectedAnime {
 	end: number;
 }
 
-export interface AnimeListState {
-	vostfr: Anime[] | null;
-	vf: Anime[] | null;
-	selectedAnimes: Map<number, Anime>;
-}
-
 export interface AnimeListOutput {
 	getAnimeList: Anime[];
 	getAnimeListFiltered: Anime[];
@@ -50,10 +49,33 @@ export interface AnimeListOutput {
 	loadData: void | boolean;
 }
 
+/*
+ * 	End of interfaces declaration
+ */
+
+
+/*
+ * 	State declaration
+ */
+
+export interface AnimeListState {
+	vostfr: Anime[] | null;
+	vf: Anime[] | null;
+	selectedAnimes: Map<number, Anime>;
+}
+
+export const animeListKey: InjectionKey<Store<AnimeListState>> = Symbol();
+
+/*
+ * 	State declaration
+ */
+
+// Download the anime list from the local server
 const load = async (version: 'vostfr' | 'vf'): Promise<Anime[]> => {
 	return (await axios.get( `${API_BASE_URL}/animes/animelist/${version}` )).data
 }
 
+// Use Router ??
 import { useRouter } from 'vue-router';
 
 const filterFunction = (anime: Anime, searchString: string) => {
@@ -68,7 +90,7 @@ const filterFunction = (anime: Anime, searchString: string) => {
 
 const isValidVersion = (input: string): boolean => ['vostfr', 'vf'].includes(input);
 
-export default {
+export const animeListStore = createStore<AnimeListState>({
 	state: {
 		vostfr: null,
 		vf: null,
@@ -144,4 +166,6 @@ export default {
 			return true;
 		}
 	}
-} as Module<AnimeListState, AnimeListOutput>;
+});
+
+export default animeListStore;

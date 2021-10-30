@@ -1,9 +1,21 @@
 
-import { Module } from 'vuex';
+import { createStore, Module } from 'vuex';
 
 import { DEFAULT_VIEW, DefaultView } from '@/constants';
 
+/*
+ * 	Interfaces declaration
+ */
 export type AnimeListView = DefaultView;
+
+/*
+ * 	End of interfaces declaration
+ */
+
+
+/*
+ *  State declaration
+ */
 
 export interface SettingsState {
 	animeListView: AnimeListView;
@@ -15,7 +27,11 @@ export interface SettingsOutput {
 	setAnimeListView: void;
 }
 
-export default {
+/*
+ *  End of state declaration
+ */
+
+export const settingsModule : Module<SettingsState, SettingsState> = {
 	state: {
 		animeListView: DEFAULT_VIEW,
 	},
@@ -30,4 +46,7 @@ export default {
 			state.animeListView = newValue;
 		}
 	}
-} as Module<SettingsState, any>
+};
+
+export default settingsModule;
+

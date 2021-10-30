@@ -1,21 +1,33 @@
-import { createStore } from 'vuex'
+
+import { createStore } from 'vuex';
 
 /*
 *		Modules
 */
 
-import animeListStore from './animeList';
-import settings from './settings';
-import download from './download';
+import animeListModule from './animeList';
+import settingsModule from './settings';
+import downloadModule from './download';
+
+import { AnimeListState } from './animeList/animeListState';
+import { SettingsState } from './settings/settingsState';
+import { DownloadState } from './download/downloadState';
 
 /*
-*		Store
+*		Stores
 */
 
-export default createStore({
+export type State = AnimeListState & SettingsState & DownloadState;
+
+export const stores= createStore<State>({
 	modules: {
-		animeListStore,
-		settings,
-		download
-	}
-})
+		animeListModule,
+		settingsModule,
+		downloadModule
+	},
+	strict: true,
+	devtools: true
+});
+
+export default stores;
+
