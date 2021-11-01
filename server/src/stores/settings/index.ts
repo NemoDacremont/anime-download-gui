@@ -5,13 +5,13 @@ import parseDownloadPath from "../../utils/Settings/downloadPath/parseDownloadPa
 
 export interface Settings {
 	downloadPath: string;
-	
+	episodeNameTemplate: string;
 };
 
 export const settings: Settings = {
 	downloadPath: config.outputDir
 		? parseDownloadPath(config.outputDir)
 		: parseDownloadPath(defaultconfig.outputDir),
-
+	episodeNameTemplate: '{ episodeTitle }'
 };
 

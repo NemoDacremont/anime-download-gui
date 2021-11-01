@@ -5,7 +5,6 @@ import getters from './settingsGetters';
 import mutations from './settingsMutations';
 
 export const settingsModule: Module<SettingsState, SettingsState> = {
-	namespaced: true,
 	state,
 	getters,
 	mutations
