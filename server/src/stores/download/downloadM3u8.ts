@@ -236,6 +236,7 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 
 		ffmpegProcess.stderr?.on("data", (chunk: string) => {
 			const messageString = chunk;//.toString("utf-8");
+			console.log(chunk);
 
 			if (!progressData.duration && durationRegExp.test(messageString)) {
 				progressData.duration = getDuration(messageString);

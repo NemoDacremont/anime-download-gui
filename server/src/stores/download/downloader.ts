@@ -26,6 +26,7 @@ export type AnimeEpisodesInformation = Map<AnimeID, Map<Version, Map<EpisodeInde
 export interface EpisodeProgress {
 	progress: number;
 	state: string;
+	title: string;
 }
 export type Progresses = Map< AnimeID, Map< Version, Map<EpisodeIndex, EpisodeProgress> >>
 
@@ -115,11 +116,12 @@ export class Downloader {
 		if (!versionProgress || !versionEntry) return;
 
 		if (typeof episodes === 'number') {
-			// Version entry is a set, no need to check value
+			// Version entry is a set, no need to check if the value already exists
 			versionEntry.add(episodes);
 			const progress: EpisodeProgress = {
 				progress: 0,
-				state: 'waiting'
+				state: 'waiting',
+				title: 'todo'
 			}
 
 			if (!versionProgress.has(episodes)) versionProgress.set(episodes, progress);
@@ -130,7 +132,8 @@ export class Downloader {
 				versionEntry.add(episode);
 				const progress: EpisodeProgress = {
 					progress: 0,
-					state: "waiting"
+					state: "waiting",
+					title: 'todo'
 				}
 
 				if (!versionProgress.has(episode)) versionProgress.set(episode, progress);
@@ -339,8 +342,7 @@ export class Downloader {
 
 					const formattedTitle = (anime.title_english)
 						?	anime.title_english.replace(/ /g, "_").toLocaleLowerCase()
-						: anime.title?.replace(/ /g, "_").replace(/\W/g, "").toLocaleLowerCase();
-
+						: "jsp";
 					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err: Error) => {
 						console.error(`Error while extracting URL, the file may not exist,error: ${err.message}`);
 						this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'File deleted' });
@@ -351,10 +353,7 @@ export class Downloader {
 
 					const fileExtension = "mp4"; /*old system, now all should be mp4*/ //typeof episodeSource === 'string' ? 'mp4': 'ts';
 					// Creating episode name by completing with 0 to be able to sort by name
-					const formattedEpisode = (anime.type == "m0v1e")
-						? formattedTitle
-						: episode.episode.replace(/ /g, "_").replace(/\./g, "");
-
+					const formattedEpisode = episode.episode.replace(/ /g, "_").replace(/\./g, "");
 					//`${'0'.repeat(episodesData.size.toString().length - episodeIndex.toString().length) }${episodeIndex}`
 					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/${formattedEpisode}.${fileExtension}`;
 
@@ -365,12 +364,14 @@ export class Downloader {
 						forceReject: (): boolean => {
 							return !this.isDownloading;
 						},
-						onData: (progress: number): void => {
-							const updatedProgress = this.getProgress(animeID, version, episodeIndex);
-							if (!updatedProgress) return;
+						onData: (newProgress: number): void => {
+							// get the 
+							const episodeProgress = this.getProgress(animeID, version, episodeIndex);
+							if (!episodeProgress) return;
 
-							updatedProgress.progress = progress;
-							this.updateProgresses(animeID, version, episodeIndex, updatedProgress);
+							// update the progress 
+							episodeProgress.progress = newProgress;
+							this.updateProgresses(animeID, version, episodeIndex, episodeProgress);
 
 							// Update in the client
 							const output = this.getParsedProgresses();
