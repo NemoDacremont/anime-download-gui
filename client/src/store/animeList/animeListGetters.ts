@@ -5,16 +5,12 @@ import { AnimeListState as State } from './animeListState';
 import { Version, Anime } from './animeListTypes';
 import { ANIME_PER_PAGE } from '@/constants';
 
-
-export type GetAnimeListFilteredGetter = { version: Version; page: number }
-export type GetAnimeGetter = { version: Version; idInput: number | string }
-
 export interface Getters {
-	getAnimeList (state: State, version: Version): Anime[] | null;
-	animeListLength (state: State, version: Version): number;
-	animeListFilteredLength (state: State, version: Version): number;
-	getAnimeListFiltered (state: State, getter: GetAnimeListFilteredGetter ): Anime[];
-	getAnime (state: State, getter: GetAnimeGetter): Anime | null;
+	getAnimeList (state: State): (version: Version) => Anime[] | null;
+	animeListLength (state: State): (version: Version) => number;
+	animeListFilteredLength (state: State): (version: Version) => number;
+	getAnimeListFiltered (state: State): (version: Version, page: number) => Anime[];
+	getAnime (state: State): (version: Version, idInput: number | string) => Anime | null;
 }
 
 // Function that return true if the anime name matches the string
@@ -33,9 +29,9 @@ const filterFunction = (anime: Anime, searchString: string): boolean | undefined
 const isValidVersion = (input: string): boolean => ['vostfr', 'vf'].includes(input);
 
 export const animeListGetters: GetterTree<State, State> & Getters = {
-	getAnimeList: (state, version) => state[version],
+	getAnimeList: (state) => (version) => state[version],
 
-	animeListLength: (state, version: Version) => {
+	animeListLength: (state) => (version: Version) => {
 		const list = state[version];
 
 		return list
@@ -43,7 +39,7 @@ export const animeListGetters: GetterTree<State, State> & Getters = {
 			: -1;
 	},
 
-	animeListFilteredLength: (state, version) => {
+	animeListFilteredLength: (state) => (version) => {
 		const animeList = state[version];
 		if (!animeList) return 0;
 
@@ -53,8 +49,7 @@ export const animeListGetters: GetterTree<State, State> & Getters = {
 		return animeList.filter(anime => filterFunction(anime, searchFilter)).length;
 	},
 
-	getAnimeListFiltered: (state, getter) => {
-		const { version, page } = getter;
+	getAnimeListFiltered: (state) => (version, page) => {
 		const animeList = state[version];
 		if (!animeList) return [];
 
@@ -70,8 +65,7 @@ export const animeListGetters: GetterTree<State, State> & Getters = {
 			.slice( ANIME_PER_PAGE * (page - 1), ANIME_PER_PAGE * page );
 	},
 
-	getAnime: (state, getter) => {
-		const { version, idInput } = getter;
+	getAnime: (state) => (version, idInput) => {
 		const animeList = state[version];
 		if (!animeList) return null;
 
