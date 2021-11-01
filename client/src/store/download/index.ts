@@ -6,7 +6,6 @@ import mutations from './downloadMutations';
 import actions from './downloadActions';
 
 export const downloadModule: Module<DownloadState, DownloadState> = {
-	namespaced: true,
 	state,
 	getters,
 	mutations,

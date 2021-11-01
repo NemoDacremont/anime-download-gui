@@ -7,7 +7,6 @@ import mutations from './animeListMutations';
 import actions from './animeListActions';
 
 export const animeListModule: Module<AnimeListState, AnimeListState> = {
-	namespaced: true,
 	state,
 	getters,
 	mutations,
