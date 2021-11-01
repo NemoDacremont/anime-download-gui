@@ -66,7 +66,7 @@
 
 				<span
 					class="material-icons clickable medium"
-					:class="{ active: !isGridViewSelected}"
+					:class="{ active: !isGridViewSelected }"
 					@click="selectListView"
 				>list</span>
 			</div>
@@ -107,7 +107,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 // Import required to use this.$route
 // eslint-disable-next-line
-import { useRoute } from 'vue-router';
+import { useRoute, LocationQueryValue } from 'vue-router';
 
 // Types
 import { Version } from '@/store/animeList/animeListTypes';
@@ -119,6 +119,14 @@ import { /*AnimeCard*/ AnimeList as AnimeListComponent } from '@/components/anim
 // Constants data
 import { ANIME_PER_PAGE } from '@/constants';
 
+interface AnimeListData {
+	version: Version;
+	baseUrl: string;
+	searchFilterRaw: LocationQueryValue | LocationQueryValue[];
+	lastSearchInputTimeout: number | undefined | null;
+	pushNextURL: boolean;
+}
+
 export default defineComponent({
 	name: 'AnimeListView',
 	components: {
@@ -126,13 +134,13 @@ export default defineComponent({
 		AnimeListComponent,
 		PageNavigation
 	},
-	data () {
+	data (): AnimeListData {
 		return {
 			version: this.$route.params.version as Version,
 			baseUrl: '/animelist/vostfr/{{newPage}}',
 			searchFilterRaw: this.$route.query.search,
 			pushNextURL: false,
-			lastSearchInputTimeout: null as number | undefined | null
+			lastSearchInputTimeout: null as number | undefined | null,
 		}
 	},
 	computed: {
@@ -146,7 +154,7 @@ export default defineComponent({
 		isVOSTFRSelected (): boolean {
 			return this.$route.params.version === 'vostfr';
 		},
-		...mapGetters(['isGridViewSelected', 'getAnimeList', 'animeListFilteredLength'])
+		...mapGetters(['isGridViewSelected', 'getAnimeList', 'animeListFilteredLength']),
 	},
 	methods: {
 		selectGridView () {
@@ -182,7 +190,7 @@ export default defineComponent({
 		},
 		submitSearch () {
 			this.search();
-			this.$data.pushNextURL = true;
+			this.pushNextURL = true;
 		},
 		...mapMutations(['setAnimeListView']),
 		...mapActions(['loadData'])

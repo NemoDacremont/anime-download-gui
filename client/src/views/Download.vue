@@ -40,15 +40,20 @@ import { Progresses } from '@/store/download/downloadTypes';
 
 import { API_BASE_URL, SOCKET_IO_URL } from '@/constants';
 
+interface DownloadViewData{
+	downloadList: Progresses | null;
+	socket: Socket | null;
+}
+
 export default defineComponent({
 	name: 'Download',
 	components: {
 		SelectedAnime
 	},
-	data () {
+	data (): DownloadViewData {
 		return {
-			downloadList: null as Progresses | null,
-			socket: null as Socket | null
+			downloadList: null,
+			socket: null
 		}
 	},
 	computed: {
@@ -58,7 +63,7 @@ export default defineComponent({
 		...mapMutations(['updateProgresses', 'forceDownloadState']),
 		...mapActions(['toggleDownload', 'loadDownloadState'])
 	},
-	async created () {
+	async created (): Promise<void> {
 		// Force downloader data loading
 		axios.get( API_BASE_URL + '/download/getSelectedEpisodes').then((response) => {
 			this.downloadList = response.data;

@@ -33,32 +33,28 @@ import { Anime } from '@/store/animeList/animeListTypes';
 // eslint-disable-next-line
 import { useRoute } from 'vue-router';
 
-interface AnimeCardData {
-	title: string;
-}
-
 export default defineComponent({
 	name: 'AnimeCard',
 	props: {
 		anime: {
 			type: Object,
 			required: true
-		},
-		title: {
-			type: String,
-			required: true
-		}
-	},
-	data (): AnimeCardData {
-		return {
-			title: this.$props.anime.title
 		}
 	},
 	computed: {
+		title (): string {
+			const anime = this.anime as Anime;
+
+			if (anime.title_english) return anime.title_english;
+			if (anime.title_romanji) return anime.title_romanji;
+			if (anime.title) return anime.title;
+
+			return 'unnamed';
+		},
 		formattedTitle (): string {
-			return this.$data.title.length > 32
-				? `${this.$data.title.slice(0, 31)}...`
-				: this.$data.title
+			return this.title.length > 32
+				? `${this.title.slice(0, 31)}...`
+				: this.title
 		},
 		link (): string {
 			const { version } = this.$route.params;

@@ -37,7 +37,7 @@ export default defineComponent({
 		showNext (): boolean {
 			const { version } = this.$route.params;
 			const { search } = this.$route.query;
-			const animeListLength = this.animeListFilteredLength( version, search );
+			const animeListLength = this.animeListFilteredLength(version, search);
 
 			const page = parseInt(this.$route.params.page as string);
 			const totalPages = Math.floor(animeListLength / ANIME_PER_PAGE);

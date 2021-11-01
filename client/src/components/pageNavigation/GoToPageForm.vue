@@ -53,7 +53,7 @@ export default defineComponent({
 			const { search } = this.$route.query;
 
 			if (Array.isArray(version)) return 0;
-			return Math.floor(this.animeListFilteredLength( version, search ) / ANIME_PER_PAGE);
+			return Math.floor(this.animeListFilteredLength(version, search) / ANIME_PER_PAGE);
 		},
 		...mapGetters(['animeListFilteredLength'])
 	}
