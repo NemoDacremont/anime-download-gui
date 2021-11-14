@@ -3,11 +3,13 @@ import { socketIOStore } from "../../../stores/socketIO/index";
 import { downloader } from "../../../stores/download";
 import { settings } from "../../../stores/settings";
 
-import {} from './createEpisodeName';
+import { createEpisodeName } from './createEpisodeName';
 
 const socketIOInstance = socketIOStore.socketIOInstance;
 
-export const initEpisodeName = (): void => {
+const initEpisodeName = (): void => {
+	if (!socketIOInstance) return;
+
 	socketIOInstance.on("updateEpisodeNameTemplate", (newTemplate: string) => {
 		if (downloader.isDownloading) {
 			socketIOInstance.send("error", "can't update the download path, app is downloading");
@@ -16,5 +18,10 @@ export const initEpisodeName = (): void => {
 		
 		settings.episodeNameTemplate = newTemplate;
 	});
+}
+
+export {
+	initEpisodeName,
+	createEpisodeName
 }
 
