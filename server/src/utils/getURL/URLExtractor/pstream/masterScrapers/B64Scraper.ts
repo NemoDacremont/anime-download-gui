@@ -57,17 +57,20 @@ export class B64Scraper implements MasterScraper {
 			return null;
 		}
 
-		const b64Matches = videojsRaw.match(/"eyJ\w*?"/);
+		const b64Matches = videojsRaw.match(/}\("([A-Za-z\d+\/=])*.?"\)/);
 		if (!(b64Matches && b64Matches[0])) {
 			console.error("can't match b64 m3u8 source");
 			console.error(`b64Matches: ${b64Matches}`);
 			return null;
 		}
 
-		const b64 = b64Matches[0].replace(/"/g, "");
-		const decoded = decodeB64(b64);
+		// Remove the parasite chars used to match the b64 scring
+		const B64RawMatch = b64Matches[0].replace(/[}\(\)"]/g, "");
+
+		// Just recreated the process of the script himself, they added a random char at pos 1, removing it
+		const B64decoded = decodeB64(B64RawMatch).slice(1);
 		try {
-      return JSON.parse(decoded).url;
+      return JSON.parse(B64decoded).url;
     } catch (err) {
       console.error(err);
 			return null;

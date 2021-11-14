@@ -11,6 +11,8 @@ import { getAnimeFromID, Version, Episode, ExtractEpisodeList } from '../animes'
 import extractURL from '../../utils/getURL/extractURL';
 import socketIOStore from '../socketIO';
 
+import { createEpisodeName } from '../../utils/Settings/nameTemplate';
+
 //	Actually getSourceFile is used in the extractURL function
 //import { getSourceFile } from '../../scripts/getURL/URLExtractor';
 
@@ -342,7 +344,7 @@ export class Downloader {
 
 					const formattedTitle = (anime.title_english)
 						?	anime.title_english.replace(/ /g, "_").toLocaleLowerCase()
-						: "jsp";
+						: anime.title?.replace(/ /g, "_").toLocaleLowerCase();
 					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err: Error) => {
 						console.error(`Error while extracting URL, the file may not exist,error: ${err.message}`);
 						this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'File deleted' });
