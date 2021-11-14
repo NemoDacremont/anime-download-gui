@@ -4,6 +4,7 @@ import fs from 'fs';
 
 import { DownloadCallbacks, defaultCallbacks } from './downloadScript';
 import { exec } from 'child_process';
+import FfmpegCommand from 'fluent-ffmpeg';
 
 //	TS interface
 import { Source } from '../../utils/getURL/URLExtractor';
@@ -209,16 +210,63 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 		const { onData, forceReject } = { ...defaultCallbacks, ...cbs };  
 
 		const ffmpegHeaders = [
-			"'Accept-Encoding: gzip, deflate, br'",
-			"'Accept-Language: en-US,en;q=0.5'",
-			"'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'"
+			'Accept-Encoding: gzip, deflate, br',
+			'Accept-Language: en-US,en;q=0.5',
+			'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+			'host: www.pstream.net'
 		];
+
+		/*
+		 * 		FLUENT FFMPEG
+		 */
+
+		const command = FfmpegCommand()
+			.input(`${source.URL}`)
+			//.input(`http://127.0.0.1:9999/test`)
+			.addInputOption('-y')
+    	.addInputOption(`-headers`, `${ffmpegHeaders.join("\r\n")}\r\n`)
+			.output(`${outFilePath}`)
+			.addOutputOption('-c copy');
+
+		command.on("start", (commandline) => {
+			console.log(`ffmpeg -y -headers ${ffmpegHeaders.join("$'\r\n'")} -i "${source.URL}" -c copy "${outFilePath}"`);
+			console.log(commandline);
+		});
+
+		command.on("progress", (progress) => {
+			/// il existe progress.currentKbps !!!
+
+			onData(progress.percent as number);
+
+			if (forceReject()) {
+				const kill = command.kill('SIGSTOP');
+				//if (!kill.killSuccess) console.log("kill didn't succeed, don't know why and hjflkjqhfjkldsqh");
+			}
+		});
+
+		command.on("error", (err) => {
+			console.error("Error while downloading with fluent-ffmpeg:", err);
+			resolve(false);
+		});
+
+		command.on("end", () => {
+			resolve(true);
+		});
+
+		command.run();
+
+
+
+
+		/*
+		 * 		FLUENT FFMPEG
+		 */
 
 		//const userAgent = '"Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0"'
 
-		const ffmpegCommand = `ffmpeg -y -headers ${ffmpegHeaders.join("$'\r\n'")} -i "${source.URL}" -c copy "${outFilePath}"`;
+	//	const ffmpegCommand = `ffmpeg -y -headers ${ffmpegHeaders.join("$'\r\n'")} -i "${source.URL}" -c copy "${outFilePath}"`;
 		console.log("FFMPEG Command: ");
-		console.log(ffmpegCommand);
+		//console.log(ffmpegCommand);
 
 		const progressData: ProgressData = {
 			duration: null,
@@ -226,7 +274,8 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 			progress: 0
 		};
 
-		const ffmpegProcess = exec(ffmpegCommand, (err: any) => {
+		/*
+			const ffmpegProcess = exec(ffmpegCommand, (err: any) => {
 			if (err) {
 				console.error(err);
 				return;
@@ -252,7 +301,7 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 
 			/*console.log("PROGRESS:");
 			console.table(progressData);*/
-
+/*
 			onData(progressData.progress);
 
 			if (forceReject()) {
@@ -268,5 +317,6 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 		ffmpegProcess.on("exit", () => {
 			resolve(true);
 		});
+		*/
 	});
 }
