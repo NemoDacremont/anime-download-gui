@@ -11,7 +11,7 @@ import { getAnimeFromID, Version, Episode, ExtractEpisodeList } from '../animes'
 import extractURL from '../../utils/getURL/extractURL';
 import socketIOStore from '../socketIO';
 
-import { createEpisodeName } from '../../utils/Settings/nameTemplate';
+//import { createEpisodeName } from '../../utils/Settings/nameTemplate';
 
 //	Actually getSourceFile is used in the extractURL function
 //import { getSourceFile } from '../../scripts/getURL/URLExtractor';
