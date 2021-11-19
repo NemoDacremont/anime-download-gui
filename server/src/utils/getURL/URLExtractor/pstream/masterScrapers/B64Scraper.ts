@@ -1,3 +1,4 @@
+
 import {decodeB64} from '../../../../base64';
 import axios, { AxiosRequestConfig} from "axios";
 import {MasterScraper} from '.';
@@ -57,18 +58,38 @@ export class B64Scraper implements MasterScraper {
 			return null;
 		}
 
-		const b64Matches = videojsRaw.match(/}\("([A-Za-z\d+\/=])*.?"\)/);
+		const b64Matches = videojsRaw.match(/slice\(\d+\)\)}\("([A-Za-z\d+\/=])*.?"\)/);
 		if (!(b64Matches && b64Matches[0])) {
 			console.error("can't match b64 m3u8 source");
 			console.error(`b64Matches: ${b64Matches}`);
 			return null;
 		}
 
+		const b64Match = b64Matches[0];
+		const slice_matches = b64Match.match(/slice\(\d+/);
+
+		if (!(slice_matches && slice_matches[0])) {
+			console.error("can't match slice in m3u8 source");
+			console.error(`slice_matches: ${slice_matches}`);
+			return null;
+		}
+
+		const slice_match = slice_matches[0];
+		const slice_length_match = slice_match.match(/\d+/);
+
+		if (!(slice_length_match && slice_length_match[0])) {
+			console.error("can't match slice length in m3u8 source");
+			console.error(`slice_length_match: ${slice_length_match}`);
+			return null;
+		}
+
+		const slice_length = parseInt(slice_length_match[0]);
+
 		// Remove the parasite chars used to match the b64 scring
-		const B64RawMatch = b64Matches[0].replace(/[}\(\)"]/g, "");
+		const B64RawMatch = b64Match.replace(/[}\(\)"]|slice\(\d*?\)/g, "");
 
 		// Just recreated the process of the script himself, they added a random char at pos 1, removing it
-		const B64decoded = decodeB64(B64RawMatch).slice(1);
+		const B64decoded = decodeB64(B64RawMatch).slice(slice_length);
 		try {
       return JSON.parse(B64decoded).url;
     } catch (err) {
