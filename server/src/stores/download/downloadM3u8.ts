@@ -3,8 +3,10 @@
 import fs from 'fs';
 
 import { DownloadCallbacks, defaultCallbacks } from './downloadScript';
-import { exec } from 'child_process';
+//import { exec } from 'child_process';
 import FfmpegCommand from 'fluent-ffmpeg';
+
+import { convertDurationToCS } from './convertDurationToCS';
 
 //	TS interface
 import { Source } from '../../utils/getURL/URLExtractor';
@@ -220,6 +222,8 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 		 * 		FLUENT FFMPEG
 		 */
 
+		let videoDuration = NaN;
+
 		const command = FfmpegCommand()
 			.input(`${source.URL}`)
 			//.input(`http://127.0.0.1:9999/test`)
@@ -233,10 +237,18 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 			console.log(commandline);
 		});
 
-		command.on("progress", (progress) => {
-			/// il existe progress.currentKbps !!!
+		command.on("codecData", (data) => {
+			videoDuration = convertDurationToCS( data.duration );
+		});
 
-			onData(progress.percent as number);
+		command.on("progress", (progress) => {
+			if (!videoDuration) return;
+			/// il existe progress.currentKbps !!!
+			const currentDuration = convertDurationToCS(progress.timemark as string);
+			const currentProgress = Math.ceil( 100 * (currentDuration / videoDuration) );
+
+
+			onData(currentProgress);
 
 			if (forceReject()) {
 				const kill = command.kill('SIGSTOP');
