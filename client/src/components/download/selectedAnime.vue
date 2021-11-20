@@ -36,7 +36,10 @@
 					class="selected-anime__episodes-list-item"
 					:style="{ '--progress': `${(getEpisodeProgress(animeID, version, episode)?.progress || 0) - 100}%`}"
 				>
-					<p>{{ }} | <span class="episode-state">state: {{ getEpisodeProgress(animeID, version, episode)?.state }}</span></p>
+					<p>
+						<span> {{ getEpisodeProgress(animeID, version, episode)?.title }} </span> |
+						<span class="episode-state">state: {{ getEpisodeProgress(animeID, version, episode)?.state }}</span>
+					</p>
 
 					<div class="selected-anime__progress">
 						<p>progress:
