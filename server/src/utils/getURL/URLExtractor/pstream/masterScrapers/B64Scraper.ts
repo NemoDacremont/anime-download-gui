@@ -58,35 +58,37 @@ export class B64Scraper implements MasterScraper {
 			return null;
 		}
 
-		const b64Matches = videojsRaw.match(/slice\(\d+\)\)}\("([A-Za-z\d+\/=])*.?"\)/);
+		const b64Matches = videojsRaw.match(/\)}\("([A-Za-z\d+\/=])*.?"\)/);
 		if (!(b64Matches && b64Matches[0])) {
 			console.error("can't match b64 m3u8 source");
 			console.error(`b64Matches: ${b64Matches}`);
 			return null;
 		}
 
-		const b64Match = b64Matches[0];
-		const slice_matches = b64Match.match(/slice\(\d+/);
+		//
+		// Slice part
+		//
 
-		if (!(slice_matches && slice_matches[0])) {
-			console.error("can't match slice in m3u8 source");
-			console.error(`slice_matches: ${slice_matches}`);
-			return null;
+		const slice_raw_matches = videojsRaw.match(/slice\(\d+\)\)}\("([A-Za-z\d+\/=])*.?"\)/);
+
+		let slice_match = "";
+		let slice_length = 0;
+
+		if (slice_raw_matches && slice_raw_matches[0]) {
+			slice_match = slice_raw_matches[0];
+			const slice_length_match = slice_match.match(/\d+/);
+
+			if (slice_length_match && slice_length_match[0]) {
+				slice_length = parseInt(slice_length_match[0]);
+			}
 		}
 
-		const slice_match = slice_matches[0];
-		const slice_length_match = slice_match.match(/\d+/);
-
-		if (!(slice_length_match && slice_length_match[0])) {
-			console.error("can't match slice length in m3u8 source");
-			console.error(`slice_length_match: ${slice_length_match}`);
-			return null;
-		}
-
-		const slice_length = parseInt(slice_length_match[0]);
+		//
+		// End of slice part
+		//
 
 		// Remove the parasite chars used to match the b64 scring
-		const B64RawMatch = b64Match.replace(/[}\(\)"]|slice\(\d*?\)/g, "");
+		const B64RawMatch = b64Matches[0].replace(/[}\(\)"]|slice\(\d*?\)/g, "");
 
 		// Just recreated the process of the script himself, they added a random char at pos 1, removing it
 		const B64decoded = decodeB64(B64RawMatch).slice(slice_length);
