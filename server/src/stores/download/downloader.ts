@@ -96,7 +96,7 @@ export class Downloader {
 	 *	Methods
 	*/
 
-	public selectEpisode (animeID: AnimeID, version: Version, episodes: number | number[]): void {
+	public async selectEpisode (animeID: AnimeID, version: Version, episodes: number | number[]): Promise<void> {
 		const { itemsToDownload, progresses } = this.store;
 
 		// actually boolean isn't useful I think
@@ -117,13 +117,16 @@ export class Downloader {
 		const versionProgress = animeProgress.get(version);
 		if (!versionProgress || !versionEntry) return;
 
+		const anime = getAnimeFromID(version, animeID);
+		const episodeList = anime ? await ExtractEpisodeList(anime) : null;
+
 		if (typeof episodes === 'number') {
 			// Version entry is a set, no need to check if the value already exists
 			versionEntry.add(episodes);
 			const progress: EpisodeProgress = {
 				progress: 0,
 				state: 'waiting',
-				title: 'todo'
+				title: episodeList && episodeList[episodes - 1] ? episodeList[episodes - 1].episode: "err"
 			}
 
 			if (!versionProgress.has(episodes)) versionProgress.set(episodes, progress);
@@ -135,7 +138,7 @@ export class Downloader {
 				const progress: EpisodeProgress = {
 					progress: 0,
 					state: "waiting",
-					title: 'todo'
+					title: episodeList && episodeList[episode - 1] ? episodeList[episode - 1].episode: "err"
 				}
 
 				if (!versionProgress.has(episode)) versionProgress.set(episode, progress);
