@@ -1,10 +1,15 @@
 <template>
 	<div class="app-container">
-		<nav-element>
-			<nav-item path="/" name="Home" />
-			<nav-item path="/animelist/vostfr/1" name="Anime List" />
-			<nav-item path="/download" name="Downloads" />
-			<nav-item path="/about" name="About" />
+		<nav-element variant="list">
+			<div id="top_nav">
+				<nav-item path="/" name="Home" />
+				<nav-item path="/animelist/vostfr/1" name="Anime List" />
+				<nav-item path="/download" name="Downloads" />
+				<nav-item path="/about" name="About" />
+			</div>
+			<div>
+				<nav-item path="/settings" icon="settings"/>
+			</div>
 		</nav-element>
 
 		<main>
