@@ -1,6 +1,12 @@
 
-import config from './config.json';
+//import config from './config.json';
 //import path from 'path';
+
+import { join } from 'path';
+import { readJSON } from './utils/readJSON';
+
+export const configPath = join(__dirname, 'config.json');
+export const config = readJSON(configPath);
 
 // other things
 export const port = config.port || 8080;
