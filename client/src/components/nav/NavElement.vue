@@ -45,9 +45,18 @@ export default defineComponent({
 
 	.nav__routes-list {
 		&.list {
+			height: 100%;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			justify-content: space-between;
+			
+			div {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
 		}
 
 		&.grid {

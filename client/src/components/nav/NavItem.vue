@@ -1,7 +1,10 @@
 <template>
-	<li class="nav-item">
+	<li class="nav-item"
+		:class="{ 'icon-style': (!name && icon) }"
+	>
 		<router-link :to="path">
-			{{ name }}
+			<span class="icon material-icons">{{ icon }}</span>
+			<span class="name">{{ name }}</span>
 		</router-link>
 	</li>
 </template>
@@ -16,15 +19,21 @@ export default defineComponent({
 		},
 		path: {
 			type: String
+		},
+		icon: {
+			type: String
 		}
-	}
+	},
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .nav-item {
 	width: 100%;
+	&.icon-style {
+		width: 8rem;
+	}
 
 	display: flex;
 	justify-content: center;
