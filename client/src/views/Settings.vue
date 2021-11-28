@@ -1,6 +1,12 @@
 <template>
 	<div class="settings">
-		<h1>Settings</h1>
+		<div class="headers">
+			<h1>Settings</h1>
+		</div>
+
+
+
+
 	</div>
 </template>
 
@@ -14,6 +20,11 @@ export default defineComponent({
 
 <style scoped>
 
-
-
+.headers {
+	height: 8vh;
+	padding: 0 5em;
+	display: flex;
+	background-color: var(--nav-background-color);
+	align-items: center;
+}
 </style>
