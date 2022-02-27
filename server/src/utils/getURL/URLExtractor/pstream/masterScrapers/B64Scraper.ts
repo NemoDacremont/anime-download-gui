@@ -93,7 +93,7 @@ export class B64Scraper implements MasterScraper {
 		// Just recreated the process of the script himself, they added a random char at pos 1, removing it
 		const B64decoded = decodeB64(B64RawMatch).slice(slice_length);
 		try {
-      return JSON.parse(B64decoded).url;
+      return JSON.parse(B64decoded).real_url;
     } catch (err) {
       console.error(err);
 			return null;
