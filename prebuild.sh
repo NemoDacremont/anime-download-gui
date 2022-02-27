@@ -3,6 +3,10 @@
 # previous build and the mv it
 rm -rf dist
 
+mkdir dist
+cp server/src/config.json dist/
+cp server/src/config.default.json dist/
+
 # Build the client
 cd client/
 npm run build
