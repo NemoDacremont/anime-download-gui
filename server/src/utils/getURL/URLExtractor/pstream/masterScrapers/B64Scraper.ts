@@ -30,6 +30,7 @@ export class B64Scraper implements MasterScraper {
         return out;
     }
 
+		console.error("no pstream scraper was able to find the url");
     return null;
   }
 
@@ -37,12 +38,15 @@ export class B64Scraper implements MasterScraper {
 		const videojsURLRegExp = /https:\/\/www\.pstream\.net\/u\/player-script\?v=\w+&e=\w+/;
 		const videojsURLMatch = playerHTML.match(videojsURLRegExp);
 
+		console.log("finding videojs url")
 		if (!(videojsURLMatch && videojsURLMatch[0])) {
 			console.error("can't find pstream player js file link in the player source");
 			console.error(`videojsURLMatch: ${videojsURLMatch}`);
 			return null;
 		}
+		console.log("videojs url found")
 
+		console.log("downloading videojs url")
 		const videojsURL = videojsURLMatch[0];
 		const videojsRequest = await axios.get(videojsURL, axiosOptions ).catch((err: Error) => console.error(err));
 		if (!videojsRequest) {
@@ -51,6 +55,7 @@ export class B64Scraper implements MasterScraper {
 			return null;
 		}
 		const videojsRaw = videojsRequest.data;
+		console.log("videojs url downloaded")
 
 		if (!videojsRaw) {
 			console.error("pstream response is null");
@@ -89,11 +94,14 @@ export class B64Scraper implements MasterScraper {
 
 		// Remove the parasite chars used to match the b64 scring
 		const B64RawMatch = b64Matches[0].replace(/[}\(\)"]|slice\(\d*?\)/g, "");
+		console.log("got the b64 match");
 
 		// Just recreated the process of the script himself, they added a random char at pos 1, removing it
 		const B64decoded = decodeB64(B64RawMatch).slice(slice_length);
 		try {
-      return JSON.parse(B64decoded).real_url;
+			const json = JSON.parse(B64decoded);
+			console.log("url:", json.mmmmmmmmmmmmmmmmmmmm);
+      return json.mmmmmmmmmmmmmmmmmmmm;
     } catch (err) {
       console.error(err);
 			return null;
