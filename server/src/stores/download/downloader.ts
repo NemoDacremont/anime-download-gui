@@ -4,6 +4,7 @@ import downloadEpisode, { DownloadCallbacks } from './downloadScript';
 import downloadM3u8 from './downloadM3u8';
 
 import { outputDir } from '../../constants';
+import { formatName } from '../../utils/formatNames'
 
 // Doing TS things
 
@@ -65,6 +66,9 @@ const onlyIncludesNumber = (arr: any[]): boolean => {
 	return true;
 }
 
+//
+// Classe Downloader
+//
 
 export class Downloader {
 	public readonly actionListener: ActionListener;
@@ -345,20 +349,21 @@ export class Downloader {
 					const episode = episodesData.get(episodeIndex);
 					if (!episode) continue;
 
+					// Format the anime title to name the folder
 					const formattedTitle = (anime.title_english)
-						?	anime.title_english.replace(/ /g, "_").toLocaleLowerCase()
-						: anime.title?.replace(/ /g, "_").toLocaleLowerCase();
+						?	formatName(anime.title_english)
+						: formatName(anime.title || "no name");
 					const episodeSource = await (extractURL(animeID, version, episodeIndex).catch((err: Error) => {
 						console.error(`Error while extracting URL, the file may not exist,error: ${err.message}`);
 						this.updateProgresses(animeID, version, episodeIndex, { ...episodeProgress, state: 'File deleted' });
 						socketIOStore.socketIOInstance?.emit('progress', this.getParsedProgresses());
 					}));
-					// test if source is void, if yes, download next episode
+					// test if source is void, if it is, download next episode
 					if (!(episodeSource && episodeSource.URL)) continue;
 
 					const fileExtension = "mp4"; /*old system, now all should be mp4*/ //typeof episodeSource === 'string' ? 'mp4': 'ts';
 					// Creating episode name by completing with 0 to be able to sort by name
-					const formattedEpisode = episode.episode.replace(/ /g, "_").replace(/\./g, "");
+					const formattedEpisode = formatName(episode.episode);
 					//`${'0'.repeat(episodesData.size.toString().length - episodeIndex.toString().length) }${episodeIndex}`
 					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/${formattedEpisode}.${fileExtension}`;
 
