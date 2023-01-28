@@ -94,7 +94,7 @@ import axios from 'axios';
 import { useRoute } from 'vue-router';
 
 // Store
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, useStore } from 'vuex';
 
 // constants / interfaces
 import { API_BASE_URL } from '@/constants';

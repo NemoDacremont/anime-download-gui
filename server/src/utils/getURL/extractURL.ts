@@ -5,7 +5,11 @@ import { downloader } from '../../stores/download';
 
 import { getSourceFile, Source } from './URLExtractor';
 
-
+const playerSourcesRegExps: RegExp[] = [
+	/https?:\/\/veestream\.net\/(\w+\/)+\w+/,
+	/https?:\/\/www\.pstream\.net\/(\w+\/)?\w+/,
+	/https?:\/\/embed\.mystream\.to\/(\w+\/)?\w+/,
+]
 
 export default function (animeID: number, version: 'vostfr' | 'vf', episode: number): Promise<Source> {
 	return new Promise(async (resolve, reject) => {
@@ -20,11 +24,23 @@ export default function (animeID: number, version: 'vostfr' | 'vf', episode: num
 
 		const animePage: string = animePageResponse.data;
 
-		const playersSources = animePage.match(/https?:\/\/((www)|(embed))\.((pstream)|(mystream))\.((net)|(to))\/(\w+\/)?\w+/g);
+		// On extrait toutes les url des players
+		const playersSources: string[] = []
+		for (let i=0 ; i<playerSourcesRegExps.length ; i++) {
+			const playerSourceRegExp = playerSourcesRegExps[i]
+			const playerSource = animePage.match(playerSourceRegExp)
+
+			if (playerSource) {
+				console.log("player trouvé:", playerSource[0])
+				playersSources.push(playerSource[0])
+			}
+		}
+
 		console.log("PLAYERS SOURCES:");
 		console.table(playersSources);
 		if (!playersSources) throw new Error(`The episode you're looking for doesn't look like existing`);
 
+		// On teste si on peut extraire la video des players
 		for (let i=0 ; i<playersSources.length ; i++) {
 			const source = await getSourceFile(playersSources[i]);
 

@@ -1,6 +1,8 @@
 
 import PStreamExtractor from './pstream';
 import MyStreamExtractor from './mystream';
+import VeeStreamExtractor from './veestream';
+import StreamTapeExtractor from './streamtape';
 
 /*
  *	Interface URLExtractor
@@ -15,13 +17,17 @@ export interface URLExtractor {
 
 const extractors: URLExtractor[] = [
 	new PStreamExtractor(),
-	new MyStreamExtractor()
+	new MyStreamExtractor(),
+	new VeeStreamExtractor()
 ]
 
 
 export interface Source {
 	type: "MP4" | "M3U8";
 	URL: string;
+	additionalHeaders: {
+		[cle: string]: string;
+	}
 }
 
 const getSourceFile = (playerURL: string): Promise<Source | null> => {
@@ -50,3 +56,4 @@ export {
 	extractors,
 	getSourceFile
 }
+

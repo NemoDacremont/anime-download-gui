@@ -1,6 +1,7 @@
 
 import https from 'https';
 import fs from 'fs';
+import { Source } from '../../utils/getURL/URLExtractor';
 //import socketIOStore from '../../../stores/socketIO';
 
 export interface DownloadCallbacks {
@@ -14,9 +15,10 @@ export const defaultCallbacks: DownloadCallbacks = {
 	onData: () => {}
 }
 
-export default function (filePath: string, url: string, cbs?: DownloadCallbacks): Promise<boolean | null> {
+export default function (filePath: string, source: Source, cbs?: DownloadCallbacks): Promise<boolean | null> {
+	const url = source.URL;
 	return new Promise((resolve, reject) => {
-		
+
 		// merging callbacks and then extract you know
 		const { forceReject, onData } = { ...defaultCallbacks, ...cbs };
 
@@ -39,7 +41,8 @@ export default function (filePath: string, url: string, cbs?: DownloadCallbacks)
 		fileStream.on('ready', () => {
 			const requestOptions: https.RequestOptions = {
 				headers: {
-					'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0'
+					'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0',
+					...source.additionalHeaders
 				}
 			}
 			

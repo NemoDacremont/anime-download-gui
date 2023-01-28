@@ -1,17 +1,16 @@
 
 import { Source, URLExtractor } from '../index';
 import axios, { AxiosRequestConfig } from 'axios';
-import { B64Scraper, /*directScraper,*/ MasterScraper } from './masterScrapers';
+import { B64Scraper, MasterScraper } from './masterScrapers';
 
-export default class URLExtractorPStream implements URLExtractor {
-	private readonly urlRegex = /^https:\/\/www\.pstream\.net\/\w\/\w+$/;
-	public readonly name = "PStream Extractor";
+export default class URLExtractorVeeStream implements URLExtractor {
+	private readonly urlRegex = /https:\/\/veestream\.net\/\w\/\w+/;
+	public readonly name = "VeeStream Extractor";
 	private readonly M3U8Scrapers: MasterScraper[];
 
 	constructor () {
 		this.M3U8Scrapers = [
 			new B64Scraper()
-			//new directScraper()
 		];
 	}
 
@@ -34,7 +33,7 @@ export default class URLExtractorPStream implements URLExtractor {
 
 			const playerRequest = await axios.request({ url: playerURL, ...axiosOptions }).catch(err => console.error(err));
 			if (!playerRequest) {
-				reject(new Error("Pstream extractor: playerRequest failed"));
+				reject(new Error("VeeStream extractor: playerRequest failed"));
 				return null;
 			}
 
@@ -42,21 +41,21 @@ export default class URLExtractorPStream implements URLExtractor {
 			
 			const masterM3U8URL = await (this.scrapeMasterM3U8(html).catch(err => console.error(err)));
 			if (!masterM3U8URL)	{
-				reject(new Error("Pstream extractor: scraping of masterM3U8 failed"));
+				reject(new Error("VeeStream extractor: scraping of masterM3U8 failed"));
 				return null;
 			}
 
 			const masterM3U8Request = await axios.request({ url: masterM3U8URL, ...axiosOptions }).catch(err => console.error(err));
 			if (!masterM3U8Request) {
-				reject(new Error("Pstream extractor: masterM3U8 request failed"));
+				reject(new Error("VeeStream extractor: masterM3U8 request failed"));
 				return null;
 			}
 			const masterM3U8 = masterM3U8Request.data;
 			
-			const mediaM3U8RegExp = /^https:\/\/www\.pstream\.net\/\w\/\d+\/\w+\.m3u8\?expires=\d+&signature=\w+$/m;
+			const mediaM3U8RegExp = /https:\/\/veestream\.net\/\w\/\d+\/\w+\.m3u8\?expires=\d+&signature=\w+/;
 			const mediaM3U8Matches = masterM3U8.match(mediaM3U8RegExp);
 			if (! (mediaM3U8Matches && mediaM3U8Matches[0]) ) {
-				reject(new Error("Pstream extractor: no media m3u8 matched"));
+				reject(new Error("VeeStream extractor: no media m3u8 matched"));
 				return;
 			}
 

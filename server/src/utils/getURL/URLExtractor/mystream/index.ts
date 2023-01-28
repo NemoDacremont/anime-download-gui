@@ -37,7 +37,13 @@ export default class URLExtractorMyStream implements URLExtractor {
 				return;
 			}
 
-			resolve({type: "MP4", URL: urlMatch[0]});
+			const out: Source = {
+				type: "MP4",
+				URL: urlMatch[0],
+				additionalHeaders: {}
+			};
+
+			resolve(out);
 		});
 	}
 }

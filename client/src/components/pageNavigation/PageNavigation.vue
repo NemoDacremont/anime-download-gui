@@ -18,6 +18,10 @@ import GoToPageForm from './GoToPageForm.vue';
 // Constants
 import { ANIME_PER_PAGE } from '../../constants'
 
+import { useRoute } from 'vue-router';
+
+
+
 export default defineComponent({
 	components: {
 		PageIncrementor,

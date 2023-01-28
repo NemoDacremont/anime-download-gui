@@ -362,8 +362,10 @@ export class Downloader {
 					if (!(episodeSource && episodeSource.URL)) continue;
 
 					const fileExtension = "mp4"; /*old system, now all should be mp4*/ //typeof episodeSource === 'string' ? 'mp4': 'ts';
+
 					// Creating episode name by completing with 0 to be able to sort by name
 					const formattedEpisode = formatName(episode.episode);
+
 					//`${'0'.repeat(episodesData.size.toString().length - episodeIndex.toString().length) }${episodeIndex}`
 					const filePath = `${outputDir}/animesDownloaded/${formattedTitle}-${animeID}/${version}/${formattedEpisode}.${fileExtension}`;
 
@@ -394,9 +396,9 @@ export class Downloader {
 
 					// If the source is an url, download the file normally
 					if(episodeSource.type === "MP4") {
-						const episodeURL = episodeSource.URL;
+						// const episodeURL = episodeSource.URL;
 
-						await (downloadEpisode(filePath, episodeURL, downloadsCallbacks).catch((err: Error) => console.log(err.message)));
+						await (downloadEpisode(filePath, episodeSource, downloadsCallbacks).catch((err: Error) => console.log(err.message)));
 					}
 
 					// If the source is m3u8 (ts files) => download with ffmpeg
