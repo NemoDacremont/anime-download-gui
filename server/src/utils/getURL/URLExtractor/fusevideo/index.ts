@@ -3,8 +3,8 @@ import { Source, URLExtractor } from '../index';
 import axios, { AxiosRequestConfig } from 'axios';
 import { B64Scraper, MasterScraper } from './masterScrapers';
 
-export default class URLExtractorVeeStream implements URLExtractor {
-	private readonly urlRegex = /https:\/\/veestream\.net\/\w\/\w+/;
+export default class URLExtractorFuseStream implements URLExtractor {
+	private readonly urlRegex = /https:\/\/fusevideo\.net\/\w\/\w+/;
 	public readonly name = "VeeStream Extractor";
 	private readonly M3U8Scrapers: MasterScraper[];
 
@@ -52,7 +52,7 @@ export default class URLExtractorVeeStream implements URLExtractor {
 			}
 			const masterM3U8 = masterM3U8Request.data;
 			
-			const mediaM3U8RegExp = /https:\/\/veestream\.net\/\w\/\d+\/\w+\.m3u8\?expires=\d+&signature=\w+/;
+			const mediaM3U8RegExp = /https:\/\/fusevideo\.net\/\w\/\d+\/\w+\.m3u8\?expires=\d+&signature=\w+/;
 			const mediaM3U8Matches = masterM3U8.match(mediaM3U8RegExp);
 			if (! (mediaM3U8Matches && mediaM3U8Matches[0]) ) {
 				reject(new Error("VeeStream extractor: no media m3u8 matched"));

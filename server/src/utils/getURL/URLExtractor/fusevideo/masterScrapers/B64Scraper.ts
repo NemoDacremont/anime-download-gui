@@ -38,7 +38,7 @@ export class B64Scraper implements MasterScraper {
   }
 
   private async scrapeMasterM3U8V7(playerHTML: string): Promise<string|null> {
-		const videojsURLRegExp = /https:\/\/veestream\.net\/u\/player-script\?v=\w+&e=\w+/;
+		const videojsURLRegExp = /https:\/\/fusevideo\.net\/u\/player-script\?v=\w+&e=\w+/;
 		const videojsURLMatch = playerHTML.match(videojsURLRegExp);
 
 		console.log("finding videojs url")

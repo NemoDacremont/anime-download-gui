@@ -1,7 +1,7 @@
 
 import PStreamExtractor from './pstream';
 import MyStreamExtractor from './mystream';
-import VeeStreamExtractor from './veestream';
+import FuseStreamExtractor from './fusevideo';
 import StreamTapeExtractor from './streamtape';
 
 /*
@@ -18,7 +18,7 @@ export interface URLExtractor {
 const extractors: URLExtractor[] = [
 	new PStreamExtractor(),
 	new MyStreamExtractor(),
-	new VeeStreamExtractor()
+	new FuseStreamExtractor()
 ]
 
 
