@@ -37,20 +37,20 @@ export default function (): Promise<News> {
 	return new Promise((resolve, reject) => {
 		axios.get(NEKO_SAMA_BASE_URL).then((response: AxiosResponse<string>) => {
 			// Get required cookie by cloudflare for next axios requests
-			if (response.headers["set-cookie"] && response.headers["set-cookie"][0]) {
-				const cookieMatch = (response.headers["set-cookie"][0] as string).match(/[\w]+=[\w\-\+\/]+;/g);
-				if (cookieMatch) {
-					const keyValueCookie = cookieMatch[0].replace(";", "").split("=");
-
-					if (keyValueCookie) {
-						if (!axios.defaults.headers.common["cookie"]) {
-							axios.defaults.headers.common["cookie"] = {};
-						}
-
-						axios.defaults.headers.common["cookie"][keyValueCookie[0]] = keyValueCookie[1];
-					}
-				}
-			}
+			// if (response.headers["set-cookie"] && response.headers["set-cookie"][0]) {
+			// 	const cookieMatch = (response.headers["set-cookie"][0] as string).match(/[\w]+=[\w\-\+\/]+;/g);
+			// 	if (cookieMatch) {
+			// 		const keyValueCookie = cookieMatch[0].replace(";", "").split("=");
+			//
+			// 		if (keyValueCookie) {
+			// 			if (!axios.defaults.headers.common["cookie"]) {
+			// 				axios.defaults.headers.common["cookie"] = {};
+			// 			}
+			//
+			// 			axios.defaults.headers.common["cookie"][keyValueCookie[0]] = keyValueCookie[1];
+			// 		}
+			// 	}
+			// }
 			// 
 			const html: string = response.data;
 			const rawMatch = html.match(/lastEpisodes = .*?\n/g);

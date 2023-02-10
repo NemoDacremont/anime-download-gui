@@ -102,7 +102,7 @@ import { Episode } from '@/store/download/downloadTypes';
 import { Anime, Version } from '@/store/animeList/animeListTypes';
 
 export default defineComponent({
-	name: 'Anime',
+	name: 'anime-view',
 	data () {
 		return {
 			startSelection: "1",

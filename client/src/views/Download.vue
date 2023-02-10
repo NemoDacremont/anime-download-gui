@@ -46,7 +46,7 @@ interface DownloadViewData{
 }
 
 export default defineComponent({
-	name: 'Download',
+	name: 'Download-view',
 	components: {
 		SelectedAnime
 	},

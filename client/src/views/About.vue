@@ -18,6 +18,14 @@
   </div>
 </template>
 
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+	name: 'About-view'
+});
+</script>
+
 <style lang="scss" scoped>
 .headers {
 	height: 8vh;

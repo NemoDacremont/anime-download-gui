@@ -36,26 +36,26 @@ export default defineComponent({
 
 // Material Icons
 @font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: url(/material-icons.woff2) format('woff2');
+	font-family: 'Material Icons';
+	font-style: normal;
+	font-weight: 400;
+	src: url(/public/material-icons.woff2) format('woff2');
 }
 
 .material-icons {
-  font-family: 'Material Icons', cursive;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  font-feature-settings: 'liga';
-  -moz-osx-font-smoothing: grayscale;
+	font-family: 'Material Icons', cursive;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 24px;
+	line-height: 1;
+	letter-spacing: normal;
+	text-transform: none;
+	display: inline-block;
+	white-space: nowrap;
+	word-wrap: normal;
+	direction: ltr;
+	font-feature-settings: 'liga';
+	-moz-osx-font-smoothing: grayscale;
 }
 
 //	Fonts, Poppins and Montserrat
@@ -63,14 +63,14 @@ export default defineComponent({
 	font-family: Poppins;
 	font-style: normal;
 	font-weight: 500;
-	src: url(/Poppins-Medium.ttf) format('truetype');
+	src: url(/public/Poppins-Medium.ttf) format('truetype');
 }
 
 @font-face {
 	font-family: Montserrat;
 	font-style: normal;
 	font-weight: 400;
-	src: url(/Montserrat-Regular.ttf) format('truetype');
+	src: url(/public/Montserrat-Regular.ttf) format('truetype');
 }
 
 :root {
@@ -162,7 +162,7 @@ export default defineComponent({
 	padding: 0;
 	margin: 0;
 	box-sizing: border-box;
-  font-family: Montserrat, sans-serif;
+	font-family: Montserrat, sans-serif;
 }
 
 body {
@@ -170,11 +170,11 @@ body {
 }
 
 #app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-align: center;
 
-  color: var(--font-color);
+	color: var(--font-color);
 	background-color: var(--background-color);
 }
 

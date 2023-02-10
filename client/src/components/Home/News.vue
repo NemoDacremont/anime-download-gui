@@ -26,7 +26,7 @@ import { Episode } from '@/store/download/downloadTypes';
 import { API_BASE_URL } from '@/constants';
 
 export default defineComponent({
-	name: 'news',
+	name: 'news-section',
 	components: {
 		NewItem
 	},

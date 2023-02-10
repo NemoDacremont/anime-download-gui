@@ -9,7 +9,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-	name: 'new',
+	name: 'new-item',
 	props: {
 		data: {
 			type: Object,

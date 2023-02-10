@@ -19,7 +19,7 @@ export default defineComponent({
 	components: {
 		News
 	},
-  name: 'Home',
+  name: 'Home-view',
 });
 </script>
 
