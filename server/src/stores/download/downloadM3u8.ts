@@ -151,6 +151,7 @@ export interface ProgressData {
 const durationRegExp = /Duration: (\d+:)+/;
 const progressTimeRegExp = /time=(\d+:)+/;
 
+
 //	Returns the duration in milliseconds
 const getDuration = (message: string): number | null => {
 	if (!durationRegExp.test(message)) return null;
@@ -169,6 +170,8 @@ const getDuration = (message: string): number | null => {
 
 	return acc;
 }
+
+
 const getProgressTime = (message: string): number | null => {
 
 	if (!progressTimeRegExp.test(message)) return null;
@@ -209,7 +212,7 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 			}
 		};
 
-		const { onData, forceReject } = { ...defaultCallbacks, ...cbs };  
+		const { onData, forceReject, pause, resume } = { ...defaultCallbacks, ...cbs };  
 
 		const ffmpegHeaders = [
 			'Accept-Encoding: gzip, deflate, br',
@@ -250,9 +253,26 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 
 			onData(currentProgress);
 
-			if (forceReject()) {
+
+			// Pause
+			if (pause()) {
 				const kill = command.kill('SIGSTOP');
-				//if (!kill.killSuccess) console.log("kill didn't succeed, don't know why and hjflkjqhfjkldsqh");
+				console.log("SIGSTOP")
+				// if (!kill.killSuccess) console.log("pause didn't succeed, don't know why and hjflkjqhfjkldsqh");
+			}
+
+
+			// Resume download
+			if (resume()) {
+				const kill = command.kill('SIGCONT');
+				console.log("SIGCONT")
+				// if (!kill.killSuccess) console.log("resume didn't succeed, don't know why and hjflkjqhfjkldsqh");
+			}
+
+			// Kill
+			if (forceReject()) {
+				const kill = command.kill('SIGKILL');
+				// if (!kill.killSuccess) console.log("kill didn't succeed, don't know why and hjflkjqhfjkldsqh");
 			}
 		});
 

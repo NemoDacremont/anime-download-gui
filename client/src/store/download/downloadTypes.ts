@@ -28,6 +28,7 @@ export interface SelectedEpisodes {
 }
 
 export type DownloadingState = 'started' | 'stopped';
+export type DownloadState = "down" | "pause" | "resume" | "up" | "stop" | "paused";
 
 export interface Episode {
 	time: string;

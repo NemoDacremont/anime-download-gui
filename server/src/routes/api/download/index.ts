@@ -15,6 +15,7 @@ import unSelectEpisodes from './unselectEpisodes';
 import controlDownload from './controlDownload';
 import isDownloadingRouter from './isdownloading';
 import getProgressesRouter from './getProgress';
+import getDownloadState from './getDownloadState';
 
 // Store
 import animeStore, { getAnimeFromID, Version } from '../../../stores/animes';
@@ -35,6 +36,7 @@ downloadRouter.use('/unSelectEpisodes', unSelectEpisodes);
 downloadRouter.use('/controlDownload', controlDownload);
 downloadRouter.use('/isDownloading', isDownloadingRouter);
 downloadRouter.use('/getProgresses', getProgressesRouter);
+downloadRouter.use('/getDownloadState', getDownloadState);
 //downloadRouter.use(JSONParser);
 
 interface IncomingBody {

@@ -1,11 +1,10 @@
 
 import { Router } from 'express';
-
 import { downloader } from '../../../stores/download';
 
 const isDownloadingRouter = Router();
 
-isDownloadingRouter.get('/', (req, res) => {
+isDownloadingRouter.get('/', (_, res) => {
 	res.send(downloader.isDownloading);
 });
 

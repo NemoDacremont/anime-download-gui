@@ -55,6 +55,8 @@ export interface ParsedProgresses {
 	}
 }
 
+type State = "down" | "pause" | "resume" | "up" | "stop" | "paused"
+
 //
 
 class ActionListener extends EventEmitter {}
@@ -74,10 +76,12 @@ export class Downloader {
 	public readonly actionListener: ActionListener;
 	public readonly store: DownloadStore;
 	public isDownloading: boolean;
+	public state: State;
 	
 
 	// Constructor
 	constructor (/*actionListener: ActionListener*/) {
+		this.state = "down"
 		this.actionListener = new ActionListener();
 
 		this.store = {
@@ -93,8 +97,24 @@ export class Downloader {
 
 		this.actionListener.on('stopDownload', () => {
 			this.isDownloading = false;
-		})
+			this.state = "stop";
+		});
+
+		this.actionListener.on('pauseDownload', () => {
+			if (this.state === "up") {
+				this.isDownloading = false;
+				this.state = "pause";
+			}
+			console.log("newstate:", this.state);
+		});
+
+
+		this.actionListener.on('resumeDownload', () => {
+			if (this.state === "paused") this.state = "resume";
+			console.log("newstate:", this.state);
+		});
 	}
+
 
 	/*
 	 *	Methods
@@ -151,6 +171,7 @@ export class Downloader {
 
 	}
 
+
 	public unSelectEpisodes (animeID: AnimeID, version?: Version, episodes?: number | number[]): void {
 		const { itemsToDownload, progresses } = this.store;
 
@@ -204,6 +225,7 @@ export class Downloader {
 		}
 	}
 
+
 	private getProgress (animeID: AnimeID, version: Version, episode: number): EpisodeProgress | null {
 		const { progresses } = this.store;
 
@@ -216,6 +238,7 @@ export class Downloader {
 		return versionEntry.get(episode) || null;
 	}
 
+
 	private updateProgresses (animeID: AnimeID, version: Version, episode: number, newProgress: EpisodeProgress): void {
 		const { progresses } = this.store;
 
@@ -223,6 +246,7 @@ export class Downloader {
 
 		progresses.get(animeID)?.get(version)?.set(episode, newProgress);
 	}
+
 
 	public getParsedProgresses () {
 		const { progresses } = this.store;
@@ -244,6 +268,7 @@ export class Downloader {
 		return output;
 	}
 
+
 	public getParsedDownloadList () {
 		const { itemsToDownload } = this.store;
 
@@ -260,6 +285,7 @@ export class Downloader {
 
 		return output;
 	}
+
 
 	getCachedEpisodes (animeID: AnimeID, version: Version): Promise<Map<EpisodeIndex, Episode> | null>;
 	getCachedEpisodes (animeID: AnimeID, version: Version, episode: EpisodeIndex): Promise< Episode | null >;
@@ -316,9 +342,11 @@ export class Downloader {
 		return versionEntry;
 	}
 
+
 	private async download (): Promise<void> {
 		// return if is downloading to prevent multiple download instance
-		if (this.isDownloading) return;
+		if (this.isDownloading || this.state === "up") return;
+		this.state = "up";
 
 		const { itemsToDownload: downloadList } = this.store;
 		this.isDownloading = true;
@@ -374,7 +402,20 @@ export class Downloader {
 
 					const downloadsCallbacks: DownloadCallbacks = {
 						forceReject: (): boolean => {
-							return !this.isDownloading;
+							const out = this.state === "stop";
+							return out;
+						},
+						pause: (): boolean => {
+							const out = this.state === "pause";
+							if (out) this.state = "paused";
+							
+							return out;
+						},
+						resume: (): boolean => {
+							const out = this.state === "resume";
+							if (out) this.state = "up";
+							
+							return out;
 						},
 						onData: (newProgress: number): void => {
 							// get the 
@@ -417,7 +458,10 @@ export class Downloader {
 					socketIOStore.socketIOInstance?.emit('progress', this.getParsedProgresses());
 
 					// Stop downloading if a cancel request has been used
-					if (!this.isDownloading) return;
+					if (this.state as 'up'|'stop' === "stop") {
+						this.state = "down";
+						return;
+					}
 				}
 			}
 		}

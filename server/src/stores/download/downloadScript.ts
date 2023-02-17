@@ -7,11 +7,15 @@ import { Source } from '../../utils/getURL/URLExtractor';
 export interface DownloadCallbacks {
 	// The progress is a integer between 0 and 100
 	onData: (progress: number) => void;
+	resume: () => boolean;
+	pause: () => boolean;
 	forceReject: () => boolean;
 }
 
 export const defaultCallbacks: DownloadCallbacks = {
 	forceReject: () => false,
+	pause: () => false,
+	resume: () => false,
 	onData: () => {}
 }
 

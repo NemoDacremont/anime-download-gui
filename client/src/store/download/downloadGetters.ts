@@ -34,6 +34,7 @@ export const downloadGetters: GetterTree<State, State> & DownloadGetters = {
 		return progresses[animeid][version][episode] || null;
 	},
 	isDownloading: (state) => state.isDownloading,
+	getDownloadState: (state) => state.downloadState,
 	downloadingState: (state) => state.isDownloading ? 'started': 'stopped'
 }
 

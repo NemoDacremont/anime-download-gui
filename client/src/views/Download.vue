@@ -2,10 +2,21 @@
 	<div class="download">
 		<header>
 			<h1>Download</h1>
-			<span class="material-icons clickable download-control" @click="toggleDownload" :title="isDownloading ? 'Stop Downloading': 'Start Downloading'">
-				{{ isDownloading ? 'stop': 'save_alt' }}
-			</span>
+
+			<div class="download-control-div">
+				<span class="material-icons clickable download-control" @click="toggleDownload"
+				:title="isDownloading ? 'Stop Downloading': 'Start Downloading'">
+					{{ isDownloading ? 'stop': 'save_alt' }}
+				</span>
+
+				<span class="material-icons clickable download-control" @click="togglePause"
+				:title="'pause'" v-if="isDownloading">
+					{{ getDownloadState === "paused" || getDownloadState === "pause" ? 'play': 'pause' }}
+				</span>
+			</div>
+
 		</header>
+
 
 		<section>
 			<div class="list" v-if="downloadList && Object.entries(downloadList).length">
@@ -20,10 +31,12 @@
 					</li>
 				</ul>
 			</div>
+
 			<div class="no-selection" v-else>
 				<p>Nothing is selected, go back to <router-link to="/animelist/vostfr/1" class="clickable text highlight">Anime List</router-link></p>
 				<h2>¯\_(ツ)_/¯</h2>
 			</div>
+
 		</section>
 	</div>
 </template>
@@ -57,11 +70,22 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		...mapGetters(['getProgresses', 'isDownloading'])
+		...mapGetters(['getProgresses', 'isDownloading', 'getDownloadState'])
 	},
 	methods: {
-		...mapMutations(['updateProgresses', 'forceDownloadState']),
-		...mapActions(['toggleDownload', 'loadDownloadState'])
+		async togglePause(): Promise<void> {
+			if (this.getDownloadState === 'paused' || this.getDownloadState === "pause") {
+				console.log("resume")
+				this.resumeDownload();
+			}
+			else {
+				console.log("pause")
+				this.pauseDownload();
+			}
+			console.log("downloadstate", this.getDownloadState)
+		},
+		...mapMutations(['updateProgresses', 'forceIsDownloading']),
+		...mapActions(['toggleDownload', 'loadDownloadState', 'resumeDownload', 'pauseDownload'])
 	},
 	async created (): Promise<void> {
 		// Force downloader data loading
@@ -84,7 +108,7 @@ export default defineComponent({
 			});
 
 			this.socket.on('updateDownloadState', (data: boolean) => {
-				this.forceDownloadState(data);
+				this.forceIsDownloading(data);
 			});
 
 			this.socket.on('updateSelectedAnime', async () => {
@@ -140,6 +164,12 @@ ul {
 
 .download-state {
 	padding: 1em;
+}
+
+.download-control-div {
+	display: flex;
+	flex-direction: row;
+	gap: 1em;
 }
 
 </style>

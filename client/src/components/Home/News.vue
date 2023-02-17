@@ -59,7 +59,6 @@ export default defineComponent({
 	},
 	async created () {
 		this.news = (await axios.get(API_BASE_URL + '/animes/getNews')).data;
-		console.table(this.news);
 	}
 });
 </script>

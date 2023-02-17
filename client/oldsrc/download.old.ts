@@ -107,7 +107,7 @@ export const downloadStore = createStore<DownloadState>({
 		},
 		loadDownloadState: async ({commit}) => {
 			const newState = (await axios.get(API_BASE_URL + '/download/isDownloading')).data;
-			if (typeof newState === 'boolean') commit('forceDownloadState', newState);
+			if (typeof newState === 'boolean') commit('forceIsDownloading', newState);
 		},
 	}
 });
