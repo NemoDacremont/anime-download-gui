@@ -4,9 +4,14 @@ import fs from 'fs';
 
 import { DownloadCallbacks, defaultCallbacks } from './downloadScript';
 //import { exec } from 'child_process';
+import { setFfmpegPath } from 'fluent-ffmpeg';
 import FfmpegCommand from 'fluent-ffmpeg';
 
 import { convertDurationToCS } from './convertDurationToCS';
+
+// constantes
+import { ffmpegPath } from '../../constants';
+
 
 //	TS interface
 import { Source } from '../../utils/getURL/URLExtractor';
@@ -215,10 +220,10 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 		const { onData, forceReject, pause, resume } = { ...defaultCallbacks, ...cbs };  
 
 		const ffmpegHeaders = [
-			'Accept-Encoding: gzip, deflate, br',
+			// 'Accept-Encoding: gzip, deflate, br',
 			'Accept-Language: en-US,en;q=0.5',
-			'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-			//'host: www.pstream.net'
+			'Accept: */*',
+			// 'host: www.pstream.net'
 		];
 
 		/*
@@ -226,6 +231,10 @@ export default function (outFilePath: string, source: Source, cbs?: DownloadCall
 		 */
 
 		let videoDuration = NaN;
+
+		if (ffmpegPath !== "") {
+			setFfmpegPath(ffmpegPath)
+		}
 
 		const command = FfmpegCommand()
 			.input(`${source.URL}`)

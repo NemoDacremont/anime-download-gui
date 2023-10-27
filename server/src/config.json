@@ -1,5 +1,5 @@
 {
-	"outputDir": "~/Vidéos",
+	"outputDir": "~/Videos",
 	"ffmpegPath": "",
 	"openOnLocalNetwork": false,
 	"port": 8080,

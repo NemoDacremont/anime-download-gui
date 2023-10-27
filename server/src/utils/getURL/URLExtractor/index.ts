@@ -33,7 +33,13 @@ export interface Source {
 const getSourceFile = (playerURL: string): Promise<Source | null> => {
 	return new Promise(async (resolve, reject) => {
 		for (const extractor of extractors) {
-			if (!extractor.test(playerURL)) continue;
+			if (!extractor.test(playerURL)) 
+			{
+				console.log(`Le player ${extractor.name} n'a pas match'`);
+				continue;
+			}
+
+
 			console.log(`${extractor.name} Matched the source ${playerURL}`);
 
 			let output = null;

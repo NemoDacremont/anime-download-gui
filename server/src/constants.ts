@@ -19,8 +19,13 @@ export const logStyle: 'dev' | 'combined'
 	= (process.env.NODE_ENV === 'production') ?'combined' :'dev';
 
 // Out dir, is using /home/{USER}/ as alias to '~'
-if (!process.env.HOME) throw new Error("process.env.HOME doesn't exist");
-export let outputDir = config.outputDir.replace(/\/$/, '').replace('~', process.env.HOME);
+if (!process.env.HOME && !process.env.HOMEPATH) throw new Error("process.env.HOME doesn't exist");
+
+
+const tildSubstitute = (process.platform === "win32") ? process.env.HOMEPATH : process.env.HOME;
+const slashSubstitute = (process.platform === "win32") ? "\\\\" : "\/"
+
+export let outputDir = config.outputDir.replace(/\/$/, '').replace('~', tildSubstitute).replace('/', slashSubstitute);
 
 
 // NEKO-SAMA URLs

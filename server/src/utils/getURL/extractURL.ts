@@ -6,7 +6,7 @@ import { downloader } from '../../stores/download';
 import { getSourceFile, Source } from './URLExtractor';
 
 const playerSourcesRegExps: RegExp[] = [
-	/https?:\/\/fusevideo\.net\/(\w+\/)+\w+/,
+	/https?:\/\/fusevideo\.io\/(\w+\/)+\w+/,
 	/https?:\/\/www\.pstream\.net\/(\w+\/)?\w+/,
 	/https?:\/\/embed\.mystream\.to\/(\w+\/)?\w+/,
 ]
