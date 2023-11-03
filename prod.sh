@@ -18,6 +18,11 @@ DIRECTORIES=(dist)
 npm run build
 
 # Creating temporary a directory to build the production app
+
+if [ -d $OUTDIR ]
+then
+	rm -rf $OUTDIR
+fi
 mkdir $OUTDIR
 
 # Copy files
